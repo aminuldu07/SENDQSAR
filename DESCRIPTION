@@ -1,10 +1,21 @@
 Package: SENDQSAR
-Title: What the Package Does (One Line, Title Case)
+Title: Building a Quantitative Structure-Activity Relationship 
+       model leveraging SEND Database
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+    person("Md Aminul Islam", "Prodhan", 
+    email = "aminuldu07@gmail.com", 
+    role = c("aut", "cre"),
+    comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: This package offers a comprehensive framework for developing 
+ Quantitative Structure-Activity Relationship (QSAR) models using the 
+ SEND (Standard for Exchange of Nonclinical Data) database. It streamlines 
+ the process of data acquisition, preprocessing, descriptor calculation,
+ model training, and evaluation. With built-in tools for feature selection
+ and visualization, users can easily delve into molecular descriptors
+ and generate robust predictive models. Ideal for researchers aiming to
+ understand chemical behavior and biological activity, this package simplifies
+ complex modeling tasks while ensuring reproducibility and interpretability.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
