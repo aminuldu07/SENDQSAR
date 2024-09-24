@@ -318,6 +318,6 @@ data.table::setDF(dm)
     master_CompileData <- master_CompileData1 %>%
       dplyr::rename(ARMCD = DOSE_RANKING)
 
-  master_CompileData
+  as.data.frame(master_CompileData)
     }
 }
