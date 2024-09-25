@@ -21,7 +21,7 @@
 get_bw_score <- function(studyid,
                          path_db,
                          fake_study = FALSE,
-                         master_CompileData = NULL,
+                         master_compiledata = NULL,
                          score_in_list_format = FALSE) {
 
 studyid <- as.character(studyid)
@@ -302,47 +302,47 @@ path <- path_db
 
 #' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #'  #<><><><><><><><><><><><><><><><>... Remove TK animals and Recovery animals......<><><><><><>.............
-    #<><><><><><><><> master_CompileData is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
+    #<><><><><><><><> master_compiledata is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
 
     #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #browser()
-    # Check if master_CompileData is NULL
-    # if (is.null(master_CompileData) & fake_study == TRUE) {
+    # Check if master_compiledata is NULL
+    # if (is.null(master_compiledata) & fake_study == TRUE) {
     #   fake_study = fake_study
-    #   # Call the master_CompileData function to generate the data frame
-    #   master_CompileData <- get_compile_data(studyid, path_db,fake_study = fake_study)
-    # } else if (is.null(master_CompileData) & fake_study == FALSE) {
-    #   master_CompileData <- get_compile_data(studyid, path_db,fake_study = FALSE)
-    # } else if (master_CompileData == master_CompileData & fake_study == FLASE) {
-    #   master_CompileData = master_CompileData
-    # } else if (master_CompileData == master_CompileData & fake_study == TRUE) {
-    #   master_CompileData = master_CompileData
+    #   # Call the master_compiledata function to generate the data frame
+    #   master_compiledata <- get_compile_data(studyid, path_db,fake_study = fake_study)
+    # } else if (is.null(master_compiledata) & fake_study == FALSE) {
+    #   master_compiledata <- get_compile_data(studyid, path_db,fake_study = FALSE)
+    # } else if (master_compiledata == master_compiledata & fake_study == FLASE) {
+    #   master_compiledata = master_compiledata
+    # } else if (master_compiledata == master_compiledata & fake_study == TRUE) {
+    #   master_compiledata = master_compiledata
     # } else {
-    #   master_CompileData = master_CompileData
+    #   master_compiledata = master_compiledata
     # }
-    if (is.null(master_CompileData) & fake_study == TRUE) {
-      # Call the master_CompileData function to generate the data frame for fake study
-      master_CompileData <- get_compile_data(studyid, path_db, fake_study = TRUE)
-    } else if (is.null(master_CompileData) & fake_study == FALSE) {
-      # Call the master_CompileData function to generate the data frame for real study
-      master_CompileData <- get_compile_data(studyid, path_db, fake_study = FALSE)
+    if (is.null(master_compiledata) & fake_study == TRUE) {
+      # Call the master_compiledata function to generate the data frame for fake study
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = TRUE)
+    } else if (is.null(master_compiledata) & fake_study == FALSE) {
+      # Call the master_compiledata function to generate the data frame for real study
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = FALSE)
     } else {
-      # If master_CompileData is already set, no action needed
-      master_CompileData = master_CompileData
+      # If master_compiledata is already set, no action needed
+      master_compiledata = master_compiledata
     }
 
     #else {
-      #master_CompileData <- get_compile_data(studyid = studyid, path_db = path_db,fake_study = fake_study)
+      #master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db,fake_study = fake_study)
     #}
 
     # # Remove the TK animals and Recovery animals
     # LB_tk_recovery_filtered <- max_visitdy_df %>%
-    #   dplyr::filter(USUBJID %in% master_CompileData$USUBJID)
+    #   dplyr::filter(USUBJID %in% master_compiledata$USUBJID)
     #
     # # Perform a left join to match USUBJID and get ARMCD ## 020924
     # #-inner_join() used instead of left_join()#199
     # LB_tk_recovery_filtered_ARMCD <- LB_tk_recovery_filtered %>%
-    #   dplyr::inner_join(master_CompileData %>% dplyr::select(USUBJID, ARMCD), by = "USUBJID")
+    #   dplyr::inner_join(master_compiledata %>% dplyr::select(USUBJID, ARMCD), by = "USUBJID")
 
 #' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -351,11 +351,11 @@ path <- path_db
     #Substract TK animals from the "StudyInitialWeights" and StudyBodyWeights" data frame
     #tk_less_StudyBodyWeights <- StudyBodyWeights[!(StudyBodyWeights$USUBJID %in% tK_animals_df$USUBJID),]
 
-    tk_less_StudyBodyWeights <- StudyBodyWeights[(StudyBodyWeights$USUBJID %in% master_CompileData$USUBJID),]
+    tk_less_StudyBodyWeights <- StudyBodyWeights[(StudyBodyWeights$USUBJID %in% master_compiledata$USUBJID),]
 
     # Substract TK animals from the "StudyInitialWeights" data frame
     #tk_less_StudyInitialWeights <- StudyInitialWeights[!(StudyInitialWeights$USUBJID %in% tK_animals_df$USUBJID),]
-    tk_less_StudyInitialWeights <- StudyInitialWeights[(StudyInitialWeights$USUBJID %in% master_CompileData$USUBJID),]
+    tk_less_StudyInitialWeights <- StudyInitialWeights[(StudyInitialWeights$USUBJID %in% master_compiledata$USUBJID),]
 
     # Rename columns in StudyInitialWeights by adding "_Init" suffix
     names(tk_less_StudyInitialWeights) <- ifelse(names(tk_less_StudyInitialWeights) == "USUBJID",
@@ -372,13 +372,13 @@ path <- path_db
 #' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Add "ARMCD","SETCD","SEX" to "selected_df"
 
-    STUDYID_less_master_CompileData <- master_CompileData[, c("USUBJID", "ARMCD","SETCD","SEX")]
-    BW_df_merged_ARMCD <- merge(BW_df_selected_column, STUDYID_less_master_CompileData, by = "USUBJID")
+    STUDYID_less_master_compiledata <- master_compiledata[, c("USUBJID", "ARMCD","SETCD","SEX")]
+    BW_df_merged_ARMCD <- merge(BW_df_selected_column, STUDYID_less_master_compiledata, by = "USUBJID")
 
     #"Recovery animals" cleaning from "BW_df_merged_ARMCD"
-    # #  master_CompileData is alreadyTK animals & Recovery animal cleaned
+    # #  master_compiledata is alreadyTK animals & Recovery animal cleaned
 
-    # all_present <- all(BW_df_merged_ARMCD$USUBJID %in% master_CompileData$USUBJID)
+    # all_present <- all(BW_df_merged_ARMCD$USUBJID %in% master_compiledata$USUBJID)
     # print(all_present)
 
 

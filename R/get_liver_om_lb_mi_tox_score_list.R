@@ -5,40 +5,25 @@
 ## ----------   --------------------------------------------------------------
 ##   May-07-2024    Md MD Aminul Islam Prodhan (mdaminulislam.prodhan@fda.hhs.gov)
 
+selected_studies <-  "studyid in selected_studies" #{slected studies should be a vector}
+
+
 #get_liver_om_lb_mi_tox_score_list <- function (selected_studies, dbtoken ) {
 get_liver_om_lb_mi_tox_score_list <- function (selected_studies,
                                                path_db,
                                                fake_study = FALSE,
-                                               master_CompileData = NULL,
-                                               bwzscore_BW = NULL,
+                                               #master_compiledata = NULL,
+                                               #bwzscore_BW = NULL,
                                                score_in_list_format = FALSE) {
-# Source the get_data scripts
-# source("get_liver_compiledata.R", local = TRUE)
-# source("get_liver_dose_ranking.R", local = TRUE)
-# source("get_liver_bw_score.R", local = TRUE)
-# source("get_liver_livertobw_score.R", local = TRUE)
-# source("get_liver_lb_score.R", local = TRUE)
-# source("get_liver_mi_score.R", local = TRUE)
-
 
 # master liverToBW_df
 master_liverToBW <-  data.frame(STUDYID = NULL, avg_liverToBW_zscore = NULL)
-
-#selected_studies <- selected_studies
-
-#master_liverToBW <- list()
-
-#master_lbxx_list <- list()
-
-#master_mixx_list <- list()
 
 master_mi_df <- data.frame()
 
 # Master LB list
 master_lb_score_six <- data.frame(STUDYID = NULL, avg_alb_zscore = NULL, avg_ast_zscore = NULL, avg_alp_zscore = NULL,
                              avg_alt_zscore = NULL, avg_bili_zscore = NULL, avg_ggt_zscore = NULL)
-# master_MI_list
-#master_MI_list <- list()
 
 # Create FOUR SCORE DATA FRAME for "LiverToBodyweight" , "LB" & "MI" Score
 FOUR_Liver_Score <-  data.frame(STUDYID = NA, liverToBW = NA, LB_score = NA, MI_score = NA, scored_liverToBW = NA, scored_LBScore = NA)
@@ -54,9 +39,6 @@ master_error_df <- data.frame(STUDYID = character() ,
                               ErrorMessage = character(),
                               #Time = POSIXct(),
                               stringsAsFactors = FALSE)
-# Print local variables for debugging
-#print(ls())
-
 #for (j in selected_studies){
 for (studyid in selected_studies){
 
@@ -65,44 +47,15 @@ for (studyid in selected_studies){
   # Initialize a flag variable at the start of each iteration
   first_block_success <- TRUE
 
-  # First Block with its own tryCatch for compiledata
+  # First Block with its own tryCatch for master_compiledata~~~~~~~~~~~~~~~~~~
   tryCatch({
 
     # Call "get_liver_compiledata" function to get the cleaned_compiledata
-    output_get_liver_compiledata <- get_liver_compiledata(studyid, dbtoken) #return(list( tK_animals_df, cleaned_compiledata)
-
-    #print(output_get_liver_compiledata)
-    # GET the "cleaned_compiledata" -data frame- from the output of the function "get_liver_compiledata(j, dbtoken)"
-    cleaned_compiledata <- output_get_liver_compiledata[["cleaned_compiledata"]]
-
-
-    # GET the "tK_animals_df" -data frame- from the output of the "get_liver_compiledata(j, dbtoken)" function
-    tK_animals_df <- output_get_liver_compiledata[["tK_animals_df"]]
-
-    # GET the "ts" -data frame- from the output of the "get_liver_compiledata(j, dbtoken)" function
-    ts <- output_get_liver_compiledata[["ts"]]
-
-    # GET the "tx" -data frame- from the output of the "get_liver_compiledata(j, dbtoken)" function
-    tx <- output_get_liver_compiledata[["tx"]]
-
-    # GET the "bw" data frame
-    bw <- output_get_liver_compiledata[["bw"]]
-
-    # GET the "om" data frame
-    om <- output_get_liver_compiledata[["om"]]
-
-    # GET the "lb" data frame
-    lb <- output_get_liver_compiledata[["lb"]]
-
-    # GET the "mi" data frame
-    mi <- output_get_liver_compiledata[["mi"]]
-
-    # GET the "id" data frame
-    #id <- output_get_liver_compiledata[["id"]]
+    output_get_compile_data <- get_compile_data(studyid, path_db, fake_study = FALSE) #return as.data.frame "master_compiledata"
+    #master_compiledata
 
     # GET the  "master_compiledata" -data frame- from the output of the --
-    #"get_liver_dose_ranking" function which  return (master_compiledata)
-    master_compiledata <- get_liver_dose_ranking(studyid, tx, cleaned_compiledata)
+    master_compiledata <- output_get_compile_data
 
     # Create a copy of master_compiledata for the diagnostic purpose
     master_compiledata_copy <- master_compiledata
@@ -144,12 +97,7 @@ for (studyid in selected_studies){
     # [[# Add a new row for the current STUDYID in FOUR_Liver_Score]]
 
 
-    # ts <- sendigR::genericQuery(dbtoken, queryString = "SELECT * FROM TS
-    #                             WHERE STUDYID = (:1)",
-    #                             queryParams = j)
-
-
-    new_row_in_four_liver_scr <- data.frame(STUDYID = unique(ts$STUDYID),
+    new_row_in_four_liver_scr <- data.frame(STUDYID = unique(master_compiledata$STUDYID),
                                             liverToBW = NA,
                                             LB_score = NA,
                                             MI_score = NA,

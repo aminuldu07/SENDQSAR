@@ -17,7 +17,7 @@
 get_lb_score <- function(studyid,
                          path_db,
                          fake_study= FALSE,
-                         master_CompileData = NULL,
+                         master_compiledata = NULL,
                          score_in_list_format = FALSE) {
 
 studyid <- as.character(studyid)
@@ -103,34 +103,34 @@ path <- path_db
       dplyr::ungroup()
 
 
-  # master_CompileData <- get_compile_data(studyid, path_db,fake_study = fake_study)
+  # master_compiledata <- get_compile_data(studyid, path_db,fake_study = fake_study)
 
     #<><><><><><><><><><><><><><><><>... Remove TK animals and Recovery animals......<><><><><><>.............
-    #<><><><><><><><> master_CompileData is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
+    #<><><><><><><><> master_compiledata is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
 
     #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #browser()
-    if (is.null(master_CompileData) & fake_study == TRUE) {
-      # Call the master_CompileData function to generate the data frame for fake study
-      master_CompileData <- get_compile_data(studyid, path_db, fake_study = TRUE)
-    } else if (is.null(master_CompileData) & fake_study == FALSE) {
-      # Call the master_CompileData function to generate the data frame for real study
-      master_CompileData <- get_compile_data(studyid, path_db, fake_study = FALSE)
+    if (is.null(master_compiledata) & fake_study == TRUE) {
+      # Call the master_compiledata function to generate the data frame for fake study
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = TRUE)
+    } else if (is.null(master_compiledata) & fake_study == FALSE) {
+      # Call the master_compiledata function to generate the data frame for real study
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = FALSE)
     } else {
-      # If master_CompileData is already set, no action needed
-      master_CompileData = master_CompileData
+      # If master_compiledata is already set, no action needed
+      master_compiledata = master_compiledata
     }
 
 
     # Filtering the tk animals and the recovery animals
     # Remove the TK animals and Recovery animals
     LB_tk_recovery_filtered <- max_visitdy_df %>%
-      dplyr::filter(USUBJID %in% master_CompileData$USUBJID)
+      dplyr::filter(USUBJID %in% master_compiledata$USUBJID)
 
     # Perform a left join to match USUBJID and get ARMCD ## 020924
     #-inner_join() used instead of left_join()#199
     LB_tk_recovery_filtered_ARMCD <- LB_tk_recovery_filtered %>%
-      dplyr::inner_join(master_CompileData %>% dplyr::select(USUBJID, ARMCD), by = "USUBJID")
+      dplyr::inner_join(master_compiledata %>% dplyr::select(USUBJID, ARMCD), by = "USUBJID")
 
 
     #::::::::::::::::::::::::::::: "zScore Calculation" for LB data::::::::::::::::::::::::::::::::::::::::::::::::::::

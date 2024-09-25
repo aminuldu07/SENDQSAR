@@ -17,7 +17,7 @@
 get_mi_score <- function(studyid,
                          path_db,
                          fake_study=FALSE,
-                         master_CompileData = NULL,
+                         master_compiledata = NULL,
                          score_in_list_format = FALSE) {
 
 studyid <- as.character(studyid)
@@ -105,41 +105,41 @@ path <- path_db
 
     #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     # Remove the "Recovery animals and tk animals from "MIData"
-    #<><><><><><><><> master_CompileData is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
+    #<><><><><><><><> master_compiledata is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
     #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
     #' #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #' #browser()
-    #' # Check if master_CompileData is NULL
-    #' if (is.null(master_CompileData)) {
+    #' # Check if master_compiledata is NULL
+    #' if (is.null(master_compiledata)) {
     #'   fake_study = fake_study
-    #'   # Call the master_CompileData function to generate the data frame
-    #'   master_CompileData <- get_compile_data(studyid, path_db,fake_study = fake_study)
+    #'   # Call the master_compiledata function to generate the data frame
+    #'   master_compiledata <- get_compile_data(studyid, path_db,fake_study = fake_study)
     #' }
 
 
-     # master_CompileData <- get_compile_data(studyid = studyid,
+     # master_compiledata <- get_compile_data(studyid = studyid,
      #                                   path_db = path_db,fake_study = fake_study)
 
     #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #browser()
-    if (is.null(master_CompileData) & fake_study == TRUE) {
-      # Call the master_CompileData function to generate the data frame for fake study
-      master_CompileData <- get_compile_data(studyid, path_db, fake_study = TRUE)
-    } else if (is.null(master_CompileData) & fake_study == FALSE) {
-      # Call the master_CompileData function to generate the data frame for real study
-      master_CompileData <- get_compile_data(studyid, path_db, fake_study = FALSE)
+    if (is.null(master_compiledata) & fake_study == TRUE) {
+      # Call the master_compiledata function to generate the data frame for fake study
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = TRUE)
+    } else if (is.null(master_compiledata) & fake_study == FALSE) {
+      # Call the master_compiledata function to generate the data frame for real study
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = FALSE)
     } else {
-      # If master_CompileData is already set, no action needed
-      master_CompileData = master_CompileData
+      # If master_compiledata is already set, no action needed
+      master_compiledata = master_compiledata
     }
 
 
     # Filtering the tk animals and the recovery animals
-    tk_recovery_less_MIData <- MIData %>% dplyr::filter (USUBJID %in% master_CompileData$USUBJID)
+    tk_recovery_less_MIData <- MIData %>% dplyr::filter (USUBJID %in% master_compiledata$USUBJID)
 
     # Perform a left join to match USUBJID and get ARMCD
     tk_recovery_less_MIData_with_ARMCD <- tk_recovery_less_MIData %>%
-      dplyr::left_join(master_CompileData %>% dplyr::select(STUDYID, USUBJID, ARMCD, SETCD), by = "USUBJID")
+      dplyr::left_join(master_compiledata %>% dplyr::select(STUDYID, USUBJID, ARMCD, SETCD), by = "USUBJID")
 
     ########## MI Data ###############
     MIData_cleaned <- tk_recovery_less_MIData_with_ARMCD
@@ -156,7 +156,7 @@ path <- path_db
 
     test_MIIncidencePRIME <- MIIncidencePRIME
 
-    Severity <- merge(master_CompileData[,c("STUDYID","USUBJID","Species", "ARMCD")], MIData_cleaned)
+    Severity <- merge(master_compiledata[,c("STUDYID","USUBJID","Species", "ARMCD")], MIData_cleaned)
 
     MIData_cleaned_SColmn <- MIData_cleaned %>% dplyr::select(USUBJID,MISTRESC,MISEV)
 
@@ -164,7 +164,7 @@ path <- path_db
 
     MIData_cleaned_SColmn[is.na(MIData_cleaned_SColmn)] <- "0" #Fill NAs with Zero
 
-    mi_CompileData <- merge(master_CompileData , MIData_cleaned_SColmn, by = "USUBJID") # Final & working mi_CompileData
+    mi_CompileData <- merge(master_compiledata , MIData_cleaned_SColmn, by = "USUBJID") # Final & working mi_CompileData
 
     # Back-up data frame for checking  purpose
     final_working_compile_data_bef_normal <- mi_CompileData

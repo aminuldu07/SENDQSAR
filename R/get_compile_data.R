@@ -312,7 +312,7 @@ data.table::setDF(dm)
                                              by = c("STUDYID", "SETCD"))
 
     # rename the Data frame
-    master_CompileData1 <- dose_rank_comp_data [,c("STUDYID",
+    master_compiledata1 <- dose_rank_comp_data [,c("STUDYID",
                                                    "USUBJID",
                                                    "Species",
                                                    "SEX",
@@ -320,11 +320,11 @@ data.table::setDF(dm)
                                                    "SETCD")]
 
     # Rename the "DOSE_RANKING" column to ARMCD
-    # Rename "DOSE_RANKING" to "ARMCD" in master_CompileData
-    master_CompileData <- master_CompileData1 %>%
+    # Rename "DOSE_RANKING" to "ARMCD" in master_compiledata
+    master_compiledata <- master_compiledata1 %>%
       dplyr::rename(ARMCD = DOSE_RANKING)
 
-  as.data.frame(master_CompileData)
+  as.data.frame(master_compiledata)
     }
 }
 

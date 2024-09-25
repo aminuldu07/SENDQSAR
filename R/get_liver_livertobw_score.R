@@ -2,7 +2,7 @@
 get_liver_livertobw_score <- function (studyid,
                                        path_db,
                                        fake_study = FALSE,
-                                       master_CompileData = NULL,
+                                       master_compiledata = NULL,
                                        bwzscore_BW = NULL,
                                        score_in_list_format = FALSE){
 
@@ -22,11 +22,11 @@ get_liver_livertobw_score <- function (studyid,
 
   # Check if bwzscore_BW is NULL
   if (is.null(bwzscore_BW)) {
-    # Call the master_CompileData function to generate the data frame
+    # Call the master_compiledata function to generate the data frame
     bwzscore_BW <-  get_bw_score (studyid,
                                path_db,
                                fake_study = FALSE,
-                               master_CompileData = NULL,
+                               master_compiledata = NULL,
                                score_in_list_format = TRUE)
   }
 
@@ -65,25 +65,25 @@ get_liver_livertobw_score <- function (studyid,
 
   #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #browser()
-  if (is.null(master_CompileData) & fake_study == TRUE) {
-    # Call the master_CompileData function to generate the data frame for fake study
-    master_CompileData <- get_compile_data(studyid, path_db, fake_study = TRUE)
-  } else if (is.null(master_CompileData) & fake_study == FALSE) {
-    # Call the master_CompileData function to generate the data frame for real study
-    master_CompileData <- get_compile_data(studyid, path_db, fake_study = FALSE)
+  if (is.null(master_compiledata) & fake_study == TRUE) {
+    # Call the master_compiledata function to generate the data frame for fake study
+    master_compiledata <- get_compile_data(studyid, path_db, fake_study = TRUE)
+  } else if (is.null(master_compiledata) & fake_study == FALSE) {
+    # Call the master_compiledata function to generate the data frame for real study
+    master_compiledata <- get_compile_data(studyid, path_db, fake_study = FALSE)
   } else {
-    # If master_CompileData is already set, no action needed
-    master_CompileData = master_CompileData
+    # If master_compiledata is already set, no action needed
+    master_compiledata = master_compiledata
   }
 
 
   # Filtering the tk animals and the recovery animals
   OrganWeights_Liver_filtered <- OrganWeights_Liver_Weight_Selected_Col %>%
-    dplyr::filter(USUBJID %in% master_CompileData$USUBJID)
+    dplyr::filter(USUBJID %in% master_compiledata$USUBJID)
 
   # Perform a left join to match USUBJID and get ARMCD
   OrganWeights_Liver_with_ARMCD <- OrganWeights_Liver_filtered %>%
-    dplyr::left_join(master_CompileData %>%
+    dplyr::left_join(master_compiledata %>%
                        dplyr::select(STUDYID, USUBJID, ARMCD), by = "USUBJID")
 
 
