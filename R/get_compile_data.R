@@ -14,9 +14,13 @@
 #' @export
 
 get_compile_data <- function(studyid, path_db,fake_study=FALSE) {
+
   studyid <- as.character(studyid)
   path <- path_db
-  con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
+  #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
+  # Correct way to connect to SQLite database using RSQLite
+  con <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+
 # function for domain
   con_db <- function(domain){
     domain <- toupper(domain)
