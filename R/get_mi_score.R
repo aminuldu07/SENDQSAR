@@ -14,12 +14,12 @@
 #' }
 #' @export
 
-get_mi_score <- function(studyid, 
+get_mi_score <- function(studyid,
                          path_db,
-                         fake_study=FALSE, 
+                         fake_study=FALSE,
                          master_CompileData = NULL,
                          score_in_list_format = FALSE) {
-  
+
 studyid <- as.character(studyid)
 path <- path_db
   con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
@@ -107,20 +107,34 @@ path <- path_db
     # Remove the "Recovery animals and tk animals from "MIData"
     #<><><><><><><><> master_CompileData is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
     #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #browser()
-    # Check if master_CompileData is NULL
-    if (is.null(master_CompileData)) {
-      fake_study = fake_study
-      # Call the master_CompileData function to generate the data frame
-      master_CompileData <- get_compile_data(studyid, path_db,fake_study = fake_study)  
-    } 
-    
-    
+    #' #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #' #browser()
+    #' # Check if master_CompileData is NULL
+    #' if (is.null(master_CompileData)) {
+    #'   fake_study = fake_study
+    #'   # Call the master_CompileData function to generate the data frame
+    #'   master_CompileData <- get_compile_data(studyid, path_db,fake_study = fake_study)
+    #' }
+
+
      # master_CompileData <- get_compile_data(studyid = studyid,
      #                                   path_db = path_db,fake_study = fake_study)
 
-    # Filter the data frame
+    #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #browser()
+    if (is.null(master_CompileData) & fake_study == TRUE) {
+      # Call the master_CompileData function to generate the data frame for fake study
+      master_CompileData <- get_compile_data(studyid, path_db, fake_study = TRUE)
+    } else if (is.null(master_CompileData) & fake_study == FALSE) {
+      # Call the master_CompileData function to generate the data frame for real study
+      master_CompileData <- get_compile_data(studyid, path_db, fake_study = FALSE)
+    } else {
+      # If master_CompileData is already set, no action needed
+      master_CompileData = master_CompileData
+    }
+
+
+    # Filtering the tk animals and the recovery animals
     tk_recovery_less_MIData <- MIData %>% dplyr::filter (USUBJID %in% master_CompileData$USUBJID)
 
     # Perform a left join to match USUBJID and get ARMCD
@@ -188,7 +202,7 @@ path <- path_db
     print_mi_CompileData <- mi_CompileData
 
     # Here Check the number of columns in mi_CompileData
-    
+
     if (ncol(mi_CompileData) > 6) {
       #Calculate Incidence per group for MI Data
       MIIncidencePRIME <- merge(MIIncidencePRIME, unique(mi_CompileData[,c("STUDYID","USUBJID","ARMCD")]), by = c("USUBJID"))
@@ -376,7 +390,7 @@ path <- path_db
 
 
       # averaged zscore per STUDYID for 'MI'..................................................................................
-      
+
       # Step 1: Filter for HD
       #MI_final_score <- ScoredData_subset_HD [ARMCD == "HD"]
       MI_final_score <- ScoredData_subset_HD %>% dplyr::filter(ARMCD == "HD")
@@ -412,53 +426,53 @@ path <- path_db
       calculated_MI_value <- MI_df$MI_score
     }
 
-  calculated_mi_score <- calculated_MI_value 
+  calculated_mi_score <- calculated_MI_value
     }
   #' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  # if score_in_list_format is TRUE 
+  # if score_in_list_format is TRUE
   if (score_in_list_format == TRUE) {
-    
+
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       #~~~~~~~~~~ GET all the severity as individual in a list ~~~~~~~~~~~~~~~
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      
+
       # Working with "ScoredData_subset_HD " according to Kevin's advise
       # Create a variable for "ScoredData_subset_HD" data frame
       mi_scoredata_hd <- ScoredData_subset_HD #' @~~~~~~~~~~~~~~~~~
-      
+
       #Average calculation for each of the 7th column to onward.
-      
+
       # Select columns from 7th to the last
       col_7th_to_end <- mi_scoredata_hd[, 7:length(colnames(mi_scoredata_hd)),
                                         drop = FALSE]
-      
+
       # Calculate the mean for each selected column
       mean_col_7th_to_end <- lapply(col_7th_to_end, mean)
-      
+
       # Define  an empty list
       empty_mi_score_list <- list()
-      
+
       # Add a 'STUDYID' element to the empty_list  with value 'j'
       empty_mi_score_list[['STUDYID']] <- unique(mi$STUDYID)
-      
-      # Append elements from mean_col_7th_to_end to 
+
+      # Append elements from mean_col_7th_to_end to
       mi_score_final_list <- append(empty_mi_score_list, mean_col_7th_to_end)
-      
+
       print(mi_score_final_list)
-      
-      # Convert the list to data frame 
+
+      # Convert the list to data frame
       mi_score_final_list_df <- dplyr::bind_rows(mi_score_final_list, .id = "iteration")
-      
-      
+
+
     } else {
       #mi_score_final_list_df <- tibble::tibble()
       mi_score_final_list_df <- data.frame()
     }
-  
-  
+
+
   # Return based on score_in_list_format
   if (score_in_list_format) {
     return(mi_score_final_list_df)
