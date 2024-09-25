@@ -14,10 +14,10 @@
 #' }
 #' @export
 
-get_lb_score <- function(studyid, 
+get_lb_score <- function(studyid,
                          path_db,
-                         fake_study= FALSE, 
-                         master_CompileData = NULL, 
+                         fake_study= FALSE,
+                         master_CompileData = NULL,
                          score_in_list_format = FALSE) {
 
 studyid <- as.character(studyid)
@@ -102,21 +102,27 @@ path <- path_db
       dplyr::filter(VISITDY == max(VISITDY, na.rm = TRUE)) %>%
       dplyr::ungroup()
 
-  
+
   # master_CompileData <- get_compile_data(studyid, path_db,fake_study = fake_study)
-    
+
     #<><><><><><><><><><><><><><><><>... Remove TK animals and Recovery animals......<><><><><><>.............
     #<><><><><><><><> master_CompileData is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
-    
+
     #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
-    # Check if master_CompileData is NULL
-    if (is.null(master_CompileData)) {
-      fake_study = fake_study
-      # Call the master_CompileData function to generate the data frame
-      master_CompileData <- get_compile_data(studyid, path_db,fake_study = fake_study)  
-    } 
-    
+    #browser()
+    if (is.null(master_CompileData) & fake_study == TRUE) {
+      # Call the master_CompileData function to generate the data frame for fake study
+      master_CompileData <- get_compile_data(studyid, path_db, fake_study = TRUE)
+    } else if (is.null(master_CompileData) & fake_study == FALSE) {
+      # Call the master_CompileData function to generate the data frame for real study
+      master_CompileData <- get_compile_data(studyid, path_db, fake_study = FALSE)
+    } else {
+      # If master_CompileData is already set, no action needed
+      master_CompileData = master_CompileData
+    }
+
+
+    # Filtering the tk animals and the recovery animals
     # Remove the TK animals and Recovery animals
     LB_tk_recovery_filtered <- max_visitdy_df %>%
       dplyr::filter(USUBJID %in% master_CompileData$USUBJID)
@@ -160,7 +166,7 @@ path <- path_db
       dplyr::mutate(avg_alt_zscore = ifelse(avg_alt_zscore >= 3, 3,
                                             ifelse(avg_alt_zscore >= 2, 2,
                                                    ifelse(avg_alt_zscore >= 1, 1, 0))))
-    
+
 
     # 2. Sub-setting for 'SERUM | AST' data frame for "BWzScore Calculation" for...'SERUM | AST'...........
     df_serum_ast <- LB_tk_recovery_filtered_ARMCD %>%
@@ -307,7 +313,7 @@ path <- path_db
                                             ifelse(avg_alb_zscore >= 2, 2,
                                                    ifelse(avg_alb_zscore >= 1, 1, 0))))
 
-    
+
     # Merging----------LB----zscores------------values---------------------------
     LB_zscore_merged_df <- serum_alb_final_zscore %>%
       dplyr::full_join(serum_ast_final_zscore, by = "STUDYID") %>%
@@ -329,12 +335,12 @@ master_LB_list <- data.frame(STUDYID = NA, avg_alb_zscore = NA, avg_ast_zscore =
                              avg_alt_zscore = NA, avg_bili_zscore = NA, avg_ggt_zscore = NA)
 ##     # Add LB_zscore_merged_df to master dataframe
     master_LB_list <- dplyr::bind_rows(master_LB_list, LB_zscore_merged_df)
-    
-    
+
+
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    
+
     master_lb_scores <- master_LB_list #%>% master_lb_scores[-1,]
-    master_lb_scores   <- master_lb_scores[-1,] # remove the first column 
+    master_lb_scores   <- master_lb_scores[-1,] # remove the first column
    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ##     # Calculate the average for each row, ignoring NA values
@@ -362,7 +368,7 @@ master_LB_list <- data.frame(STUDYID = NA, avg_alb_zscore = NA, avg_ast_zscore =
 ##     # Score the LB_score values in the FOUR_Liver_Score data frame and fill "scored_LBScore" column
 ##
 score_final <- LB_all_liver_zscore_averaged$avg_all_LB_zscores
-    
+
 # LB_final_score$zscore <- ifelse(score_final >= 3, 3,
 #                                               ifelse(score_final >= 2, 2,
 #                                                      ifelse(score_final >= 1, 1, 0)))
