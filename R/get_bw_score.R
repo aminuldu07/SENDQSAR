@@ -18,9 +18,9 @@
 #' @importFrom RSQLite dbConnect
 #' @importFrom RSQLite SQLite
 
-get_bw_score <- function(studyid, 
-                         path_db, 
-                         fake_study = FALSE, 
+get_bw_score <- function(studyid,
+                         path_db,
+                         fake_study = FALSE,
                          master_CompileData = NULL,
                          score_in_list_format = FALSE) {
 
@@ -242,31 +242,31 @@ path <- path_db
 
 ####################~~~~~~~~~~~~~~~~~~~~~~~tk_animal_take_care~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #####
-# 
+#
 #     tK_animals_df <- data.frame(PP_PoolID = character(), STUDYID = character(),
 #                                 USUBJID = character(), POOLID = character(),
 #                                 stringsAsFactors = FALSE)
-# 
+#
 #     # Initialize a data frame to keep track of studies with no POOLID
 #     no_poolid_studies <- data.frame(STUDYID = character(),
 #                                     stringsAsFactors = FALSE)
-# 
+#
 #     # check for the species [# Check if the current study is a rat]
 #   # [{# Convert Species to lowercase for case-insensitive comparison}]
-# 
+#
 #     Species_lower <- tolower(Species)
-# 
+#
 #     if ("rat" %in% Species_lower) {
 #       # Create TK individuals for "Rat" studies [# Retrieve unique
 #       # pool IDs (TKPools) from pp table]
 #       TKPools <- unique(pp$POOLID)
-# 
+#
 #       # Check if TKPools is not empty
 #       if (length(TKPools) > 0) {
 # # For each pool ID in TKPools, retrieve corresponding rows from pooldef table
 #         for (pool_id in TKPools) {
 #           pooldef_data <- pooldef[pooldef$POOLID == pool_id, ]
-# 
+#
 #           # Create a temporary data frame if pooldef_data is not empty
 #           if (nrow(pooldef_data) > 0) {
 #             temp_df <- data.frame(PP_PoolID = pool_id,
@@ -274,7 +274,7 @@ path <- path_db
 #                                   USUBJID = pooldef_data$USUBJID,
 #                                   POOLID = pooldef_data$POOLID,
 #                                   stringsAsFactors = FALSE)
-# 
+#
 #             # Append the temporary data frame to the results data frame
 #             tK_animals_df <- rbind(tK_animals_df, temp_df)
 #           }
@@ -282,13 +282,13 @@ path <- path_db
 #       } else {
 #         # Retrieve STUDYID for the current study
 #         current_study_id <- bw$STUDYID[1]
-# 
+#
 #         # Add study to no_poolid_studies dataframe
 #         no_poolid_studies <- rbind(no_poolid_studies,
 #                                    data.frame(STUDYID = current_study_id,
 #                                               stringsAsFactors = FALSE))
 #       }
-# 
+#
 #     } else {
 #       # Create a empty data frame named "tK_animals_df"
 #       tK_animals_df <- data.frame(PP_PoolID = character(),
@@ -303,32 +303,54 @@ path <- path_db
 #' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #'  #<><><><><><><><><><><><><><><><>... Remove TK animals and Recovery animals......<><><><><><>.............
     #<><><><><><><><> master_CompileData is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
-    
+
     #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #browser()
     # Check if master_CompileData is NULL
-    if (is.null(master_CompileData)) {
-      fake_study = fake_study
-      # Call the master_CompileData function to generate the data frame
-      master_CompileData <- get_compile_data(studyid, path_db,fake_study = fake_study)  
-    } 
-    
+    # if (is.null(master_CompileData) & fake_study == TRUE) {
+    #   fake_study = fake_study
+    #   # Call the master_CompileData function to generate the data frame
+    #   master_CompileData <- get_compile_data(studyid, path_db,fake_study = fake_study)
+    # } else if (is.null(master_CompileData) & fake_study == FALSE) {
+    #   master_CompileData <- get_compile_data(studyid, path_db,fake_study = FALSE)
+    # } else if (master_CompileData == master_CompileData & fake_study == FLASE) {
+    #   master_CompileData = master_CompileData
+    # } else if (master_CompileData == master_CompileData & fake_study == TRUE) {
+    #   master_CompileData = master_CompileData
+    # } else {
+    #   master_CompileData = master_CompileData
+    # }
+    if (is.null(master_CompileData) & fake_study == TRUE) {
+      # Call the master_CompileData function to generate the data frame for fake study
+      master_CompileData <- get_compile_data(studyid, path_db, fake_study = TRUE)
+    } else if (is.null(master_CompileData) & fake_study == FALSE) {
+      # Call the master_CompileData function to generate the data frame for real study
+      master_CompileData <- get_compile_data(studyid, path_db, fake_study = FALSE)
+    } else {
+      # If master_CompileData is already set, no action needed
+      master_CompileData = master_CompileData
+    }
+
+    #else {
+      #master_CompileData <- get_compile_data(studyid = studyid, path_db = path_db,fake_study = fake_study)
+    #}
+
     # # Remove the TK animals and Recovery animals
     # LB_tk_recovery_filtered <- max_visitdy_df %>%
     #   dplyr::filter(USUBJID %in% master_CompileData$USUBJID)
-    # 
+    #
     # # Perform a left join to match USUBJID and get ARMCD ## 020924
     # #-inner_join() used instead of left_join()#199
     # LB_tk_recovery_filtered_ARMCD <- LB_tk_recovery_filtered %>%
     #   dplyr::inner_join(master_CompileData %>% dplyr::select(USUBJID, ARMCD), by = "USUBJID")
-    
-#' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~    
-    
+
+#' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 
     #Substract TK animals from the "StudyInitialWeights" and StudyBodyWeights" data frame
     #tk_less_StudyBodyWeights <- StudyBodyWeights[!(StudyBodyWeights$USUBJID %in% tK_animals_df$USUBJID),]
-    
+
     tk_less_StudyBodyWeights <- StudyBodyWeights[(StudyBodyWeights$USUBJID %in% master_CompileData$USUBJID),]
 
     # Substract TK animals from the "StudyInitialWeights" data frame
@@ -347,9 +369,9 @@ path <- path_db
 
     # Select specific columns from joined_BW_df
     BW_df_selected_column <- joined_BW_df[, c("USUBJID", "STUDYID", "BWSTRESN", "BWSTRESN_Init")]
-
+#' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Add "ARMCD","SETCD","SEX" to "selected_df"
-    master_CompileData <- get_compile_data(studyid = studyid, path_db = path_db,fake_study = fake_study)
+
     STUDYID_less_master_CompileData <- master_CompileData[, c("USUBJID", "ARMCD","SETCD","SEX")]
     BW_df_merged_ARMCD <- merge(BW_df_selected_column, STUDYID_less_master_CompileData, by = "USUBJID")
 
@@ -378,14 +400,14 @@ path <- path_db
         BWZSCORE = (finalbodyweight - mean_vehicle) / sd_vehicle
       ) %>%
       dplyr::select(-mean_vehicle, -sd_vehicle)  # Optionally remove the mean_vehicle and sd_vehicle columns
-    
+
     # Filter and select specific columns
     HD_BWzScore <- bwzscore_BW %>%
       dplyr::filter(ARMCD == "HD") %>%
       dplyr::select(STUDYID, USUBJID, SEX, BWZSCORE)
-      
+
     as.data.frame(HD_BWzScore)
-    
+
     # Return based on score_in_list_format
     if (score_in_list_format) {
       return(bwzscore_BW)

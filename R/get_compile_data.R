@@ -13,7 +13,9 @@
 #' }
 #' @export
 
-get_compile_data <- function(studyid, path_db,fake_study=FALSE) {
+get_compile_data <- function(studyid,
+                             path_db,
+                             fake_study = FALSE) {
 
   studyid <- as.character(studyid)
   path <- path_db
