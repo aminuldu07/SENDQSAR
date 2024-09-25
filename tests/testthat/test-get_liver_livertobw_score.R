@@ -7,10 +7,11 @@ test_that("get_bw_score returns correct data for valid inputs", {
   path_db <- 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db'
   fake_study <- FALSE
   master_CompileData = NULL
+  bwzscore_BW = NULL
   score_in_list_format = TRUE
 
   # Call the function
-  result <- get_liver_livertobw_score(studyid, path_db, fake_study, master_CompileData, score_in_list_format)
+  result <- get_liver_livertobw_score(studyid, path_db, fake_study, master_CompileData, bwzscore_BW, score_in_list_format)
 
   # Check the expected output
   #expect_type(result, "data.frame")
