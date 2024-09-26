@@ -133,29 +133,24 @@ get_liver_livertobw_score <- function (studyid,
     dplyr::mutate(avg_liverToBW_zscore = ifelse(avg_liverToBW_zscore >= 3, 3,
                                    ifelse(avg_liverToBW_zscore >= 2, 2,
                                           ifelse(avg_liverToBW_zscore >= 1, 1, 0))))
+# if (score_in_list_format == FALSE) {
+#   # # Add the liverToBW_zscore to "FOUR_Liver_Score" data frame................
+#   # Create "liverToBW_df" for FOUR_Liver_Score
+#   liverToBW_df <- final_liverToBW_df %>%
+#                                        rename(liverToBW = avg_liverToBW_zscore)
+#
+#   # add liverToBW_df to master_liverToBW
+#   master_liverToBW <- bind_rows(master_liverToBW, liverToBW_df)
+#
+#   # Extract the liverToBW value for the current STUDYID from liverToBW_df
+#   calculated_liverToBW_value <- liverToBW_df$liverToBW[liverToBW_df$STUDYID == unique(ts$STUDYID)]
+#
+#   # Update the liverToBW value in FOUR_Liver_Score for the current STUDYID
+#   FOUR_Liver_Score$liverToBW[FOUR_Liver_Score$STUDYID == unique(ts$STUDYID)] <- calculated_liverToBW_value
+#
+#
+# }
 
-  # create a empty list for storing the individual final_liverToBW_df
-  #empty_lb_score_list <- list()
-
-  # # Add the liverToBW_zscore to "FOUR_Liver_Score" data frame..........................................
-  # # Create "liverToBW_df" for FOUR_Liver_Score
-  # liverToBW_df <- final_liverToBW_df %>% rename(liverToBW = avg_liverToBW_zscore)
-  #
-  # # add liverToBW_df to master_liverToBW
-  # master_liverToBW <- bind_rows(master_liverToBW, liverToBW_df)
-  #
-  # # Extract the liverToBW value for the current STUDYID from liverToBW_df
-  # calculated_liverToBW_value <- liverToBW_df$liverToBW[liverToBW_df$STUDYID == unique(ts$STUDYID)]
-  #
-  # # Update the liverToBW value in FOUR_Liver_Score for the current STUDYID
-  # FOUR_Liver_Score$liverToBW[FOUR_Liver_Score$STUDYID == unique(ts$STUDYID)] <- calculated_liverToBW_value
-  #
-  # # Score the liverToBW values in the FOUR_Liver_Score data frame and fill "scored_liverToBW" column
-  # FOUR_Liver_Score$scored_liverToBW <- ifelse(FOUR_Liver_Score$liverToBW >= 3, 3,
-  #                                             ifelse(FOUR_Liver_Score$liverToBW >= 2, 2,
-  #                                                    ifelse(FOUR_Liver_Score$liverToBW >= 1, 1, 0)))
-  #
-  #
 #return(final_liverToBW_df)
   # Return based on score_in_list_format
   if (score_in_list_format) {

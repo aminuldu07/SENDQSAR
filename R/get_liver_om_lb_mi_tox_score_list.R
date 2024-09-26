@@ -14,25 +14,7 @@ get_liver_om_lb_mi_tox_score_list <- function (selected_studies,
                                                fake_study = FALSE,
                                                #master_compiledata = NULL,
                                                #bwzscore_BW = NULL,
-                                               score_in_list_format = FALSE) {
-# # GET-THE-ts-domain-for-error-log
-#   studyid <- as.character(studyid)
-#   path <- path_db
-#   con <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
-#
-#   # function for domain
-#   con_db <- function(domain){
-#     domain <- toupper(domain)
-#     stat <- paste0('SELECT * FROM ', domain, " WHERE STUDYID = (:x)")
-#     domain <- DBI::dbGetQuery(con,
-#                               statement = stat,
-#                               params=list(x=studyid))
-#     domain
-#   }
-#   #Pull "ts" domain data for each domain-for-error-log
-#   ts <- con_db('ts')
- #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                                               SCORE_IN_LIST_FORMAT = FALSE) {
 
 # master liverToBW_df
 master_liverToBW <-  data.frame(STUDYID = NULL, avg_liverToBW_zscore = NULL)
@@ -168,21 +150,39 @@ for (studyid in selected_studies){
 
 #---------------------------"OM_DATA"-(Liver_Organ to Body Weight zScore)-------
   tryCatch({
-
+    if(SCORE_IN_LIST_FORMAT == FALSE){
     final_liverToBW_df <- get_liver_livertobw_score (studyid, path_db,
                                                      fake_study = FALSE,
                                                      master_compiledata = master_compiledata,
                                                      bwzscore_BW = bwzscore_BW ,
                                                      score_in_list_format = FALSE)
 
+    print(str(final_liverToBW_df))
 
+      # # Add the liverToBW_zscore to "FOUR_Liver_Score" data frame................
+      # Create "liverToBW_df" for FOUR_Liver_Score
+      liverToBW_df <- final_liverToBW_df %>%
+                                           dplyr::rename(liverToBW = avg_liverToBW_zscore)
 
-      #get_liver_livertobw_score(studyid, om,  master_compiledata,bwzscore_BW)
-    # Dynamically name the list element using the j (study_id)
-    #master_liverToBW[[j]] <- final_liverToBW_df
-    #master_liverToBW <- append(master_liverToBW, final_liverToBW_df)
+      # add liverToBW_df to master_liverToBW
+      master_liverToBW <- dplyr::bind_rows(master_liverToBW, liverToBW_df)
 
-    master_liverToBW <- rbind(master_liverToBW, final_liverToBW_df)
+      # Extract the liverToBW value for the current STUDYID from liverToBW_df
+      calculated_liverToBW_value <- liverToBW_df$liverToBW[liverToBW_df$STUDYID == unique(master_compiledata$STUDYID)]
+
+      # Update the liverToBW value in FOUR_Liver_Score for the current STUDYID
+      FOUR_Liver_Score$liverToBW[FOUR_Liver_Score$STUDYID == unique(master_compiledata$STUDYID)] <- calculated_liverToBW_value
+
+    } else {
+      final_liverToBW_df <- get_liver_livertobw_score (studyid, path_db,
+                                                       fake_study = FALSE,
+                                                       master_compiledata = master_compiledata,
+                                                       bwzscore_BW = bwzscore_BW ,
+                                                       score_in_list_format = TRUE)
+
+      #master_liverToBW <- rbind(master_liverToBW, final_liverToBW_df)
+
+    }
 
   }, error = function(e) {
     # Handling errors of the secondary operation
@@ -199,7 +199,7 @@ for (studyid in selected_studies){
 
   #<><><><><><><><><><><><><><><><><><>"""LB"""" zscoring <><><><><><><><><><><>
   tryCatch({
-    #browser()
+    if(SCORE_IN_LIST_FORMAT == FALSE){
     master_lb_scores <- get_lb_score(studyid,
                                      path_db,
                                      fake_study= FALSE,
@@ -209,6 +209,17 @@ for (studyid in selected_studies){
     #master_lbxx_list[[j]] <- lb_score_final_list
     master_lb_score_six <- rbind(master_lb_score_six ,master_lb_scores)
 
+    } else {
+      master_lb_scores <- get_lb_score(studyid,
+                                       path_db,
+                                       fake_study= FALSE,
+                                       master_compiledata = master_compiledata,
+                                       score_in_list_format = TRUE)
+
+      #master_lbxx_list[[j]] <- lb_score_final_list
+      master_lb_score_six <- rbind(master_lb_score_six ,master_lb_scores)
+
+     }
 
   }, error = function(e) {
     # Handling errors of the secondary operation
@@ -228,14 +239,28 @@ for (studyid in selected_studies){
     #mi_score_final_list <- get_liver_mi_score(j, dbtoken, ts, master_compiledata)
 
     #master_mixx_list[[j]] <- mi_score_final_list
-
+   if(SCORE_IN_LIST_FORMAT == FALSE){
     mi_score_final_list_df <- get_mi_score(studyid,
                                path_db,
                                fake_study = FALSE,
                                master_compiledata = master_compiledata ,
                                score_in_list_format = FALSE)
 
-    master_mi_df <- dplyr::bind_rows(master_mi_df, mi_score_final_list_df)
+    print(mi_score_final_list_df)
+    print("this part is okay")
+
+    #master_mi_df <- dplyr::bind_rows(master_mi_df, mi_score_final_list_df)
+
+   } else {
+      mi_score_final_list_df <- get_mi_score(studyid,
+                                             path_db,
+                                             fake_study = FALSE,
+                                             master_compiledata = master_compiledata ,
+                                             score_in_list_format = TRUE)
+
+      master_mi_df <- dplyr::bind_rows(master_mi_df, mi_score_final_list_df)
+
+    }
     #master_mi_df <- rbind(master_mi_df, mi_score_final_list_df)
 
   }, error = function(e) {
@@ -259,6 +284,7 @@ for (studyid in selected_studies){
 
 # Debugging: list variables in the function environment
 #print(ls(envir = environment()))
+
 
 return(list(master_liverToBW = master_liverToBW,
             master_lb_score_six = master_lb_score_six,
