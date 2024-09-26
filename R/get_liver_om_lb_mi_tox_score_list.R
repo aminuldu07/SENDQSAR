@@ -15,6 +15,24 @@ get_liver_om_lb_mi_tox_score_list <- function (selected_studies,
                                                #master_compiledata = NULL,
                                                #bwzscore_BW = NULL,
                                                score_in_list_format = FALSE) {
+# # GET-THE-ts-domain-for-error-log
+#   studyid <- as.character(studyid)
+#   path <- path_db
+#   con <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+#
+#   # function for domain
+#   con_db <- function(domain){
+#     domain <- toupper(domain)
+#     stat <- paste0('SELECT * FROM ', domain, " WHERE STUDYID = (:x)")
+#     domain <- DBI::dbGetQuery(con,
+#                               statement = stat,
+#                               params=list(x=studyid))
+#     domain
+#   }
+#   #Pull "ts" domain data for each domain-for-error-log
+#   ts <- con_db('ts')
+ #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 # master liverToBW_df
 master_liverToBW <-  data.frame(STUDYID = NULL, avg_liverToBW_zscore = NULL)
@@ -40,6 +58,7 @@ master_error_df <- data.frame(STUDYID = character() ,
                               #Time = POSIXct(),
                               stringsAsFactors = FALSE)
 #for (j in selected_studies){
+
 for (studyid in selected_studies){
 
   print(studyid)
@@ -105,13 +124,14 @@ for (studyid in selected_studies){
                                             scored_LBScore = NA)
 
     FOUR_Liver_Score <- rbind(FOUR_Liver_Score, new_row_in_four_liver_scr)
+    FOUR_Liver_Score <- FOUR_Liver_Score[-1,] # remove the first column
 
   }, error = function(e) {
     # Handling errors of the secondary operation
     message("Error in FOUR_Liver_Score: ", e$message)
 
     # Log the error
-    error_block_flscrdf <- data.frame(STUDYID = unique(ts$STUDYID),
+    error_block_flscrdf <- data.frame(STUDYID = studyid,
                                       Block = "FOUR_Liver_Score",
                                       ErrorMessage = e$message,
                                       #Time = Sys.time(),
@@ -125,18 +145,19 @@ for (studyid in selected_studies){
 
   tryCatch({
 
-    BWzScore_vehicle_plus_highdose <-  get_liver_bw_score(studyid, bw, ts,
-                                                          master_compiledata,
-                                                               tK_animals_df )
+    # BWzScore_vehicle_plus_highdose <-  get_liver_bw_score(studyid, bw, ts,
+    #                                                       master_compiledata,
+    #                                                            tK_animals_df )
+    #' @here-master_compiledata-can-be-worked-on-to-be-incorporated-in-argument
+    bwzscore_BW <- get_bw_score (studyid, path_db, fake_study = FALSE, master_compiledata = master_compiledata , score_in_list_format = TRUE)
 
-    bwzscore_BW <- BWzScore_vehicle_plus_highdose[["bwzscore_BW"]]
 
   }, error = function(e) {
     # Handling errors of the secondary operation
     message("Error in BodyWeight_zScore calculation: ", e$message)
 
     # Log the error
-    error_block2 <- data.frame(STUDYID = unique(ts$STUDYID),
+    error_block2 <- data.frame(STUDYID = studyid,
                                Block = "BWZscore",
                                ErrorMessage = e$message,
                                #Time = Sys.time(),
@@ -144,12 +165,19 @@ for (studyid in selected_studies){
     master_error_df <<- rbind(master_error_df, error_block2)
 
   })
+
 #---------------------------"OM_DATA"-(Liver_Organ to Body Weight zScore)-------
   tryCatch({
 
-    final_liverToBW_df <- get_liver_livertobw_score(studyid, om,
-                                                    master_compiledata,
-                                                          bwzscore_BW)
+    final_liverToBW_df <- get_liver_livertobw_score (studyid, path_db,
+                                                     fake_study = FALSE,
+                                                     master_compiledata = master_compiledata,
+                                                     bwzscore_BW = bwzscore_BW ,
+                                                     score_in_list_format = FALSE)
+
+
+
+      #get_liver_livertobw_score(studyid, om,  master_compiledata,bwzscore_BW)
     # Dynamically name the list element using the j (study_id)
     #master_liverToBW[[j]] <- final_liverToBW_df
     #master_liverToBW <- append(master_liverToBW, final_liverToBW_df)
@@ -161,7 +189,7 @@ for (studyid in selected_studies){
     message("Error in Liver_Organ to Body Weight zScore: ", e$message)
 
     # Log the error
-    error_block3 <- data.frame(STUDYID = unique(ts$STUDYID),
+    error_block3 <- data.frame(STUDYID = studyid,
                                Block = "LiverToBW",
                                ErrorMessage = e$message,
                                #Time = Sys.time(),
@@ -171,9 +199,12 @@ for (studyid in selected_studies){
 
   #<><><><><><><><><><><><><><><><><><>"""LB"""" zscoring <><><><><><><><><><><>
   tryCatch({
-
-    master_lb_scores <- get_liver_lb_score(studyid, ts, lb,
-                                                master_compiledata)
+    #browser()
+    master_lb_scores <- get_lb_score(studyid,
+                                     path_db,
+                                     fake_study= FALSE,
+                                     master_compiledata = master_compiledata,
+                                     score_in_list_format = FALSE)
 
     #master_lbxx_list[[j]] <- lb_score_final_list
     master_lb_score_six <- rbind(master_lb_score_six ,master_lb_scores)
@@ -184,7 +215,7 @@ for (studyid in selected_studies){
     message("Error in LB zscoring: ", e$message)
 
     # Log the error
-    error_block4 <- data.frame(STUDYID = unique(ts$STUDYID), Block = "LB",
+    error_block4 <- data.frame(STUDYID = studyid, Block = "LB",
                                ErrorMessage = e$message,
                                #Time = Sys.time(),
                                stringsAsFactors = FALSE)
@@ -198,18 +229,20 @@ for (studyid in selected_studies){
 
     #master_mixx_list[[j]] <- mi_score_final_list
 
-    mi_score_final_list_df <- get_liver_mi_score(studyid, ts, mi,
-                                              master_compiledata)
+    mi_score_final_list_df <- get_mi_score(studyid,
+                               path_db,
+                               fake_study = FALSE,
+                               master_compiledata = master_compiledata ,
+                               score_in_list_format = FALSE)
 
     master_mi_df <- dplyr::bind_rows(master_mi_df, mi_score_final_list_df)
     #master_mi_df <- rbind(master_mi_df, mi_score_final_list_df)
-
 
   }, error = function(e) {
     # Handling errors of the secondary operation
 
     # Log the error
-    error_block5 <- data.frame(STUDYID = unique(ts$STUDYID),Block = "MI",
+    error_block5 <- data.frame(STUDYID = studyid, Block = "MI",
                                ErrorMessage = e$message,
                                #Time = Sys.time(),
                                stringsAsFactors = FALSE)
@@ -229,43 +262,10 @@ for (studyid in selected_studies){
 
 return(list(master_liverToBW = master_liverToBW,
             master_lb_score_six = master_lb_score_six,
-            master_mi_df  = master_mi_df
+            master_mi_df  = master_mi_df,
+            master_error_df = master_error_df
             ))
 
 }
 
 
-#' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-#get_om_lb_mi_toxicity_score_list <- function (studyid, dbtoken , source) {
-# # remove objects from the environment
-# rm(list = ls())
-#
-# #libraries
-# library(matrixStats)
-# library(dplyr)
-# library(sendigR)
-# library(tidyverse)
-# library(tidyr)
-# library(this.path)
-# library(reshape2)
-# library(stringr)
-# library(purrr)
-#
-# # #Set File Path
-# homePath <- dirname(this.path())
-# setwd(homePath)
-#
-# # #Database Load
-# dbtoken <- sendigR::initEnvironment(dbType = 'sqlite',
-#                                     dbPath = "/opt/rstudio/users/MdAminulIslam.Prodhan/DataCentral.db",
-#                                     dbCreate = FALSE)
-#
-# selected_studies <- c("1017-3581", "1470536", "P19-025-RD")
-
-
-
-#selected_studies <- "1017-3581"
-# selected_studies <- c("1017-3581", "1470536", "P19-025-RD")
-#selected_studies <- c("1470536") # problematic bwzscore
-#selected_studies <- c("2206-027", "1017-3581")

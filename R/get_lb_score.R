@@ -20,11 +20,16 @@ get_lb_score <- function(studyid,
                          master_compiledata = NULL,
                          score_in_list_format = FALSE) {
 
+#browser()
 studyid <- as.character(studyid)
 path <- path_db
   con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
     lb <- DBI::dbGetQuery(con, statement = "SELECT * FROM LB WHERE STUDYID = (:x)",
                                 params = list(x=studyid))
+# check the lb data frame
+
+
+
     organTESTCDlist <- list('LIVER' = c('SERUM | ALT',
                                         'SERUM | AST',
                                         'SERUM | ALP',

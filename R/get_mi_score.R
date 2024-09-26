@@ -25,7 +25,8 @@ path <- path_db
   con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
   mi <- DBI::dbGetQuery(con, statement = "SELECT * FROM MI WHERE STUDYID = (:x)",
                         params = list(x=studyid))
-    # Initialize the  MI_final_score DATA FRAME
+
+  # Initialize the  MI_final_score DATA FRAME
     MI_final_score <- data.frame( STUDYID = unique(mi$STUDYID), avg_MI_score = NA )
 
     #Make Data Frame to hold MI Information for the STUDY available in combined_mi for repeat dose
@@ -358,7 +359,7 @@ path <- path_db
             }
           }
       }
-
+      browser()
       # subset the ScoredData
       ScoredData_subset_HD <- ScoredData %>% dplyr::filter (ARMCD == "HD")
 
@@ -384,7 +385,7 @@ path <- path_db
         ScoredData_subset_HD$highest_score <- matrixStats::rowMaxs(as.matrix(ScoredData_subset_HD[, 7:ncol(ScoredData_subset_HD)]),
                                                                    na.rm = TRUE)
       }
-
+      browser()
       # Move the highest_score column to be the third column
       ScoredData_subset_HD <- ScoredData_subset_HD[, c(1:2, ncol(ScoredData_subset_HD), 3:(ncol(ScoredData_subset_HD)-1))]
 

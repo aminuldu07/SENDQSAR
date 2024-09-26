@@ -8,7 +8,8 @@ get_liver_livertobw_score <- function (studyid,
 
   # om <- sendigR::genericQuery(dbtoken, queryString = "SELECT * FROM OM WHERE STUDYID = (:1)",
   #                             queryParams = j)
-  path <- path_db
+
+   path <- path_db
   con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
 
   con_db <- function(domain){
