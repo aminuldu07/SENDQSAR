@@ -318,7 +318,6 @@ path <- path_db
                                             ifelse(avg_alb_zscore >= 2, 2,
                                                    ifelse(avg_alb_zscore >= 1, 1, 0))))
 
-
     # Merging----------LB----zscores------------values---------------------------
     LB_zscore_merged_df <- serum_alb_final_zscore %>%
       dplyr::full_join(serum_ast_final_zscore, by = "STUDYID") %>%
@@ -332,57 +331,45 @@ path <- path_db
     selected_cols <- c("avg_alb_zscore", "avg_ast_zscore", "avg_alp_zscore", "avg_alt_zscore", "avg_bili_zscore", "avg_ggt_zscore")
     LB_zscore_merged_df[selected_cols] <- lapply(LB_zscore_merged_df[selected_cols], function(x) replace(x, is.infinite(x) | is.nan(x), NA))
 
-    # add the LB_zscore_merged_df to master_LB_list
-
-  ## LB_zscore_merged_df
-
-master_LB_list <- data.frame(STUDYID = NA, avg_alb_zscore = NA, avg_ast_zscore = NA, avg_alp_zscore = NA,
-                             avg_alt_zscore = NA, avg_bili_zscore = NA, avg_ggt_zscore = NA)
-##     # Add LB_zscore_merged_df to master dataframe
-    master_LB_list <- dplyr::bind_rows(master_LB_list, LB_zscore_merged_df)
 
 
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    if (score_in_list_format) {
 
-    master_lb_scores <- master_LB_list #%>% master_lb_scores[-1,]
-    master_lb_scores   <- master_lb_scores[-1,] # remove the first column
-   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      # Master LB list
+      master_LB_list <- data.frame(STUDYID = NA, avg_alb_zscore = NA, avg_ast_zscore = NA, avg_alp_zscore = NA,
+                                   avg_alt_zscore = NA, avg_bili_zscore = NA, avg_ggt_zscore = NA)
 
-##     # Calculate the average for each row, ignoring NA values
-    LB_zscore_merged_df$avg_all_LB_zscores <- rowMeans(LB_zscore_merged_df[selected_cols], na.rm = TRUE)
+      # Add LB_zscore_merged_df to master dataframe
+      master_LB_list <- dplyr::bind_rows(master_LB_list, LB_zscore_merged_df)
 
-##     # select the specific columns for calculation
-    LB_all_liver_zscore_averaged <- LB_zscore_merged_df %>% dplyr::select (STUDYID, avg_all_LB_zscores)
-  ## LB_all_liver_zscore_averaged
+      master_lb_scores <- master_LB_list #%>% master_lb_scores[-1,]
+      master_lb_scores   <- master_lb_scores[-1,] # remove the first column
 
 
-##     # Assigning the new variables
-##
-    LB_final_score <- LB_all_liver_zscore_averaged
+    } else {
+      # Calculate the average for each row, ignoring NA values
+      LB_zscore_merged_df$avg_all_LB_zscores <- rowMeans(LB_zscore_merged_df[selected_cols], na.rm = TRUE)
 
-##     # Append the LB_zscore to the "FOUR_Liver_Score" data frame
-##     # Create "LB_df" for FOUR_Liver_Score
-##     LB_df <- LB_final_score %>% rename(LB_score = avg_all_LB_zscores)
+      # select the specific columns for calculation
+      LB_all_liver_zscore_averaged <- LB_zscore_merged_df %>% dplyr::select (STUDYID, avg_all_LB_zscores)
 
-##     # Extract the LB_score value for the current STUDYID from LB_df
-##     calculated_LB_value <- LB_df$LB_score[LB_df$STUDYID == unique(ts$STUDYID)]
+      # Assigning the new variables
+      LB_final_score <- LB_all_liver_zscore_averaged
 
-##     # Update the LB_score value in FOUR_Liver_Score for the current STUDYID
-##     FOUR_Liver_Score$LB_score[FOUR_Liver_Score$STUDYID == unique(ts$STUDYID)] <- calculated_LB_value
+      # Create "LB_df" for FOUR_Liver_Score
+      LB_final_score <- LB_final_score %>% dplyr::rename(LB_score = avg_all_LB_zscores)
 
-##     # Score the LB_score values in the FOUR_Liver_Score data frame and fill "scored_LBScore" column
-##
-score_final <- LB_all_liver_zscore_averaged$avg_all_LB_zscores
+      # Score the LB_score values in the FOUR_Liver_Score data frame and fill "scored_LBScore" column
+      #score_final <- LB_all_liver_zscore_averaged$avg_all_LB_zscores
+      #score_final <- LB_all_liver_zscore_averaged
 
-# LB_final_score$zscore <- ifelse(score_final >= 3, 3,
-#                                               ifelse(score_final >= 2, 2,
-#                                                      ifelse(score_final >= 1, 1, 0)))
-##   FOUR_Liver_Score
-# Return based on score_in_list_format
+    }
+
+
 if (score_in_list_format) {
   return(master_lb_scores)
 } else {
-  return(score_final)
+  return(LB_final_score)
 }
 
 }

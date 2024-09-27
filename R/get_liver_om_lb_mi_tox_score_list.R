@@ -131,7 +131,11 @@ for (studyid in selected_studies){
     #                                                       master_compiledata,
     #                                                            tK_animals_df )
     #' @here-master_compiledata-can-be-worked-on-to-be-incorporated-in-argument
-    bwzscore_BW <- get_bw_score (studyid, path_db, fake_study = FALSE, master_compiledata = master_compiledata , score_in_list_format = TRUE)
+    bwzscore_BW <- get_bw_score (studyid,
+                                 path_db,
+                                 fake_study = FALSE,
+                                 master_compiledata = master_compiledata ,
+                                 score_in_list_format = TRUE)
 
 
   }, error = function(e) {
@@ -150,19 +154,27 @@ for (studyid in selected_studies){
 
 #---------------------------"OM_DATA"-(Liver_Organ to Body Weight zScore)-------
   tryCatch({
-    if(SCORE_IN_LIST_FORMAT == FALSE){
-    final_liverToBW_df <- get_liver_livertobw_score (studyid, path_db,
-                                                     fake_study = FALSE,
-                                                     master_compiledata = master_compiledata,
-                                                     bwzscore_BW = bwzscore_BW ,
-                                                     score_in_list_format = FALSE)
+    if(SCORE_IN_LIST_FORMAT){
+      final_liverToBW_df <- get_liver_livertobw_score (studyid, path_db,
+                                                       fake_study = FALSE,
+                                                       master_compiledata = master_compiledata,
+                                                       bwzscore_BW = bwzscore_BW ,
+                                                       score_in_list_format = TRUE)
 
-    print(str(final_liverToBW_df))
+      #master_liverToBW <- rbind(master_liverToBW, final_liverToBW_df)
+    } else {
+      final_liverToBW_df <- get_liver_livertobw_score (studyid, path_db,
+                                                       fake_study = FALSE,
+                                                       master_compiledata = master_compiledata,
+                                                       bwzscore_BW = bwzscore_BW ,
+                                                       score_in_list_format = FALSE)
+
+      print(str(final_liverToBW_df))
 
       # # Add the liverToBW_zscore to "FOUR_Liver_Score" data frame................
       # Create "liverToBW_df" for FOUR_Liver_Score
       liverToBW_df <- final_liverToBW_df %>%
-                                           dplyr::rename(liverToBW = avg_liverToBW_zscore)
+        dplyr::rename(liverToBW = avg_liverToBW_zscore)
 
       # add liverToBW_df to master_liverToBW
       master_liverToBW <- dplyr::bind_rows(master_liverToBW, liverToBW_df)
@@ -172,15 +184,6 @@ for (studyid in selected_studies){
 
       # Update the liverToBW value in FOUR_Liver_Score for the current STUDYID
       FOUR_Liver_Score$liverToBW[FOUR_Liver_Score$STUDYID == unique(master_compiledata$STUDYID)] <- calculated_liverToBW_value
-
-    } else {
-      final_liverToBW_df <- get_liver_livertobw_score (studyid, path_db,
-                                                       fake_study = FALSE,
-                                                       master_compiledata = master_compiledata,
-                                                       bwzscore_BW = bwzscore_BW ,
-                                                       score_in_list_format = TRUE)
-
-      #master_liverToBW <- rbind(master_liverToBW, final_liverToBW_df)
 
     }
 
@@ -194,30 +197,40 @@ for (studyid in selected_studies){
                                ErrorMessage = e$message,
                                #Time = Sys.time(),
                                stringsAsFactors = FALSE)
-    master_error_df <<- rbind(master_error_df, error_block3)
+    master_error_df <<- dplyr::rbind(master_error_df, error_block3)
   })
 
   #<><><><><><><><><><><><><><><><><><>"""LB"""" zscoring <><><><><><><><><><><>
   tryCatch({
-    if(SCORE_IN_LIST_FORMAT == FALSE){
+
+    if(SCORE_IN_LIST_FORMAT){
     master_lb_scores <- get_lb_score(studyid,
                                      path_db,
                                      fake_study= FALSE,
                                      master_compiledata = master_compiledata,
-                                     score_in_list_format = FALSE)
+                                     score_in_list_format = TRUE)
 
     #master_lbxx_list[[j]] <- lb_score_final_list
     master_lb_score_six <- rbind(master_lb_score_six ,master_lb_scores)
 
     } else {
-      master_lb_scores <- get_lb_score(studyid,
-                                       path_db,
-                                       fake_study= FALSE,
-                                       master_compiledata = master_compiledata,
-                                       score_in_list_format = TRUE)
+      #browser()
+        master_lb_scores <- get_lb_score(studyid,
+                                         path_db,
+                                         fake_study= FALSE,
+                                         master_compiledata = master_compiledata,
+                                         score_in_list_format = FALSE)
+        #browser()
+        # Append the LB_zscore to the "FOUR_Liver_Score" data frame
+        # Extract the LB_score value for the current STUDYID from LB_df
+        calculated_LB_value <- master_lb_scores$LB_score[master_lb_scores$STUDYID == unique(master_compiledata$STUDYID)]
 
-      #master_lbxx_list[[j]] <- lb_score_final_list
-      master_lb_score_six <- rbind(master_lb_score_six ,master_lb_scores)
+        # Update the LB_score value in FOUR_Liver_Score for the current STUDYID
+        FOUR_Liver_Score$LB_score[FOUR_Liver_Score$STUDYID == unique(master_compiledata$STUDYID)] <- calculated_LB_value
+
+
+        #master_lbxx_list[[j]] <- lb_score_final_list
+        master_lb_score_six <- rbind(master_lb_score_six ,master_lb_scores)
 
      }
 
@@ -239,27 +252,29 @@ for (studyid in selected_studies){
     #mi_score_final_list <- get_liver_mi_score(j, dbtoken, ts, master_compiledata)
 
     #master_mixx_list[[j]] <- mi_score_final_list
-   if(SCORE_IN_LIST_FORMAT == FALSE){
-    mi_score_final_list_df <- get_mi_score(studyid,
-                               path_db,
-                               fake_study = FALSE,
-                               master_compiledata = master_compiledata ,
-                               score_in_list_format = FALSE)
+   if(SCORE_IN_LIST_FORMAT ){
 
-    print(mi_score_final_list_df)
-    print("this part is okay")
+     mi_score_final_list_df <- get_mi_score(studyid,
+                                            path_db,
+                                            fake_study = FALSE,
+                                            master_compiledata = master_compiledata ,
+                                            score_in_list_format = TRUE)
+
+     master_mi_df <- dplyr::bind_rows(master_mi_df, mi_score_final_list_df)
+
+
 
     #master_mi_df <- dplyr::bind_rows(master_mi_df, mi_score_final_list_df)
 
    } else {
-      mi_score_final_list_df <- get_mi_score(studyid,
-                                             path_db,
-                                             fake_study = FALSE,
-                                             master_compiledata = master_compiledata ,
-                                             score_in_list_format = TRUE)
+         mi_score_final_list_df <- get_mi_score(studyid,
+                                            path_db,
+                                            fake_study = FALSE,
+                                            master_compiledata = master_compiledata ,
+                                            score_in_list_format = FALSE)
 
-      master_mi_df <- dplyr::bind_rows(master_mi_df, mi_score_final_list_df)
-
+     print(mi_score_final_list_df)
+     print("this part is okay")
     }
     #master_mi_df <- rbind(master_mi_df, mi_score_final_list_df)
 
@@ -278,19 +293,42 @@ for (studyid in selected_studies){
   })
 
 }
-# write.csv(master_liverToBW, "dc_7396_master_livertobw_scores_df.csv", row.names = FALSE)
-# write.csv(master_lb_score_six, "dc_7396_master_lb_scores_df.csv", row.names = FALSE)
-# write.csv(master_mi_df , "dc_7396_master_mi_scores_df.csv", row.names = FALSE)
-
-# Debugging: list variables in the function environment
-#print(ls(envir = environment()))
+if (SCORE_IN_LIST_FORMAT ) {
 
 
-return(list(master_liverToBW = master_liverToBW,
-            master_lb_score_six = master_lb_score_six,
-            master_mi_df  = master_mi_df,
-            master_error_df = master_error_df
-            ))
+} else  {
+browser()
+  # Reassigned the variable
+  liver_scored_Four_Liver_Score <- FOUR_Liver_Score
+
+  # Create averaged_liver_score column for un_scored columns
+  liver_scored_Four_Liver_Score <- liver_scored_Four_Liver_Score %>%
+    dplyr::mutate(averaged_liver_score = rowMeans(select(., liverToBW, LB_score, MI_score), na.rm = TRUE))
+
+
+  # Create scored_averaged_liver_score column for scored columns
+  liver_scored_Four_Liver_Score <- liver_scored_Four_Liver_Score %>%
+    dplyr::mutate(scored_averaged_liver_score = rowMeans(dplyr::select(.,MI_score, scored_liverToBW, scored_LBScore), na.rm = TRUE))
+
+  # remove NAs from "scored_averaged_liver_score" column
+  final_liver_scored_Four_Liver_Score <- liver_scored_Four_Liver_Score %>%
+                 dplyr::filter(!is.na(scored_averaged_liver_score))
+  #.........................................................................................................................
+}
+
+if (score_in_list_format) {
+  return(list(master_liverToBW = master_liverToBW,
+              master_lb_score_six = master_lb_score_six,
+              master_mi_df  = master_mi_df,
+              master_error_df = master_error_df))
+} else {
+  return(final_liver_scored_Four_Liver_Score)
+}
+# return(list(master_liverToBW = master_liverToBW,
+#             master_lb_score_six = master_lb_score_six,
+#             master_mi_df  = master_mi_df,
+#             master_error_df = master_error_df
+#             ))
 
 }
 
