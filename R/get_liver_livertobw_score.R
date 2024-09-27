@@ -122,41 +122,34 @@ get_liver_livertobw_score <- function (studyid,
     dplyr::filter(ARMCD == "HD") %>%
     dplyr::select(STUDYID, USUBJID,  ARMCD, liverToBW_zscore)
 
-  # Create final_liverToBW_df for the current STUDYID by averaging..................................
-  final_liverToBW_df <- HD_liver_zscore %>%
-    dplyr::group_by(STUDYID) %>%
-    dplyr::mutate(liverToBW_zscore = replace(liverToBW_zscore,
-                                      is.infinite(liverToBW_zscore), NA)) %>%
-    dplyr::summarize(avg_liverToBW_zscore = mean(liverToBW_zscore, na.rm = TRUE))%>%
-    dplyr::mutate(avg_liverToBW_zscore = abs(avg_liverToBW_zscore))  %>%
-    dplyr::select(STUDYID, avg_liverToBW_zscore) %>%
-    dplyr::mutate(avg_liverToBW_zscore = ifelse(avg_liverToBW_zscore >= 3, 3,
-                                   ifelse(avg_liverToBW_zscore >= 2, 2,
-                                          ifelse(avg_liverToBW_zscore >= 1, 1, 0))))
-# if (return_individual_scores == FALSE) {
-#   # # Add the liverToBW_zscore to "FOUR_Liver_Score" data frame................
-#   # Create "liverToBW_df" for FOUR_Liver_Score
-#   liverToBW_df <- final_liverToBW_df %>%
-#                                        rename(liverToBW = avg_liverToBW_zscore)
-#
-#   # add liverToBW_df to master_liverToBW
-#   master_liverToBW <- bind_rows(master_liverToBW, liverToBW_df)
-#
-#   # Extract the liverToBW value for the current STUDYID from liverToBW_df
-#   calculated_liverToBW_value <- liverToBW_df$liverToBW[liverToBW_df$STUDYID == unique(ts$STUDYID)]
-#
-#   # Update the liverToBW value in FOUR_Liver_Score for the current STUDYID
-#   FOUR_Liver_Score$liverToBW[FOUR_Liver_Score$STUDYID == unique(ts$STUDYID)] <- calculated_liverToBW_value
-#
-#
-# }
+  if (return_individual_scores) {
+    HD_liver_zscore_df <- HD_liver_zscore %>%
+      dplyr::mutate(liverToBW_zscore = ifelse(liverToBW_zscore >= 3, 3,
+                                                  ifelse(liverToBW_zscore >= 2, 2,
+                                                         ifelse(liverToBW_zscore >= 1, 1, 0))))
+
+
+  } else {
+    # Create final_liverToBW_df for the current STUDYID by averaging..................................
+    averaged_liverToBW_df  <- HD_liver_zscore %>%
+      dplyr::group_by(STUDYID) %>%
+      dplyr::mutate(liverToBW_zscore = replace(liverToBW_zscore,
+                                               is.infinite(liverToBW_zscore), NA)) %>%
+      dplyr::summarize(avg_liverToBW_zscore = mean(liverToBW_zscore, na.rm = TRUE))%>%
+      dplyr::mutate(avg_liverToBW_zscore = abs(avg_liverToBW_zscore))  %>%
+      dplyr::select(STUDYID, avg_liverToBW_zscore) %>%
+      dplyr::mutate(avg_liverToBW_zscore = ifelse(avg_liverToBW_zscore >= 3, 3,
+                                                  ifelse(avg_liverToBW_zscore >= 2, 2,
+                                                         ifelse(avg_liverToBW_zscore >= 1, 1, 0))))
+  }
+
 
 #return(final_liverToBW_df)
   # Return based on return_individual_scores
   if (return_individual_scores) {
-    return(HD_liver_zscore)
+    return(HD_liver_zscore_df)
   } else {
-    return(final_liverToBW_df)
+    return(averaged_liverToBW_df)
   }
 
 }

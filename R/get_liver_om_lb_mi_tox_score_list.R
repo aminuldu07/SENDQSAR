@@ -164,7 +164,7 @@ print( bwzscore_BW)
 #---------------------------"OM_DATA"-(Liver_Organ to Body Weight zScore)-------
   tryCatch({
     if(output_individual_scores){
-      final_liverToBW_df <- get_liver_livertobw_score (studyid, path_db,
+      HD_liver_zscore_df <- get_liver_livertobw_score (studyid, path_db,
                                                        fake_study = FALSE,
                                                        master_compiledata = master_compiledata,
                                                        bwzscore_BW = bwzscore_BW ,
@@ -173,7 +173,7 @@ print( bwzscore_BW)
       #master_liverToBW <- rbind(master_liverToBW, final_liverToBW_df)
     } else {
 
-      final_liverToBW_df <- get_liver_livertobw_score (studyid, path_db,
+      averaged_liverToBW_df <- get_liver_livertobw_score (studyid, path_db,
                                                        fake_study = FALSE,
                                                        master_compiledata = master_compiledata,
                                                        bwzscore_BW = NULL ,
@@ -311,8 +311,8 @@ if (output_individual_scores ) {
 
 } else  {
 browser()
+  print(FOUR_Liver_Score)
   print(str(final_liverToBW_df))
-
   print(master_lb_scores)
   print(MI_averaged_score_df)
 
