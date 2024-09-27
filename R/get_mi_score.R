@@ -393,16 +393,11 @@ path <- path_db
       ScoredData_subset_HD <- ScoredData_subset_HD[, c(1:2, ncol(ScoredData_subset_HD), 3:(ncol(ScoredData_subset_HD)-1))]
 
       if(score_in_list_format) {
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        #~~~~~~~~~~ GET all the severity as individual in a list ~~~~~~~~~~~~~~
 
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        #~~~~~~~~~~ GET all the severity as individual in a list ~~~~~~~~~~~~~~~
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-        # Working with "ScoredData_subset_HD " according to Kevin's advise
         # Create a variable for "ScoredData_subset_HD" data frame
-        mi_scoredata_hd <- ScoredData_subset_HD #' @~~~~~~~~~~~~~~~~~
+        mi_scoredata_hd <- ScoredData_subset_HD
 
         #Average calculation for each of the 7th column to onward.
 
