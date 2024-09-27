@@ -18,7 +18,7 @@ get_mi_score <- function(studyid,
                          path_db,
                          fake_study=FALSE,
                          master_compiledata = NULL,
-                         score_in_list_format = FALSE) {
+                         return_individual_scores = FALSE) {
 
 studyid <- as.character(studyid)
 path <- path_db
@@ -389,7 +389,7 @@ path <- path_db
       # Move the highest_score column to be the third column
       ScoredData_subset_HD <- ScoredData_subset_HD[, c(1:2, ncol(ScoredData_subset_HD), 3:(ncol(ScoredData_subset_HD)-1))]
 
-      if(score_in_list_format){
+      if(return_individual_scores){
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         #~~~~~~~~~~ GET all the severity as individual in a list ~~~~~~~~~~~~~~
 
@@ -444,7 +444,7 @@ path <- path_db
 
     }   else {
 
-      if(score_in_list_format) {
+      if(return_individual_scores) {
 
         mi_score_final_list_df = data.frame()
 
@@ -456,8 +456,8 @@ path <- path_db
 
   }
 
-  # Return based on score_in_list_format
-  if (score_in_list_format) {
+  # Return based on return_individual_scores
+  if (return_individual_scores) {
     return(mi_score_final_list_df)
   } else {
     return( MI_averaged_score_df)

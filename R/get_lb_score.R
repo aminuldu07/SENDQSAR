@@ -18,7 +18,7 @@ get_lb_score <- function(studyid,
                          path_db,
                          fake_study= FALSE,
                          master_compiledata = NULL,
-                         score_in_list_format = FALSE) {
+                         return_individual_scores = FALSE) {
 
 #browser()
 studyid <- as.character(studyid)
@@ -341,7 +341,7 @@ path <- path_db
 
 
 
-    if (score_in_list_format) {
+    if (return_individual_scores) {
 
       # Master LB list
       master_LB_list <- data.frame(STUDYID = NA, avg_alb_zscore = NA, avg_ast_zscore = NA, avg_alp_zscore = NA,
@@ -366,7 +366,7 @@ path <- path_db
       LB_final_score <- LB_all_liver_zscore_averaged
 
       # Create "LB_df" for FOUR_Liver_Score
-      LB_final_score <- LB_final_score %>% dplyr::rename(averaged_LB_score = avg_all_LB_zscores)
+      LB_final_score <- LB_final_score %>% dplyr::rename(LB_score = avg_all_LB_zscores)
 
       # Score the LB_score values in the FOUR_Liver_Score data frame and fill "scored_LBScore" column
       #score_final <- LB_all_liver_zscore_averaged$avg_all_LB_zscores
@@ -375,7 +375,7 @@ path <- path_db
     }
 
 
-if (score_in_list_format) {
+if (return_individual_scores) {
   return(master_lb_scores)
 } else {
   return(LB_final_score)

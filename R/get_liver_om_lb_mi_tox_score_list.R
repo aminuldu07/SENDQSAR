@@ -5,7 +5,7 @@
 ## ----------   --------------------------------------------------------------
 ##   May-07-2024    Md MD Aminul Islam Prodhan (mdaminulislam.prodhan@fda.hhs.gov)
 
-selected_studies <-  "studyid in selected_studies" #{slected studies should be a vector}
+#selected_studies <-  "studyid in selected_studies" #{slected studies should be a vector}
 
 
 #get_liver_om_lb_mi_tox_score_list <- function (selected_studies, dbtoken ) {
@@ -14,7 +14,7 @@ get_liver_om_lb_mi_tox_score_list <- function (selected_studies,
                                                fake_study = FALSE,
                                                #master_compiledata = NULL,
                                                #bwzscore_BW = NULL,
-                                               SCORE_IN_LIST_FORMAT = FALSE) {
+                                               output_individual_scores = FALSE) {
 
 # master liverToBW_df
 master_liverToBW <-  data.frame(STUDYID = NULL, avg_liverToBW_zscore = NULL)
@@ -127,16 +127,25 @@ for (studyid in selected_studies){
 
   tryCatch({
 
-    # BWzScore_vehicle_plus_highdose <-  get_liver_bw_score(studyid, bw, ts,
-    #                                                       master_compiledata,
-    #                                                            tK_animals_df )
+    if(output_individual_scores){
+
     #' @here-master_compiledata-can-be-worked-on-to-be-incorporated-in-argument
     bwzscore_BW <- get_bw_score (studyid,
                                  path_db,
                                  fake_study = FALSE,
                                  master_compiledata = master_compiledata ,
-                                 score_in_list_format = TRUE)
+                                 return_individual_scores = TRUE)
+    } else {
 
+      #' @here-master_compiledata-can-be-worked-on-to-be-incorporated-in-argument
+      bwzscore_BW <- get_bw_score (studyid,
+                                   path_db,
+                                   fake_study = FALSE,
+                                   master_compiledata = master_compiledata,
+                                   return_individual_scores = FALSE)
+print( bwzscore_BW)
+
+    }
 
   }, error = function(e) {
     # Handling errors of the secondary operation
@@ -154,22 +163,25 @@ for (studyid in selected_studies){
 
 #---------------------------"OM_DATA"-(Liver_Organ to Body Weight zScore)-------
   tryCatch({
-    if(SCORE_IN_LIST_FORMAT){
+    if(output_individual_scores){
       final_liverToBW_df <- get_liver_livertobw_score (studyid, path_db,
                                                        fake_study = FALSE,
                                                        master_compiledata = master_compiledata,
                                                        bwzscore_BW = bwzscore_BW ,
-                                                       score_in_list_format = TRUE)
+                                                       return_individual_scores = TRUE)
 
       #master_liverToBW <- rbind(master_liverToBW, final_liverToBW_df)
     } else {
+
       final_liverToBW_df <- get_liver_livertobw_score (studyid, path_db,
                                                        fake_study = FALSE,
                                                        master_compiledata = master_compiledata,
-                                                       bwzscore_BW = bwzscore_BW ,
-                                                       score_in_list_format = FALSE)
+                                                       bwzscore_BW = NULL ,
+                                                       return_individual_scores = FALSE)
+      # Here is special case, if we use bwzscore_BW in else condition from
+      #the previous step, it will provide the  "1x2" STUDYID & avg_bwscore df
+      # but we need full  bwzscore_BW. if NULL,  bwzscore_BW will be calcualted
 
-      print(str(final_liverToBW_df))
 
       # # Add the liverToBW_zscore to "FOUR_Liver_Score" data frame................
       # Create "liverToBW_df" for FOUR_Liver_Score
@@ -197,30 +209,30 @@ for (studyid in selected_studies){
                                ErrorMessage = e$message,
                                #Time = Sys.time(),
                                stringsAsFactors = FALSE)
-    master_error_df <<- dplyr::rbind(master_error_df, error_block3)
+    master_error_df <<- rbind(master_error_df, error_block3)
   })
 
   #<><><><><><><><><><><><><><><><><><>"""LB"""" zscoring <><><><><><><><><><><>
   tryCatch({
 
-    if(SCORE_IN_LIST_FORMAT){
+    if(output_individual_scores){
     master_lb_scores <- get_lb_score(studyid,
                                      path_db,
                                      fake_study= FALSE,
                                      master_compiledata = master_compiledata,
-                                     score_in_list_format = TRUE)
+                                     return_individual_scores = TRUE)
 
     #master_lbxx_list[[j]] <- lb_score_final_list
     master_lb_score_six <- rbind(master_lb_score_six ,master_lb_scores)
 
     } else {
-      #browser()
+
         master_lb_scores <- get_lb_score(studyid,
                                          path_db,
                                          fake_study= FALSE,
                                          master_compiledata = master_compiledata,
-                                         score_in_list_format = FALSE)
-        #browser()
+                                         return_individual_scores = FALSE)
+
         # Append the LB_zscore to the "FOUR_Liver_Score" data frame
         # Extract the LB_score value for the current STUDYID from LB_df
         calculated_LB_value <- master_lb_scores$LB_score[master_lb_scores$STUDYID == unique(master_compiledata$STUDYID)]
@@ -252,13 +264,13 @@ for (studyid in selected_studies){
     #mi_score_final_list <- get_liver_mi_score(j, dbtoken, ts, master_compiledata)
 
     #master_mixx_list[[j]] <- mi_score_final_list
-   if(SCORE_IN_LIST_FORMAT ){
+   if(output_individual_scores ){
 
      mi_score_final_list_df <- get_mi_score(studyid,
                                             path_db,
                                             fake_study = FALSE,
                                             master_compiledata = master_compiledata ,
-                                            score_in_list_format = TRUE)
+                                            return_individual_scores = TRUE)
 
      master_mi_df <- dplyr::bind_rows(master_mi_df, mi_score_final_list_df)
 
@@ -271,10 +283,10 @@ for (studyid in selected_studies){
                                             path_db,
                                             fake_study = FALSE,
                                             master_compiledata = master_compiledata ,
-                                            score_in_list_format = FALSE)
+                                            return_individual_scores = FALSE)
 
-     print(mi_score_final_list_df)
-     print("this part is okay")
+         MI_averaged_score_df <- mi_score_final_list_df
+
     }
     #master_mi_df <- rbind(master_mi_df, mi_score_final_list_df)
 
@@ -293,11 +305,18 @@ for (studyid in selected_studies){
   })
 
 }
-if (SCORE_IN_LIST_FORMAT ) {
+if (output_individual_scores ) {
+
 
 
 } else  {
 browser()
+  print(str(final_liverToBW_df))
+
+  print(master_lb_scores)
+  print(MI_averaged_score_df)
+
+
   # Reassigned the variable
   liver_scored_Four_Liver_Score <- FOUR_Liver_Score
 
@@ -316,7 +335,7 @@ browser()
   #.........................................................................................................................
 }
 
-if (score_in_list_format) {
+if (output_individual_scores) {
   return(list(master_liverToBW = master_liverToBW,
               master_lb_score_six = master_lb_score_six,
               master_mi_df  = master_mi_df,

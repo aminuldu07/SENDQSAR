@@ -4,7 +4,7 @@ get_liver_livertobw_score <- function (studyid,
                                        fake_study = FALSE,
                                        master_compiledata = NULL,
                                        bwzscore_BW = NULL,
-                                       score_in_list_format = FALSE){
+                                       return_individual_scores = FALSE){
 
   # om <- sendigR::genericQuery(dbtoken, queryString = "SELECT * FROM OM WHERE STUDYID = (:1)",
   #                             queryParams = j)
@@ -28,7 +28,7 @@ get_liver_livertobw_score <- function (studyid,
                                path_db,
                                fake_study = FALSE,
                                master_compiledata = NULL,
-                               score_in_list_format = TRUE)
+                               return_individual_scores = TRUE)
   }
 
 
@@ -65,7 +65,7 @@ get_liver_livertobw_score <- function (studyid,
   # Filter the data frame for removing recovery and TK animals.....................................
 
   #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #browser()
+
   if (is.null(master_compiledata) & fake_study == TRUE) {
     # Call the master_compiledata function to generate the data frame for fake study
     master_compiledata <- get_compile_data(studyid, path_db, fake_study = TRUE)
@@ -133,7 +133,7 @@ get_liver_livertobw_score <- function (studyid,
     dplyr::mutate(avg_liverToBW_zscore = ifelse(avg_liverToBW_zscore >= 3, 3,
                                    ifelse(avg_liverToBW_zscore >= 2, 2,
                                           ifelse(avg_liverToBW_zscore >= 1, 1, 0))))
-# if (score_in_list_format == FALSE) {
+# if (return_individual_scores == FALSE) {
 #   # # Add the liverToBW_zscore to "FOUR_Liver_Score" data frame................
 #   # Create "liverToBW_df" for FOUR_Liver_Score
 #   liverToBW_df <- final_liverToBW_df %>%
@@ -152,8 +152,8 @@ get_liver_livertobw_score <- function (studyid,
 # }
 
 #return(final_liverToBW_df)
-  # Return based on score_in_list_format
-  if (score_in_list_format) {
+  # Return based on return_individual_scores
+  if (return_individual_scores) {
     return(HD_liver_zscore)
   } else {
     return(final_liverToBW_df)

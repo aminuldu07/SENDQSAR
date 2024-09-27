@@ -22,7 +22,7 @@ get_bw_score <- function(studyid,
                          path_db,
                          fake_study = FALSE,
                          master_compiledata = NULL,
-                         score_in_list_format = FALSE) {
+                         return_individual_scores = FALSE) {
 
 studyid <- as.character(studyid)
 
@@ -305,7 +305,7 @@ path <- path_db
     #<><><><><><><><> master_compiledata is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
 
     #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #browser()
+
     # Check if master_compiledata is NULL
     # if (is.null(master_compiledata) & fake_study == TRUE) {
     #   fake_study = fake_study
@@ -387,7 +387,7 @@ path <- path_db
     # Create the finalbodyweight column in merged_recovery_tk_cleaned_dose_ranked_df data frame
     bwzscore_BW_df <- BW_df_merged_ARMCD %>%
       dplyr::mutate(finalbodyweight = abs(BWSTRESN - BWSTRESN_Init))
-#browser()
+
     # Create the BWZSCORE column
     bwzscore_BW <- bwzscore_BW_df %>%
       dplyr::group_by(STUDYID) %>%
@@ -408,11 +408,24 @@ path <- path_db
 
     as.data.frame(HD_BWzScore)
 
+  if (return_individual_scores){
+    bwzscore_BW <- bwzscore_BW
+
+  } else {
+
+    HD_BWzScore_averaged <- HD_BWzScore  %>%
+      dplyr::select(STUDYID, BWZSCORE) %>%    # Select relevant columns
+      dplyr::group_by(STUDYID) %>%             # Group by STUDYID
+      dplyr::summarize(avg_bwzscore = mean(abs(BWZSCORE), na.rm = TRUE)) # Calculate average, ignoring NAs
+  }
+
+
+#print(HD_BWzScore_averaged)
     # Return based on score_in_list_format
-    if (score_in_list_format) {
+    if (return_individual_scores) {
       return(bwzscore_BW)
     } else {
-      return(HD_BWzScore)
+      return(HD_BWzScore_averaged)
     }
 
 }

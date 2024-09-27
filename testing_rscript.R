@@ -29,24 +29,43 @@ mi_score <- get_mi_score (studyid,
                           path_db,
                           fake_study=FALSE,
                           master_compiledata = NULL,
-                          score_in_list_format = FALSE)
+                          return_individual_scores = FALSE)
 
-livertobw_scre <- get_liver_livertobw_score(studyid,
+bw_score <- get_bw_score(studyid,
+                         path_db,
+                         fake_study = FALSE,
+                         master_compiledata = NULL,
+                         return_individual_scores = TRUE)
+
+
+
+
+
+
+livertobw_score <- get_liver_livertobw_score(studyid,
                                             path_db,
                                             fake_study = FALSE,
                                             master_compiledata = NULL,
                                             bwzscore_BW = NULL,
-                                            score_in_list_format = TRUE)
+                                            return_individual_scores = FALSE)
 
 
 lb_score <- get_lb_score(studyid,
                          path_db,
                          fake_study= FALSE,
                          master_compiledata = NULL,
-                         score_in_list_format = TRUE)
-
-
-
+                         return_individual_scores = FALSE)
+rm(list = ls())
+#setwd("C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/send-summarizer")
+devtools::load_all(".")
+selected_studies <- c("2170016")
+path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db'
+allscore <- get_liver_om_lb_mi_tox_score_list(selected_studies,
+                                               path_db,
+                                               fake_study = FALSE,
+                                               #master_compiledata = NULL,
+                                               #bwzscore_BW = NULL,
+                                               output_individual_scores = FALSE)
 
 #####
 # Select the PARALLEL STUDY from the DATABASE
