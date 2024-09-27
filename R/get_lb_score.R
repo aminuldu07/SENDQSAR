@@ -20,15 +20,13 @@ get_lb_score <- function(studyid,
                          master_compiledata = NULL,
                          return_individual_scores = FALSE) {
 
-#browser()
+
 studyid <- as.character(studyid)
 path <- path_db
   con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
     lb <- DBI::dbGetQuery(con, statement = "SELECT * FROM LB WHERE STUDYID = (:x)",
                                 params = list(x=studyid))
 # check the lb data frame
-
-
 
     organTESTCDlist <- list('LIVER' = c('SERUM | ALT',
                                         'SERUM | AST',
@@ -110,8 +108,8 @@ path <- path_db
 
   # master_compiledata <- get_compile_data(studyid, path_db,fake_study = fake_study)
 
-    #<><><><><><><><><><><><><><><><>... Remove TK animals and Recovery animals......<><><><><><>.............
-    #<><><><><><><><> master_compiledata is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
+    #><><><><><>... Remove TK animals and Recovery animals......<><><><><><>.
+    #<><> master_compiledata is free of TK animals and Recovery animals<><><>
 
     #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #browser()
@@ -138,10 +136,10 @@ path <- path_db
       dplyr::inner_join(master_compiledata %>% dplyr::select(USUBJID, ARMCD), by = "USUBJID")
 
 
-    #::::::::::::::::::::::::::::: "zScore Calculation" for LB data::::::::::::::::::::::::::::::::::::::::::::::::::::
-    # First subset the LB_tk_recovery_filtered_ARMCD data frame .....................................................
+    #::::::::::::::::::: "zScore Calculation" for LB data:::::::::::::::::::::
+    # First subset the LB_tk_recovery_filtered_ARMCD data frame .............
 
-    # ........................Filtering data for each unique "LBTESTCD" value.........................
+    # .................Filtering data for each unique "LBTESTCD" value........
 
     # 1. Sub-setting for 'SERUM | ALT' data frame for "LBzScore Calculation" for...'SERUM | ALT'...........
     df_serum_alt <- LB_tk_recovery_filtered_ARMCD %>%
@@ -336,9 +334,11 @@ path <- path_db
 
 
     # Replace Inf, -Inf, and NaN with NA in the selected columns
-    selected_cols <- c("avg_alb_zscore", "avg_ast_zscore", "avg_alp_zscore", "avg_alt_zscore", "avg_bili_zscore", "avg_ggt_zscore")
-    LB_zscore_merged_df[selected_cols] <- lapply(LB_zscore_merged_df[selected_cols], function(x) replace(x, is.infinite(x) | is.nan(x), NA))
+    selected_cols <- c("avg_alb_zscore", "avg_ast_zscore", "avg_alp_zscore",
+                       "avg_alt_zscore", "avg_bili_zscore", "avg_ggt_zscore")
 
+    LB_zscore_merged_df[selected_cols] <- lapply(LB_zscore_merged_df[selected_cols],
+                                             function(x) replace(x, is.infinite(x) | is.nan(x), NA))
 
 
     if (return_individual_scores) {
@@ -355,7 +355,6 @@ path <- path_db
 
 
     } else {
-
       # Calculate the average for each row, ignoring NA values
       LB_zscore_merged_df$avg_all_LB_zscores <- rowMeans(LB_zscore_merged_df[selected_cols], na.rm = TRUE)
 
@@ -366,11 +365,8 @@ path <- path_db
       LB_final_score <- LB_all_liver_zscore_averaged
 
       # Create "LB_df" for FOUR_Liver_Score
-      LB_final_score <- LB_final_score %>% dplyr::rename(LB_score = avg_all_LB_zscores)
+      averaged_LB_score <- LB_final_score %>% dplyr::rename(LB_score_avg = avg_all_LB_zscores)
 
-      # Score the LB_score values in the FOUR_Liver_Score data frame and fill "scored_LBScore" column
-      #score_final <- LB_all_liver_zscore_averaged$avg_all_LB_zscores
-      #score_final <- LB_all_liver_zscore_averaged
 
     }
 
@@ -378,7 +374,7 @@ path <- path_db
 if (return_individual_scores) {
   return(master_lb_scores)
 } else {
-  return(LB_final_score)
+  return(averaged_LB_score)
 }
 
 }

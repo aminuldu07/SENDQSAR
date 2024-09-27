@@ -26,8 +26,10 @@ master_lb_score_six <- data.frame(STUDYID = NULL, avg_alb_zscore = NULL, avg_ast
                              avg_alt_zscore = NULL, avg_bili_zscore = NULL, avg_ggt_zscore = NULL)
 
 # Create FOUR SCORE DATA FRAME for "LiverToBodyweight" , "LB" & "MI" Score
-FOUR_Liver_Score <-  data.frame(STUDYID = NA, liverToBW = NA, LB_score = NA, MI_score = NA, scored_liverToBW = NA, scored_LBScore = NA)
+#FOUR_Liver_Score <-  data.frame(STUDYID = NA, liverToBW = NA, LB_score = NA, MI_score = NA, scored_liverToBW = NA, scored_LBScore = NA)
 
+# Create FOUR SCORE DATA FRAME for "LiverToBodyweight" , "LB" & "MI" Score
+FOUR_Liver_Score_avg <-  data.frame(STUDYID = NA, liverToBW_avg = NA, LB_score_avg = NA, MI_score_avg = NA)
 
 # Initialize an empty data frame to store the names of studies with errors
 Error_studies <- list()
@@ -97,6 +99,7 @@ for (studyid in selected_studies){
     # Initialize the "FOUR_Liver_Score"
     # [[# Add a new row for the current STUDYID in FOUR_Liver_Score]]
 
+    if(output_individual_scores){
 
     new_row_in_four_liver_scr <- data.frame(STUDYID = unique(master_compiledata$STUDYID),
                                             liverToBW = NA,
@@ -107,6 +110,17 @@ for (studyid in selected_studies){
 
     FOUR_Liver_Score <- rbind(FOUR_Liver_Score, new_row_in_four_liver_scr)
     FOUR_Liver_Score <- FOUR_Liver_Score[-1,] # remove the first column
+
+    } else {
+      new_row_in_four_liver_scr_avg <- data.frame(STUDYID = unique(master_compiledata$STUDYID),
+                                              liverToBW_avg = NA,
+                                              LB_score_avg = NA,
+                                              MI_score_avg = NA)
+
+      FOUR_Liver_Score_avg <- rbind(FOUR_Liver_Score_avg, new_row_in_four_liver_scr_avg)
+      FOUR_Liver_Score_avg <- FOUR_Liver_Score_avg[-1,]
+      print(FOUR_Liver_Score_avg)
+    }
 
   }, error = function(e) {
     # Handling errors of the secondary operation
@@ -178,24 +192,26 @@ print( bwzscore_BW)
                                                        master_compiledata = master_compiledata,
                                                        bwzscore_BW = NULL ,
                                                        return_individual_scores = FALSE)
-      # Here is special case, if we use bwzscore_BW in else condition from
-      #the previous step, it will provide the  "1x2" STUDYID & avg_bwscore df
-      # but we need full  bwzscore_BW. if NULL,  bwzscore_BW will be calcualted
+      # {{{{...... N.B. Here is special case, if we use bwzscore_BW in else
+      # condition from the previous step, it will provide
+      # the  "1x2" STUDYID & avg_bwscore df but we need
+      # full  bwzscore_BW. if NULL,  bwzscore_BW will be calcualted...}}}}
 
 
       # # Add the liverToBW_zscore to "FOUR_Liver_Score" data frame................
-      # Create "liverToBW_df" for FOUR_Liver_Score
-      liverToBW_df <- final_liverToBW_df %>%
-        dplyr::rename(liverToBW = avg_liverToBW_zscore)
+      # Create "liverToBW_df" for FOUR_Liver_Score_avg
+      liverToBW_df <- averaged_liverToBW_df  %>%
+        dplyr::rename(liverToBW_avg = avg_liverToBW_zscore)
+
+            # Extract the liverToBW value for the current STUDYID from liverToBW_df
+      calculated_liverToBW_value <- liverToBW_df$liverToBW_avg[liverToBW_df$STUDYID == unique(master_compiledata$STUDYID)]
+      #calculated_liverToBW_value <- liverToBW_df$liverToBW_avg
+      # Update the liverToBW value in FOUR_Liver_Score_avg for the current STUDYID
+      print(calculated_liverToBW_value)
+      FOUR_Liver_Score_avg$liverToBW_avg[FOUR_Liver_Score_avg$STUDYID == unique(master_compiledata$STUDYID)] <- calculated_liverToBW_value
 
       # add liverToBW_df to master_liverToBW
-      master_liverToBW <- dplyr::bind_rows(master_liverToBW, liverToBW_df)
-
-      # Extract the liverToBW value for the current STUDYID from liverToBW_df
-      calculated_liverToBW_value <- liverToBW_df$liverToBW[liverToBW_df$STUDYID == unique(master_compiledata$STUDYID)]
-
-      # Update the liverToBW value in FOUR_Liver_Score for the current STUDYID
-      FOUR_Liver_Score$liverToBW[FOUR_Liver_Score$STUDYID == unique(master_compiledata$STUDYID)] <- calculated_liverToBW_value
+      #master_liverToBW <- dplyr::bind_rows(master_liverToBW, liverToBW_df)
 
     }
 
@@ -227,22 +243,22 @@ print( bwzscore_BW)
 
     } else {
 
-        master_lb_scores <- get_lb_score(studyid,
+      averaged_LB_score <- get_lb_score(studyid,
                                          path_db,
                                          fake_study= FALSE,
                                          master_compiledata = master_compiledata,
                                          return_individual_scores = FALSE)
 
-        # Append the LB_zscore to the "FOUR_Liver_Score" data frame
+        # Append the LB_zscore to the "FOUR_Liver_Score_avg" data frame
         # Extract the LB_score value for the current STUDYID from LB_df
-        calculated_LB_value <- master_lb_scores$LB_score[master_lb_scores$STUDYID == unique(master_compiledata$STUDYID)]
+        calculated_LB_value <- averaged_LB_score$LB_score_avg[ averaged_LB_score$STUDYID == unique(master_compiledata$STUDYID)]
 
         # Update the LB_score value in FOUR_Liver_Score for the current STUDYID
-        FOUR_Liver_Score$LB_score[FOUR_Liver_Score$STUDYID == unique(master_compiledata$STUDYID)] <- calculated_LB_value
+        FOUR_Liver_Score_avg$LB_score_avg[FOUR_Liver_Score_avg$STUDYID == unique(master_compiledata$STUDYID)] <- calculated_LB_value
 
 
         #master_lbxx_list[[j]] <- lb_score_final_list
-        master_lb_score_six <- rbind(master_lb_score_six ,master_lb_scores)
+        #master_lb_score_six <- rbind(master_lb_score_six , averaged_LB_score)
 
      }
 
@@ -279,17 +295,22 @@ print( bwzscore_BW)
     #master_mi_df <- dplyr::bind_rows(master_mi_df, mi_score_final_list_df)
 
    } else {
-         mi_score_final_list_df <- get_mi_score(studyid,
+     averaged_MI_score <- get_mi_score(studyid,
                                             path_db,
                                             fake_study = FALSE,
                                             master_compiledata = master_compiledata ,
                                             return_individual_scores = FALSE)
 
-         MI_averaged_score_df <- mi_score_final_list_df
+     # Append the "MI_zscore"MI_score_avg" to the "FOUR_Liver_Score_avg" data frame
+     # Extract the "LB_score"MI_score_avg" value for the current STUDYID from
+     calculated_MI_value <- averaged_MI_score$MI_score_avg[averaged_MI_score$STUDYID == unique(master_compiledata$STUDYID)]
+
+     # Update the LB_score value in FOUR_Liver_Score for the current STUDYID
+     FOUR_Liver_Score_avg$MI_score_avg[FOUR_Liver_Score_avg$STUDYID == unique(master_compiledata$STUDYID)] <- calculated_MI_value
 
     }
-    #master_mi_df <- rbind(master_mi_df, mi_score_final_list_df)
 
+browser()
   }, error = function(e) {
     # Handling errors of the secondary operation
 

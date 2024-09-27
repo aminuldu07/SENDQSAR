@@ -438,7 +438,7 @@ path <- path_db
          dplyr::select(STUDYID, avg_MI_score)
 
         # renaming the avg_MI_score to "MI score"
-        MI_averaged_score_df <- MI_final_score %>% dplyr::rename(MI_score = avg_MI_score)
+        averaged_MI_score <- MI_final_score %>% dplyr::rename(MI_score_avg = avg_MI_score)
 
          }
 
@@ -450,7 +450,7 @@ path <- path_db
 
       } else {
 
-        MI_averaged_score_df <- data.frame()
+        averaged_MI_score <- data.frame()
 
         }
 
@@ -460,7 +460,7 @@ path <- path_db
   if (return_individual_scores) {
     return(mi_score_final_list_df)
   } else {
-    return( MI_averaged_score_df)
+    return(averaged_MI_score)
   }
 
 }
