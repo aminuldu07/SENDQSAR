@@ -29,7 +29,7 @@ master_lb_score_six <- data.frame(STUDYID = NULL, avg_alb_zscore = NULL, avg_ast
 #FOUR_Liver_Score <-  data.frame(STUDYID = NA, liverToBW = NA, LB_score = NA, MI_score = NA, scored_liverToBW = NA, scored_LBScore = NA)
 
 # Create FOUR SCORE DATA FRAME for "LiverToBodyweight" , "LB" & "MI" Score
-FOUR_Liver_Score_avg <-  data.frame(STUDYID = NA, liverToBW_avg = NA, LB_score_avg = NA, MI_score_avg = NA)
+FOUR_Liver_Score_avg <-  data.frame(STUDYID = NA, BWzScore_avg = NA, liverToBW_avg = NA, LB_score_avg = NA, MI_score_avg = NA)
 
 # Initialize an empty data frame to store the names of studies with errors
 Error_studies <- list()
@@ -109,17 +109,18 @@ for (studyid in selected_studies){
                                             scored_LBScore = NA)
 
     FOUR_Liver_Score <- rbind(FOUR_Liver_Score, new_row_in_four_liver_scr)
-    FOUR_Liver_Score <- FOUR_Liver_Score[-1,] # remove the first column
+    # FOUR_Liver_Score <- FOUR_Liver_Score[-1,] # remove the first column
 
     } else {
       new_row_in_four_liver_scr_avg <- data.frame(STUDYID = unique(master_compiledata$STUDYID),
+                                              BWzScore_avg = NA,
                                               liverToBW_avg = NA,
                                               LB_score_avg = NA,
                                               MI_score_avg = NA)
 
       FOUR_Liver_Score_avg <- rbind(FOUR_Liver_Score_avg, new_row_in_four_liver_scr_avg)
-      FOUR_Liver_Score_avg <- FOUR_Liver_Score_avg[-1,]
-      print(FOUR_Liver_Score_avg)
+      # FOUR_Liver_Score_avg <- FOUR_Liver_Score_avg[-1,]
+      # print(FOUR_Liver_Score_avg)
     }
 
   }, error = function(e) {
@@ -143,7 +144,6 @@ for (studyid in selected_studies){
 
     if(output_individual_scores){
 
-    #' @here-master_compiledata-can-be-worked-on-to-be-incorporated-in-argument
     bwzscore_BW <- get_bw_score (studyid,
                                  path_db,
                                  fake_study = FALSE,
@@ -151,13 +151,20 @@ for (studyid in selected_studies){
                                  return_individual_scores = TRUE)
     } else {
 
-      #' @here-master_compiledata-can-be-worked-on-to-be-incorporated-in-argument
-      bwzscore_BW <- get_bw_score (studyid,
+      averaged_HD_BWzScore <- get_bw_score (studyid,
                                    path_db,
                                    fake_study = FALSE,
                                    master_compiledata = master_compiledata,
                                    return_individual_scores = FALSE)
-print( bwzscore_BW)
+
+      # # Add the liverToBW_zscore to "FOUR_Liver_Score" data frame................
+
+      # Extract the liverToBW value for the current STUDYID from liverToBW_df
+      calculated_BWzScore_value <-  averaged_HD_BWzScore$BWzScore_avg[averaged_HD_BWzScore$STUDYID == unique(master_compiledata$STUDYID)]
+      #calculated_liverToBW_value <- liverToBW_df$liverToBW_avg
+
+      # Update the liverToBW value in FOUR_Liver_Score_avg for the current STUDYID
+      FOUR_Liver_Score_avg$BWzScore_avg[FOUR_Liver_Score_avg$STUDYID == unique(master_compiledata$STUDYID)] <- calculated_BWzScore_value
 
     }
 
@@ -310,7 +317,7 @@ print( bwzscore_BW)
 
     }
 
-browser()
+
   }, error = function(e) {
     # Handling errors of the secondary operation
 
@@ -326,49 +333,43 @@ browser()
   })
 
 }
+
+
+
 if (output_individual_scores ) {
 
 
 
 } else  {
-browser()
-  print(FOUR_Liver_Score)
-  print(str(final_liverToBW_df))
-  print(master_lb_scores)
-  print(MI_averaged_score_df)
 
-
-  # Reassigned the variable
-  liver_scored_Four_Liver_Score <- FOUR_Liver_Score
-
-  # Create averaged_liver_score column for un_scored columns
-  liver_scored_Four_Liver_Score <- liver_scored_Four_Liver_Score %>%
-    dplyr::mutate(averaged_liver_score = rowMeans(select(., liverToBW, LB_score, MI_score), na.rm = TRUE))
-
-
-  # Create scored_averaged_liver_score column for scored columns
-  liver_scored_Four_Liver_Score <- liver_scored_Four_Liver_Score %>%
-    dplyr::mutate(scored_averaged_liver_score = rowMeans(dplyr::select(.,MI_score, scored_liverToBW, scored_LBScore), na.rm = TRUE))
-
-  # remove NAs from "scored_averaged_liver_score" column
-  final_liver_scored_Four_Liver_Score <- liver_scored_Four_Liver_Score %>%
-                 dplyr::filter(!is.na(scored_averaged_liver_score))
+  FOUR_Liver_Score_avg <- FOUR_Liver_Score_avg [-1,]
+  # # Reassigned the variable
+  # liver_scored_Four_Liver_Score <- FOUR_Liver_Score
+  #
+  # # Create averaged_liver_score column for un_scored columns
+  # liver_scored_Four_Liver_Score <- liver_scored_Four_Liver_Score %>%
+  #   dplyr::mutate(averaged_liver_score = rowMeans(select(., liverToBW, LB_score, MI_score), na.rm = TRUE))
+  #
+  #
+  # # Create scored_averaged_liver_score column for scored columns
+  # liver_scored_Four_Liver_Score <- liver_scored_Four_Liver_Score %>%
+  #   dplyr::mutate(scored_averaged_liver_score = rowMeans(dplyr::select(.,MI_score, scored_liverToBW, scored_LBScore), na.rm = TRUE))
+  #
+  # # remove NAs from "scored_averaged_liver_score" column
+  # final_liver_scored_Four_Liver_Score <- liver_scored_Four_Liver_Score %>%
+  #                dplyr::filter(!is.na(scored_averaged_liver_score))
   #.........................................................................................................................
 }
 
-if (output_individual_scores) {
-  return(list(master_liverToBW = master_liverToBW,
+   if (output_individual_scores) {
+    return(list(master_liverToBW = master_liverToBW,
               master_lb_score_six = master_lb_score_six,
               master_mi_df  = master_mi_df,
               master_error_df = master_error_df))
-} else {
-  return(final_liver_scored_Four_Liver_Score)
-}
-# return(list(master_liverToBW = master_liverToBW,
-#             master_lb_score_six = master_lb_score_six,
-#             master_mi_df  = master_mi_df,
-#             master_error_df = master_error_df
-#             ))
+   } else {
+   return(FOUR_Liver_Score_avg)
+  }
+
 
 }
 

@@ -411,12 +411,20 @@ path <- path_db
   if (return_individual_scores){
     bwzscore_BW <- bwzscore_BW
 
+    # %>%  # Calculate average, ignoring NAs
+    #   dplyr::mutate(BWzScore_avg  = ifelse(BWzScore_avg  >= 3, 3,
+    #                                        ifelse(BWzScore_avg  >= 2, 2,
+    #                                               ifelse(BWzScore_avg  >= 1, 1, 0))))
+
   } else {
 
-    HD_BWzScore_averaged <- HD_BWzScore  %>%
+    averaged_HD_BWzScore <- HD_BWzScore  %>%
       dplyr::select(STUDYID, BWZSCORE) %>%    # Select relevant columns
       dplyr::group_by(STUDYID) %>%             # Group by STUDYID
-      dplyr::summarize(avg_bwzscore = mean(abs(BWZSCORE), na.rm = TRUE)) # Calculate average, ignoring NAs
+      dplyr::summarize(BWzScore_avg = mean(abs(BWZSCORE), na.rm = TRUE)) %>%  # Calculate average, ignoring NAs
+      dplyr::mutate(BWzScore_avg  = ifelse(BWzScore_avg  >= 3, 3,
+                                                ifelse(BWzScore_avg  >= 2, 2,
+                                                       ifelse(BWzScore_avg  >= 1, 1, 0))))
   }
 
 
@@ -425,7 +433,7 @@ path <- path_db
     if (return_individual_scores) {
       return(bwzscore_BW)
     } else {
-      return(HD_BWzScore_averaged)
+      return(averaged_HD_BWzScore)
     }
 
 }
