@@ -373,6 +373,7 @@ path <- path_db
       #if(score_in_list_format == FALSE) {
       # Calculate the highest score for each row from the 7th to the last column
 
+
       # Check the number of columns
       num_cols_ScoredData_subset_HD <- ncol(ScoredData_subset_HD)
       #browser()
@@ -391,34 +392,8 @@ path <- path_db
       # Move the highest_score column to be the third column
       ScoredData_subset_HD <- ScoredData_subset_HD[, c(1:2, ncol(ScoredData_subset_HD), 3:(ncol(ScoredData_subset_HD)-1))]
 
-      if(score_in_list_format == FALSE) {
-      # averaged zscore per STUDYID for 'MI'..................................................................................
-      # Step 1: Filter for HD
-      #MI_final_score <- ScoredData_subset_HD [ARMCD == "HD"]
-      MI_final_score <- ScoredData_subset_HD %>% dplyr::filter(ARMCD == "HD")
+      if(score_in_list_format) {
 
-      # Step 2: Convert highest_score to numeric # FACTOR value to numeric......?????????
-      MI_final_score <- MI_final_score %>%  dplyr::mutate(highest_score = as.numeric(highest_score))
-
-      # Step 3: Group by STUDYID
-      MI_final_score <- MI_final_score %>%  dplyr::group_by(STUDYID)
-
-      # Step 4: Average MI_score
-      MI_final_score <- MI_final_score %>%  dplyr::summarise( avg_MI_score = mean(highest_score, na.rm = TRUE),  )
-
-      # Step 5: final column selection
-      MI_final_score <- MI_final_score %>% dplyr::select(STUDYID, avg_MI_score)
-
-
-      MI_df <- MI_final_score %>% dplyr::rename(MI_score = avg_MI_score)
-
-      # Extract the MI_score value for the current STUDYID from MI_df
-      #calculated_MI_value <- MI_df$MI_score[MI_df$STUDYID == unique(mi$STUDYID)]
-      calculated_MI_value <- MI_df$MI_score[MI_df$STUDYID == unique(mi$STUDYID)]
-
-      calculated_mi_score <- calculated_MI_value
-
-      } else {
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         #~~~~~~~~~~ GET all the severity as individual in a list ~~~~~~~~~~~~~~~
@@ -452,6 +427,35 @@ path <- path_db
         # Convert the list to data frame
         mi_score_final_list_df <- dplyr::bind_rows(mi_score_final_list, .id = "iteration")
 
+
+
+      } else {
+        # averaged zscore per STUDYID for 'MI'..................................................................................
+        # Step 1: Filter for HD
+        #MI_final_score <- ScoredData_subset_HD [ARMCD == "HD"]
+        MI_final_score <- ScoredData_subset_HD %>% dplyr::filter(ARMCD == "HD")
+
+        # Step 2: Convert highest_score to numeric # FACTOR value to numeric......?????????
+        MI_final_score <- MI_final_score %>%  dplyr::mutate(highest_score = as.numeric(highest_score))
+
+        # Step 3: Group by STUDYID
+        MI_final_score <- MI_final_score %>%  dplyr::group_by(STUDYID)
+
+        # Step 4: Average MI_score
+        MI_final_score <- MI_final_score %>%  dplyr::summarise( avg_MI_score = mean(highest_score, na.rm = TRUE),  )
+
+        # Step 5: final column selection
+        MI_final_score <- MI_final_score %>% dplyr::select(STUDYID, avg_MI_score)
+
+
+        MI_df <- MI_final_score %>% dplyr::rename(MI_score = avg_MI_score)
+
+        # Extract the MI_score value for the current STUDYID from MI_df
+        #calculated_MI_value <- MI_df$MI_score[MI_df$STUDYID == unique(mi$STUDYID)]
+        calculated_MI_value <- MI_df$MI_score[MI_df$STUDYID == unique(mi$STUDYID)]
+
+        calculated_mi_score <- calculated_MI_value
+
       }
 
     #       } else {
@@ -468,14 +472,13 @@ path <- path_db
       #calculated_mi_score <- calculated_MI_value
     }   else {
 
-      if(score_in_list_format == FALSE) {
-
-          calculated_MI_value <- "ncol(mi_CompileData) = 6"
-
-      } else {
+      if(score_in_list_format) {
 
         mi_score_final_list_df = "mi_score_final_list_df"
 
+      } else {
+
+        calculated_MI_value <- "ncol(mi_CompileData) = 6"
         }
 
 
