@@ -318,6 +318,14 @@ path <- path_db
                                             ifelse(avg_alb_zscore >= 2, 2,
                                                    ifelse(avg_alb_zscore >= 1, 1, 0))))
 
+    print(serum_alb_final_zscore)
+    print(serum_ast_final_zscore)
+    print(serum_alp_final_zscore)
+    print(serum_alt_final_zscore)
+    print(serum_bili_final_zscore)
+    print(serum_ggt_final_zscore)
+
+
     # Merging----------LB----zscores------------values---------------------------
     LB_zscore_merged_df <- serum_alb_final_zscore %>%
       dplyr::full_join(serum_ast_final_zscore, by = "STUDYID") %>%
@@ -347,6 +355,7 @@ path <- path_db
 
 
     } else {
+
       # Calculate the average for each row, ignoring NA values
       LB_zscore_merged_df$avg_all_LB_zscores <- rowMeans(LB_zscore_merged_df[selected_cols], na.rm = TRUE)
 
@@ -357,7 +366,7 @@ path <- path_db
       LB_final_score <- LB_all_liver_zscore_averaged
 
       # Create "LB_df" for FOUR_Liver_Score
-      LB_final_score <- LB_final_score %>% dplyr::rename(LB_score = avg_all_LB_zscores)
+      LB_final_score <- LB_final_score %>% dplyr::rename(averaged_LB_score = avg_all_LB_zscores)
 
       # Score the LB_score values in the FOUR_Liver_Score data frame and fill "scored_LBScore" column
       #score_final <- LB_all_liver_zscore_averaged$avg_all_LB_zscores

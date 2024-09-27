@@ -120,7 +120,7 @@ get_liver_livertobw_score <- function (studyid,
   # Filter and select specific columns
   HD_liver_zscore <- liver_zscore_df %>%
     dplyr::filter(ARMCD == "HD") %>%
-    dplyr::select(STUDYID, USUBJID, liverToBW_zscore, ARMCD)
+    dplyr::select(STUDYID, USUBJID,  ARMCD, liverToBW_zscore)
 
   # Create final_liverToBW_df for the current STUDYID by averaging..................................
   final_liverToBW_df <- HD_liver_zscore %>%

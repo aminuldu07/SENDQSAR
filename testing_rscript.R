@@ -17,6 +17,37 @@ all_score_testing <- get_liver_om_lb_mi_tox_score_list(selected_studies,
                                                        path_db,
                                                        fake_study = FALSE,
                                                        SCORE_IN_LIST_FORMAT = FALSE)
+
+rm(list = ls())
+#setwd("C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/send-summarizer")
+devtools::load_all(".")
+studyid <- c("2170016")
+path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db'
+#livertobw <- all_score_testing[["master_liverToBW"]]
+#error_df <- all_score_testing[["master_error_df"]]
+mi_score <- get_mi_score (studyid,
+                          path_db,
+                          fake_study=FALSE,
+                          master_compiledata = NULL,
+                          score_in_list_format = FALSE)
+
+livertobw_scre <- get_liver_livertobw_score(studyid,
+                                            path_db,
+                                            fake_study = FALSE,
+                                            master_compiledata = NULL,
+                                            bwzscore_BW = NULL,
+                                            score_in_list_format = TRUE)
+
+
+lb_score <- get_lb_score(studyid,
+                         path_db,
+                         fake_study= FALSE,
+                         master_compiledata = NULL,
+                         score_in_list_format = TRUE)
+
+
+
+
 #####
 # Select the PARALLEL STUDY from the DATABASE
 parallel_StudyID <- sendigR::getStudiesSDESIGN(dbtoken, studyDesignFilter = "PARALLEL")
@@ -68,22 +99,4 @@ rat_STUDYID_ts_species <- sendigR::genericQuery(dbtoken, queryString = "SELECT S
 # path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db'
 #selected_studies <- as.vector(rat_STUDYID_ts_species$STUDYID)
 #####
-rm(list = ls())
-#setwd("C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/send-summarizer")
-devtools::load_all(".")
-studyid <- c("2170016")
-path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db'
-#livertobw <- all_score_testing[["master_liverToBW"]]
-#error_df <- all_score_testing[["master_error_df"]]
-mi_score <- get_mi_score (studyid,
-                                     path_db,
-                                     fake_study=FALSE,
-                                     master_compiledata = NULL,
-                                     score_in_list_format = FALSE)
 
-livertobw_scre <- get_liver_livertobw_score(studyid,
-                                      path_db,
-                                      fake_study = FALSE,
-                                      master_compiledata = NULL,
-                                      bwzscore_BW = NULL,
-                                      score_in_list_format = FALSE)
