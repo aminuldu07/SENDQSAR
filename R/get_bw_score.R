@@ -18,12 +18,14 @@
 #' @importFrom RSQLite dbConnect
 #' @importFrom RSQLite SQLite
 
+
+
 get_bw_score <- function(studyid,
                          path_db,
                          fake_study = FALSE,
                          master_compiledata = NULL,
                          return_individual_scores = FALSE) {
-
+browser()
 studyid <- as.character(studyid)
 
 path <- path_db
@@ -38,12 +40,60 @@ path <- path_db
     domain
 }
 
+  if(fake_study){
+    browser()
+    bw <- con_db('bw')
+    data.table::setDT(bw)
+
+    ts <- con_db('ts')
+    data.table::setDT(ts)
+
+    # Fetch species value from ts table where TSPARMCD equals 'SPECIES
+    species <- ts$TSVAL[which(ts$TSPARMCD=='SPECIES')]
+
+    # Select specific columns from dm
+    dm <- dm[,c('STUDYID','USUBJID','SPECIES','SEX','ARMCD','ARM','SETCD')]
+
+    #dm[,data.table::`:=`(Species=species,SPECIES=NULL,ARMCD=ARM,ARM=NULL)]
+
+    # Assuming dm is already defined as a data frame or tibble
+    dm <- dm %>%
+      dplyr::mutate(Species = SPECIES) %>%   # Add or update the Species column
+      dplyr::select(-SPECIES, -ARMCD) %>%  # Remove  ARMCD
+      dplyr::rename(ARMCD = ARM)  %>%   # Rename ARM to ARMCD (if ARMCD is needed)
+      dplyr::select("STUDYID", "USUBJID", "Species","SEX", "ARMCD","SETCD")
+
+    #  Update 'ARMCD' to 'vehicle' where it originally equals 'Control'
+    #dm[ARMCD=='Control',`:=`(ARMCD='vehicle')]
+    dm <- dm %>%
+      dplyr::mutate(ARMCD = dplyr::if_else(ARMCD == 'Control', 'vehicle', ARMCD))
+
+    # Filter 'dm' to include only rows where 'ARMCD' is either 'vehicle' or 'HD'
+    #dm <- dm[ARMCD %in% c('vehicle','HD')]
+    dm <- dm %>%
+      dplyr::filter( ARMCD %in% c("vehicle", "HD"))
+
+    data.table::setDF(dm)
+    return(dm)
+
+
+  } else{
 
     #Pull relevant domain data for each domain
-  bw <- con_db('bw')
-  ts <- con_db('ts')
-  pooldef <- con_db('pooldef')
-  pp <- con_db('pp')
+    bw <- con_db('bw')
+    ts <- con_db('ts')
+
+  }
+
+
+
+  #Pull relevant domain data for each domain
+  # bw <- con_db('bw')
+  # ts <- con_db('ts')
+  # pooldef <- con_db('pooldef')
+  # pp <- con_db('pp')
+
+
 
     Species <- ts$TSVAL[which(ts$TSPARMCD == "SPECIES")]
     TRTName <- ts$TSVAL[which(ts$TSPARMCD == "TRT")]
@@ -52,9 +102,9 @@ path <- path_db
     # Initial BW weight calculation
 
     StudyInitialWeights <- data.frame("STUDYID" = NA, "USUBJID" = NA,
-                                      "BWSTRESN" = NA, "VISITDY" = NA,
-                                      "BWNOMDY" = NA, "BWNOMLBL"= NA,
-                                      "BWBLFL" = NA)
+                                      "BWSTRESN" = NA, "VISITDY" = NA) #,
+                                      # "BWNOMDY" = NA, "BWNOMLBL"= NA,
+                                      # "BWBLFL" = NA)
 
     # Initialize dataframe for unmatched USUBJIDs
     UnmatchedUSUBJIDs <- data.frame("USUBJID" = character(), stringsAsFactors = FALSE)
@@ -77,7 +127,7 @@ path <- path_db
 
         # 1. Check if VISITDY == 1 is present
         SubjectInitialWeight <- subj_data[subj_data$VISITDY == 1,
-                                          c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY","BWNOMDY","BWNOMLBL","BWBLFL")]
+                                          c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY")] #,"BWNOMDY","BWNOMLBL","BWBLFL")]
 
 
         # 2. If no initial weight with VISITDY == 1,  try VISITDY < 0
@@ -85,7 +135,7 @@ path <- path_db
           negative_visits <- subj_data[subj_data$VISITDY < 0, ]
           if (nrow(negative_visits) > 0) {
             closest_row <- which.min(abs(negative_visits$VISITDY))
-            SubjectInitialWeight <- negative_visits[closest_row, c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY","BWNOMDY","BWNOMLBL","BWBLFL")]
+            SubjectInitialWeight <- negative_visits[closest_row, c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY")] #,"BWNOMDY","BWNOMLBL","BWBLFL")]
           }
         }
 
@@ -96,7 +146,7 @@ path <- path_db
           if (nrow(five_visitdy) > 0) {
             # If there are rows where 1 < VISITDY <= 5, choose the one with the minimum VISITDY value
             closest_row_five <- which.min(five_visitdy$VISITDY)
-            SubjectInitialWeight <- five_visitdy[closest_row_five, c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY", "BWNOMDY", "BWNOMLBL", "BWBLFL")]
+            SubjectInitialWeight <- five_visitdy[closest_row_five, c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY")] #, "BWNOMDY", "BWNOMLBL", "BWBLFL")]
           }
         }
 
@@ -110,7 +160,7 @@ path <- path_db
 
             # Choose the row with the minimum BWDY value greater than 5
             closest_row_null_visitdy <- which.min(null_visitdy_large_bw$VISITDY)
-            SubjectInitialWeight <- null_visitdy_large_bw[closest_row_null_visitdy, c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY", "BWNOMDY", "BWNOMLBL", "BWBLFL")]
+            SubjectInitialWeight <- null_visitdy_large_bw[closest_row_null_visitdy, c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY")] #, "BWNOMDY", "BWNOMLBL", "BWBLFL")]
           }
         }
         # If SubjectInitialWeight is still empty, add currentUSUBJID to UnmatchedUSUBJIDs
@@ -151,16 +201,17 @@ path <- path_db
     StudyInitialWeights <- StudyInitialWeights[!duplicated(StudyInitialWeights$USUBJID), ]
 
 
-    # Final day "StudyBodyWeights" calculation
+    # ..........Final day "StudyBodyWeights" calculation.....................
 
-    #(StudyBodyWeights)-(TERMBW)-(BoDY Weigt) calculation
+    #......(StudyBodyWeights)-(TERMBW)-(BoDY Weigt) calculation...............
 
     # Initialize "StudyBodyWeights" empty data frame
     StudyBodyWeights <- data.frame("STUDYID" = NA, "USUBJID" = NA, "BWTESTCD" = NA,
-                                   "BWSTRESN" = NA, "VISITDY" = NA, "BWNOMDY" = NA, "BWNOMLBL"= NA, "BWBLFL" = NA)
+                                   "BWSTRESN" = NA, "VISITDY" = NA) #, "BWNOMDY" = NA, "BWNOMLBL"= NA, "BWBLFL" = NA)
 
     # Initialize dataframe for unmatched USUBJIDs
-    BodyWeights_UnmatchedUSUBJIDs <- data.frame("USUBJID" = character(), stringsAsFactors = FALSE)
+    BodyWeights_UnmatchedUSUBJIDs <- data.frame("USUBJID" = character(),
+                                                stringsAsFactors = FALSE)
 
 
     if(TRUE) {
@@ -181,7 +232,7 @@ path <- path_db
 
         # 1. Check if BWTESTCD == TERMBW is present
         SubjectBodyWeight <- subj_bw_data[subj_bw_data$BWTESTCD == "TERMBW",
-                                          c("STUDYID", "USUBJID", "BWTESTCD","BWSTRESN", "VISITDY","BWNOMDY","BWNOMLBL","BWBLFL")]
+                                          c("STUDYID", "USUBJID", "BWTESTCD","BWSTRESN", "VISITDY")] #,"BWNOMDY","BWNOMLBL","BWBLFL")]
 
         # If BWTESTCD == TERMBW not present,
         # 2. If no  BWTESTCD == TERMBW,try  VISITDY > 5"
@@ -192,7 +243,7 @@ path <- path_db
           if (nrow(positive_bw_VISITDY) > 0) {
             # choose the one with the maximum VISITDY value
             max_VISITDY <- which.max(positive_bw_VISITDY$VISITDY)
-            SubjectBodyWeight <- positive_bw_VISITDY[max_VISITDY, c("STUDYID", "USUBJID", "BWTESTCD", "BWSTRESN", "VISITDY", "BWNOMDY", "BWNOMLBL", "BWBLFL")]
+            SubjectBodyWeight <- positive_bw_VISITDY[max_VISITDY, c("STUDYID", "USUBJID", "BWTESTCD", "BWSTRESN", "VISITDY")] #, "BWNOMDY", "BWNOMLBL", "BWBLFL")]
           }
         }
 
@@ -236,69 +287,9 @@ path <- path_db
 
     # number of unique USUBJID
     unique_StudyBodyWeights_USUBJID <- length(unique(StudyBodyWeights$USUBJID))
-    ## print(unique_StudyBodyWeights_USUBJID)
-    #
 
 
-####################~~~~~~~~~~~~~~~~~~~~~~~tk_animal_take_care~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#####
-#
-#     tK_animals_df <- data.frame(PP_PoolID = character(), STUDYID = character(),
-#                                 USUBJID = character(), POOLID = character(),
-#                                 stringsAsFactors = FALSE)
-#
-#     # Initialize a data frame to keep track of studies with no POOLID
-#     no_poolid_studies <- data.frame(STUDYID = character(),
-#                                     stringsAsFactors = FALSE)
-#
-#     # check for the species [# Check if the current study is a rat]
-#   # [{# Convert Species to lowercase for case-insensitive comparison}]
-#
-#     Species_lower <- tolower(Species)
-#
-#     if ("rat" %in% Species_lower) {
-#       # Create TK individuals for "Rat" studies [# Retrieve unique
-#       # pool IDs (TKPools) from pp table]
-#       TKPools <- unique(pp$POOLID)
-#
-#       # Check if TKPools is not empty
-#       if (length(TKPools) > 0) {
-# # For each pool ID in TKPools, retrieve corresponding rows from pooldef table
-#         for (pool_id in TKPools) {
-#           pooldef_data <- pooldef[pooldef$POOLID == pool_id, ]
-#
-#           # Create a temporary data frame if pooldef_data is not empty
-#           if (nrow(pooldef_data) > 0) {
-#             temp_df <- data.frame(PP_PoolID = pool_id,
-#                                   STUDYID = pooldef_data$STUDYID,
-#                                   USUBJID = pooldef_data$USUBJID,
-#                                   POOLID = pooldef_data$POOLID,
-#                                   stringsAsFactors = FALSE)
-#
-#             # Append the temporary data frame to the results data frame
-#             tK_animals_df <- rbind(tK_animals_df, temp_df)
-#           }
-#         }
-#       } else {
-#         # Retrieve STUDYID for the current study
-#         current_study_id <- bw$STUDYID[1]
-#
-#         # Add study to no_poolid_studies dataframe
-#         no_poolid_studies <- rbind(no_poolid_studies,
-#                                    data.frame(STUDYID = current_study_id,
-#                                               stringsAsFactors = FALSE))
-#       }
-#
-#     } else {
-#       # Create a empty data frame named "tK_animals_df"
-#       tK_animals_df <- data.frame(PP_PoolID = character(),
-#                                   STUDYID = character(),
-#                                   USUBJID = character(),
-#                                   POOLID = character(),
-#                                   stringsAsFactors = FALSE)
-#     }
-    ####################~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #############################
+
 
 #' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 #'  #<><><><><><><><><><><><><><><><>... Remove TK animals and Recovery animals......<><><><><><>.............
@@ -306,20 +297,6 @@ path <- path_db
 
     #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    # Check if master_compiledata is NULL
-    # if (is.null(master_compiledata) & fake_study == TRUE) {
-    #   fake_study = fake_study
-    #   # Call the master_compiledata function to generate the data frame
-    #   master_compiledata <- get_compile_data(studyid, path_db,fake_study = fake_study)
-    # } else if (is.null(master_compiledata) & fake_study == FALSE) {
-    #   master_compiledata <- get_compile_data(studyid, path_db,fake_study = FALSE)
-    # } else if (master_compiledata == master_compiledata & fake_study == FLASE) {
-    #   master_compiledata = master_compiledata
-    # } else if (master_compiledata == master_compiledata & fake_study == TRUE) {
-    #   master_compiledata = master_compiledata
-    # } else {
-    #   master_compiledata = master_compiledata
-    # }
     if (is.null(master_compiledata) & fake_study == TRUE) {
       # Call the master_compiledata function to generate the data frame for fake study
       master_compiledata <- get_compile_data(studyid, path_db, fake_study = TRUE)
@@ -331,20 +308,7 @@ path <- path_db
       master_compiledata = master_compiledata
     }
 
-    #else {
-      #master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db,fake_study = fake_study)
-    #}
-
-    # # Remove the TK animals and Recovery animals
-    # LB_tk_recovery_filtered <- max_visitdy_df %>%
-    #   dplyr::filter(USUBJID %in% master_compiledata$USUBJID)
-    #
-    # # Perform a left join to match USUBJID and get ARMCD ## 020924
-    # #-inner_join() used instead of left_join()#199
-    # LB_tk_recovery_filtered_ARMCD <- LB_tk_recovery_filtered %>%
-    #   dplyr::inner_join(master_compiledata %>% dplyr::select(USUBJID, ARMCD), by = "USUBJID")
-
-#' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 
@@ -364,25 +328,21 @@ path <- path_db
 
     #  Inner join"StudyInitialWeights" and StudyBodyWeights"
     # an inner join on the USUBJID column for TK_less (StudyInitialWeights & StudyBodyWeights )
-    joined_BW_df <- merge(tk_less_StudyBodyWeights, tk_less_StudyInitialWeights, by = "USUBJID")
+    joined_BW_df <- merge(tk_less_StudyBodyWeights,
+                          tk_less_StudyInitialWeights,
+                                       by = "USUBJID")
 
 
     # Select specific columns from joined_BW_df
     BW_df_selected_column <- joined_BW_df[, c("USUBJID", "STUDYID", "BWSTRESN", "BWSTRESN_Init")]
-#' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Add "ARMCD","SETCD","SEX" to "selected_df"
 
     STUDYID_less_master_compiledata <- master_compiledata[, c("USUBJID", "ARMCD","SETCD","SEX")]
     BW_df_merged_ARMCD <- merge(BW_df_selected_column, STUDYID_less_master_compiledata, by = "USUBJID")
 
-    #"Recovery animals" cleaning from "BW_df_merged_ARMCD"
-    # #  master_compiledata is alreadyTK animals & Recovery animal cleaned
 
-    # all_present <- all(BW_df_merged_ARMCD$USUBJID %in% master_compiledata$USUBJID)
-    # print(all_present)
-
-
-    # "BWzScore Calculation"
+    # "BWzScore Calculation"~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # Create the finalbodyweight column in merged_recovery_tk_cleaned_dose_ranked_df data frame
     bwzscore_BW_df <- BW_df_merged_ARMCD %>%

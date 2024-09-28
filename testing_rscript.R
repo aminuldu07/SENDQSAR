@@ -113,5 +113,17 @@ time_taken <- end_time - start_time
 print(time_taken)
 #####
 
+####bw##score testing
+######
+rm(list = ls())
+devtools::load_all(".")
+studyid = '10663'
+path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/liver_1.db'
+
+fake_bw <- get_bw_score(studyid,
+                        path_db,
+                        fake_study = TRUE,
+                        master_compiledata = NULL,
+                        return_individual_scores = FALSE)
 
 
