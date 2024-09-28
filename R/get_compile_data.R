@@ -17,9 +17,11 @@ get_compile_data <- function(studyid,
                              path_db,
                              fake_study = FALSE) {
 
+
   studyid <- as.character(studyid)
   path <- path_db
   #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
+
   # Correct way to connect to SQLite database using RSQLite
   con <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
@@ -33,14 +35,22 @@ get_compile_data <- function(studyid,
     domain
   }
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if(fake_study){
+    browser()
   dm <- con_db('dm')
   data.table::setDT(dm)
+
   ts <- con_db('ts')
   data.table::setDT(ts)
+# Fetch species value from ts table where TSPARMCD equals 'SPECIES
 species <- ts$TSVAL[which(ts$TSPARMCD=='SPECIES')]
+
+# Select specific columns from dm
 dm <- dm[,c('STUDYID','USUBJID','SPECIES','SEX','ARMCD','ARM','SETCD')]
+
 dm[,`:=`(Species=species,SPECIES=NULL,ARMCD=ARM,ARM=NULL)]
+
 dm[ARMCD=='Control',`:=`(ARMCD='vehicle')]
 dm <- dm[ARMCD %in% c('vehicle','HD')]
 data.table::setDF(dm)
@@ -325,7 +335,19 @@ data.table::setDF(dm)
       dplyr::rename(ARMCD = DOSE_RANKING)
 
   as.data.frame(master_compiledata)
-    }
+  }
+
+  if(fake_study){
+    dm <- dm
+  } else {
+    master_compiledata <- master_compiledata
+  }
+
+  if (fake_study) {
+    return(dm)
+  } else {
+    return(master_compiledata)
+  }
 }
 
 # test more
