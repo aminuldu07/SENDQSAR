@@ -6,10 +6,9 @@ get_liver_livertobw_score <- function (studyid,
                                        bwzscore_BW = NULL,
                                        return_individual_scores = FALSE){
 
-  # om <- sendigR::genericQuery(dbtoken, queryString = "SELECT * FROM OM WHERE STUDYID = (:1)",
-  #                             queryParams = j)
 
-   path <- path_db
+
+  path <- path_db
   con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
 
   con_db <- function(domain){
@@ -20,21 +19,39 @@ get_liver_livertobw_score <- function (studyid,
                               params=list(x=studyid))
     domain
   }
+  if(fake_study){
+    om <- con_db('om')
+    data.table::setDT(om)
+
+    # Select specific columns from dm
+    om <- om[,c('USUBJID',"OMSPEC" ,"OMSTRESN", "OMTEST")]
+
+  } else{
+    #Pull relevant domain data for each domain
+    om <- con_db('om')
+  }
+
+
+
+
 
   # Check if bwzscore_BW is NULL
-  if (is.null(bwzscore_BW)) {
+  if (is.null(bwzscore_BW) & fake_study == FALSE) {
     # Call the master_compiledata function to generate the data frame
     bwzscore_BW <-  get_bw_score (studyid,
                                path_db,
                                fake_study = FALSE,
                                master_compiledata = NULL,
                                return_individual_scores = TRUE)
+
+  } else if (is.null(bwzscore_BW) & fake_study == TRUE) {
+    # Call the master_compiledata function to generate the data frame
+    bwzscore_BW <-  get_bw_score (studyid,
+                                  path_db,
+                                  fake_study = TRUE,
+                                  master_compiledata = NULL,
+                                  return_individual_scores = TRUE)
   }
-
-
-
-  #Pull relevant domain data for each domain
-  om <- con_db('om')
 
   # Initialize data frames to store the OrganWeights_Liver data
   OrganWeights_Liver <- data.frame(USUBJID = character(0), OMSPEC = character(0), OMSTRESN = numeric(0), OMTEST = character(0))

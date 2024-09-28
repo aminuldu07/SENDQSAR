@@ -25,7 +25,7 @@ get_bw_score <- function(studyid,
                          fake_study = FALSE,
                          master_compiledata = NULL,
                          return_individual_scores = FALSE) {
-browser()
+
 studyid <- as.character(studyid)
 
 path <- path_db
@@ -41,48 +41,16 @@ path <- path_db
 }
 
   if(fake_study){
-    browser()
     bw <- con_db('bw')
     data.table::setDT(bw)
 
-    ts <- con_db('ts')
-    data.table::setDT(ts)
-
-    # Fetch species value from ts table where TSPARMCD equals 'SPECIES
-    species <- ts$TSVAL[which(ts$TSPARMCD=='SPECIES')]
-
     # Select specific columns from dm
-    dm <- dm[,c('STUDYID','USUBJID','SPECIES','SEX','ARMCD','ARM','SETCD')]
-
-    #dm[,data.table::`:=`(Species=species,SPECIES=NULL,ARMCD=ARM,ARM=NULL)]
-
-    # Assuming dm is already defined as a data frame or tibble
-    dm <- dm %>%
-      dplyr::mutate(Species = SPECIES) %>%   # Add or update the Species column
-      dplyr::select(-SPECIES, -ARMCD) %>%  # Remove  ARMCD
-      dplyr::rename(ARMCD = ARM)  %>%   # Rename ARM to ARMCD (if ARMCD is needed)
-      dplyr::select("STUDYID", "USUBJID", "Species","SEX", "ARMCD","SETCD")
-
-    #  Update 'ARMCD' to 'vehicle' where it originally equals 'Control'
-    #dm[ARMCD=='Control',`:=`(ARMCD='vehicle')]
-    dm <- dm %>%
-      dplyr::mutate(ARMCD = dplyr::if_else(ARMCD == 'Control', 'vehicle', ARMCD))
-
-    # Filter 'dm' to include only rows where 'ARMCD' is either 'vehicle' or 'HD'
-    #dm <- dm[ARMCD %in% c('vehicle','HD')]
-    dm <- dm %>%
-      dplyr::filter( ARMCD %in% c("vehicle", "HD"))
-
-    data.table::setDF(dm)
-    return(dm)
-
+    bw <- bw[,c('STUDYID','USUBJID',"BWTESTCD" ,"BWSTRESN", "VISITDY")]
 
   } else{
 
     #Pull relevant domain data for each domain
     bw <- con_db('bw')
-    ts <- con_db('ts')
-
   }
 
 
@@ -95,11 +63,14 @@ path <- path_db
 
 
 
-    Species <- ts$TSVAL[which(ts$TSPARMCD == "SPECIES")]
-    TRTName <- ts$TSVAL[which(ts$TSPARMCD == "TRT")]
-    Duration <-ts$TSVAL[which(ts$TSPARMCD == "DOSDUR")]
+    # Species <- ts$TSVAL[which(ts$TSPARMCD == "SPECIES")]
+    # TRTName <- ts$TSVAL[which(ts$TSPARMCD == "TRT")]
+    # Duration <-ts$TSVAL[which(ts$TSPARMCD == "DOSDUR")]
     # "BodyWeight_zScore" calculation
     # Initial BW weight calculation
+
+  #.................. "BodyWeight_zScore" .....calculation........
+  #................... Initial BW weight calculation..............
 
     StudyInitialWeights <- data.frame("STUDYID" = NA, "USUBJID" = NA,
                                       "BWSTRESN" = NA, "VISITDY" = NA) #,
@@ -201,6 +172,7 @@ path <- path_db
     StudyInitialWeights <- StudyInitialWeights[!duplicated(StudyInitialWeights$USUBJID), ]
 
 
+    #.......................................................................
     # ..........Final day "StudyBodyWeights" calculation.....................
 
     #......(StudyBodyWeights)-(TERMBW)-(BoDY Weigt) calculation...............
@@ -214,7 +186,7 @@ path <- path_db
                                                 stringsAsFactors = FALSE)
 
 
-    if(TRUE) {
+    #if(TRUE) {
       # Get unique USUBJIDs in the current study
       unique_bw_subjids <- unique(bw$USUBJID)
 
@@ -255,7 +227,7 @@ path <- path_db
         # Store Values to "StudyBodyWeights" data frame
         StudyBodyWeights  <- rbind(StudyBodyWeights ,SubjectBodyWeight)
       }
-    }
+    #}
 
     # Remove the first row (initialized with NAs)
     StudyBodyWeights <- StudyBodyWeights[-1, ]
