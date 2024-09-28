@@ -58,13 +58,13 @@ lb_score <- get_lb_score(studyid,
 rm(list = ls())
 #setwd("C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/send-summarizer")
 devtools::load_all(".")
-selected_studies <- c("2170016", "1021-9743")
+#selected_studies <- c("2170016", "1021-9743")
+selected_studies       <- c("8514252")
 path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db'
+
 allscore <- get_liver_om_lb_mi_tox_score_list(selected_studies,
                                                path_db,
                                                fake_study = FALSE,
-                                               #master_compiledata = NULL,
-                                               #bwzscore_BW = NULL,
                                                output_individual_scores = FALSE)
 
 #####
@@ -92,6 +92,8 @@ parallel_repeat_dose_intersec_df <- data.frame(STUDYID = parallel_repeat_dose_in
 rat_STUDYID_ts_species <- sendigR::genericQuery(dbtoken, queryString = "SELECT STUDYID, TSPARMCD, TSVAL
                              FROM ts
                              WHERE TSPARMCD = 'SPECIES' AND UPPER(TSVAL) LIKE '%RAT%'", queryParams = NULL)
+selected_studies <- as.vector(rat_STUDYID_ts_species$STUDYID)
+
 #####
 # # GET the studyidli
 # #selected_studies <- c("20098018")

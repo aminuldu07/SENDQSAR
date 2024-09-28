@@ -1,23 +1,14 @@
-## This code is for getting liver toxicity score from SEND Studyid
-
-## -----------------------------------------------------------------------------
-##   Date                     Programmer
-## ----------   --------------------------------------------------------------
-##   May-07-2024    Md MD Aminul Islam Prodhan (mdaminulislam.prodhan@fda.hhs.gov)
-
-#selected_studies <-  "studyid in selected_studies" #{slected studies should be a vector}
 
 
-#get_liver_om_lb_mi_tox_score_list <- function (selected_studies, dbtoken ) {
+
+
 get_liver_om_lb_mi_tox_score_list <- function (selected_studies,
                                                path_db,
                                                fake_study = FALSE,
-                                               #master_compiledata = NULL,
-                                               #bwzscore_BW = NULL,
                                                output_individual_scores = FALSE) {
 
 # master liverToBW_df
-master_liverToBW <-  data.frame(STUDYID = NULL, avg_liverToBW_zscore = NULL)
+master_liverToBW_avg <-  data.frame(STUDYID = NULL, avg_liverToBW_zscore = NULL)
 
 master_mi_df <- data.frame()
 
@@ -41,7 +32,7 @@ master_error_df <- data.frame(STUDYID = character() ,
                               ErrorMessage = character(),
                               #Time = POSIXct(),
                               stringsAsFactors = FALSE)
-#for (j in selected_studies){
+
 
 for (studyid in selected_studies){
 
