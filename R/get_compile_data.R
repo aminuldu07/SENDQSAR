@@ -35,25 +35,40 @@ get_compile_data <- function(studyid,
     domain
   }
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
   if(fake_study){
-    browser()
-  dm <- con_db('dm')
+   dm <- con_db('dm')
   data.table::setDT(dm)
 
   ts <- con_db('ts')
   data.table::setDT(ts)
-# Fetch species value from ts table where TSPARMCD equals 'SPECIES
-species <- ts$TSVAL[which(ts$TSPARMCD=='SPECIES')]
 
-# Select specific columns from dm
-dm <- dm[,c('STUDYID','USUBJID','SPECIES','SEX','ARMCD','ARM','SETCD')]
+  # Fetch species value from ts table where TSPARMCD equals 'SPECIES
+  species <- ts$TSVAL[which(ts$TSPARMCD=='SPECIES')]
 
-dm[,`:=`(Species=species,SPECIES=NULL,ARMCD=ARM,ARM=NULL)]
+  # Select specific columns from dm
+  dm <- dm[,c('STUDYID','USUBJID','SPECIES','SEX','ARMCD','ARM','SETCD')]
 
-dm[ARMCD=='Control',`:=`(ARMCD='vehicle')]
-dm <- dm[ARMCD %in% c('vehicle','HD')]
-data.table::setDF(dm)
+  #dm[,data.table::`:=`(Species=species,SPECIES=NULL,ARMCD=ARM,ARM=NULL)]
+
+  # Assuming dm is already defined as a data frame or tibble
+  dm <- dm %>%
+  dplyr::mutate(Species = SPECIES) %>%   # Add or update the Species column
+  dplyr::select(-SPECIES, -ARMCD) %>%  # Remove  ARMCD
+  dplyr::rename(ARMCD = ARM)  %>%   # Rename ARM to ARMCD (if ARMCD is needed)
+  dplyr::select("STUDYID", "USUBJID", "Species","SEX", "ARMCD","SETCD")
+
+  #  Update 'ARMCD' to 'vehicle' where it originally equals 'Control'
+  #dm[ARMCD=='Control',`:=`(ARMCD='vehicle')]
+  dm <- dm %>%
+    dplyr::mutate(ARMCD = dplyr::if_else(ARMCD == 'Control', 'vehicle', ARMCD))
+
+  # Filter 'dm' to include only rows where 'ARMCD' is either 'vehicle' or 'HD'
+  #dm <- dm[ARMCD %in% c('vehicle','HD')]
+  dm <- dm %>%
+    dplyr::filter( ARMCD %in% c("vehicle", "HD"))
+
+  data.table::setDF(dm)
   return(dm)
 
 
@@ -68,10 +83,14 @@ data.table::setDF(dm)
   pooldef <- con_db('pooldef')
   pp <- con_db('pp')
 
+ }
+
+
+
 # # Combine into list of assigned name
-  studyData <- list('bw' = bw, 'dm' = dm, 'ds' = ds,
-                    'pooldef' = pooldef,
-                    'ts' = ts,  'tx' = tx, 'pp' = pp)
+  # studyData <- list('bw' = bw, 'dm' = dm, 'ds' = ds,
+  #                   'pooldef' = pooldef,
+  #                   'ts' = ts,  'tx' = tx, 'pp' = pp)
     #..Creation of compilation data...(Compilation of DM Data).........
     # Step-1 :: # CompileData is basically the compilation of DM data
     CompileData <- data.frame(STUDYID = NA, Species = NA,
@@ -335,19 +354,20 @@ data.table::setDF(dm)
       dplyr::rename(ARMCD = DOSE_RANKING)
 
   as.data.frame(master_compiledata)
+  return(master_compiledata)
   }
 
-  if(fake_study){
-    dm <- dm
-  } else {
-    master_compiledata <- master_compiledata
-  }
+  # if(fake_study){
+  #   dm <- dm
+  # } else {
+  #   master_compiledata <- master_compiledata
+  # }
 
-  if (fake_study) {
-    return(dm)
-  } else {
-    return(master_compiledata)
-  }
-}
+  # if (fake_study) {
+  #   return(dm)
+  # } else {
+    #return(master_compiledata)
+  #}
+#}
 
 # test more
