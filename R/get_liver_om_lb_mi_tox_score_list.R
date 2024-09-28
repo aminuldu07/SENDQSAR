@@ -8,7 +8,7 @@ get_liver_om_lb_mi_tox_score_list <- function (selected_studies,
                                                output_individual_scores = FALSE) {
 
 # master liverToBW_df
-master_liverToBW_avg <-  data.frame(STUDYID = NULL, avg_liverToBW_zscore = NULL)
+master_liverToBW <-  data.frame(STUDYID = NULL, avg_liverToBW_zscore = NULL)
 
 master_mi_df <- data.frame()
 
@@ -17,7 +17,7 @@ master_lb_score_six <- data.frame(STUDYID = NULL, avg_alb_zscore = NULL, avg_ast
                              avg_alt_zscore = NULL, avg_bili_zscore = NULL, avg_ggt_zscore = NULL)
 
 # Create FOUR SCORE DATA FRAME for "LiverToBodyweight" , "LB" & "MI" Score
-#FOUR_Liver_Score <-  data.frame(STUDYID = NA, liverToBW = NA, LB_score = NA, MI_score = NA, scored_liverToBW = NA, scored_LBScore = NA)
+FOUR_Liver_Score <-  data.frame(STUDYID = NA, liverToBW = NA, LB_score = NA, MI_score = NA, scored_liverToBW = NA, scored_LBScore = NA)
 
 # Create FOUR SCORE DATA FRAME for "LiverToBodyweight" , "LB" & "MI" Score
 FOUR_Liver_Score_avg <-  data.frame(STUDYID = NA, BWzScore_avg = NA, liverToBW_avg = NA, LB_score_avg = NA, MI_score_avg = NA)
@@ -182,7 +182,8 @@ for (studyid in selected_studies){
                                                        bwzscore_BW = bwzscore_BW ,
                                                        return_individual_scores = TRUE)
 
-      #master_liverToBW <- rbind(master_liverToBW, final_liverToBW_df)
+      master_liverToBW <- rbind(master_liverToBW, HD_liver_zscore_df )
+
     } else {
 
       averaged_liverToBW_df <- get_liver_livertobw_score (studyid, path_db,
@@ -236,8 +237,8 @@ for (studyid in selected_studies){
                                      master_compiledata = master_compiledata,
                                      return_individual_scores = TRUE)
 
-    #master_lbxx_list[[j]] <- lb_score_final_list
-    master_lb_score_six <- rbind(master_lb_score_six ,master_lb_scores)
+
+    master_lb_score_six <- rbind(master_lb_score_six , master_lb_scores)
 
     } else {
 
@@ -355,8 +356,8 @@ if (output_individual_scores ) {
    if (output_individual_scores) {
     return(list(master_liverToBW = master_liverToBW,
               master_lb_score_six = master_lb_score_six,
-              master_mi_df  = master_mi_df,
-              master_error_df = master_error_df))
+              master_mi_df  = master_mi_df))
+             # master_error_df = master_error_df))
    } else {
    return(FOUR_Liver_Score_avg)
   }

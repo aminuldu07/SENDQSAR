@@ -123,10 +123,17 @@ get_liver_livertobw_score <- function (studyid,
     dplyr::select(STUDYID, USUBJID,  ARMCD, liverToBW_zscore)
 
   if (return_individual_scores) {
+
     HD_liver_zscore_df <- HD_liver_zscore %>%
-      dplyr::mutate(liverToBW_zscore = ifelse(liverToBW_zscore >= 3, 3,
-                                                  ifelse(liverToBW_zscore >= 2, 2,
-                                                         ifelse(liverToBW_zscore >= 1, 1, 0))))
+      dplyr::group_by(STUDYID) %>%
+      dplyr::mutate(liverToBW_zscore = replace(liverToBW_zscore,
+                                               is.infinite(liverToBW_zscore), NA)) %>%
+      dplyr::summarize(avg_liverToBW_zscore = mean(liverToBW_zscore, na.rm = TRUE))%>%
+      dplyr::mutate(avg_liverToBW_zscore = abs(avg_liverToBW_zscore))  %>%
+      dplyr::select(STUDYID, avg_liverToBW_zscore) %>%
+      dplyr::mutate(avg_liverToBW_zscore = ifelse(avg_liverToBW_zscore >= 3, 3,
+                                                  ifelse(avg_liverToBW_zscore >= 2, 2,
+                                                         ifelse(avg_liverToBW_zscore >= 1, 1, 0))))
 
 
   } else {
