@@ -6,33 +6,46 @@ get_liver_om_lb_mi_tox_score_list <- function (selected_studies,
                                                path_db,
                                                fake_study = FALSE,
                                                output_individual_scores = FALSE) {
+if(output_individual_scores ) {
+  # master liverToBW_df
+  master_liverToBW <-  data.frame(STUDYID = NULL, avg_liverToBW_zscore = NULL)
 
-# master liverToBW_df
-master_liverToBW <-  data.frame(STUDYID = NULL, avg_liverToBW_zscore = NULL)
+  master_mi_df <- data.frame()
 
-master_mi_df <- data.frame()
+  # Master LB list
+  master_lb_score_six <- data.frame(STUDYID = NULL, avg_alb_zscore = NULL, avg_ast_zscore = NULL, avg_alp_zscore = NULL,
+                                    avg_alt_zscore = NULL, avg_bili_zscore = NULL, avg_ggt_zscore = NULL)
 
-# Master LB list
-master_lb_score_six <- data.frame(STUDYID = NULL, avg_alb_zscore = NULL, avg_ast_zscore = NULL, avg_alp_zscore = NULL,
-                             avg_alt_zscore = NULL, avg_bili_zscore = NULL, avg_ggt_zscore = NULL)
+  # Create FOUR SCORE DATA FRAME for "LiverToBodyweight" , "LB" & "MI" Score
+  FOUR_Liver_Score <-  data.frame(STUDYID = NA, liverToBW = NA, LB_score = NA, MI_score = NA, scored_liverToBW = NA, scored_LBScore = NA)
 
-# Create FOUR SCORE DATA FRAME for "LiverToBodyweight" , "LB" & "MI" Score
-FOUR_Liver_Score <-  data.frame(STUDYID = NA, liverToBW = NA, LB_score = NA, MI_score = NA, scored_liverToBW = NA, scored_LBScore = NA)
+  # Initialize an empty data frame to store the names of studies with errors
+  Error_studies <- list()
 
-# Create FOUR SCORE DATA FRAME for "LiverToBodyweight" , "LB" & "MI" Score
-FOUR_Liver_Score_avg <-  data.frame(STUDYID = NA, BWzScore_avg = NA, liverToBW_avg = NA, LB_score_avg = NA, MI_score_avg = NA)
+  # Initialize the master error data frame to have the details of the errors
+  #master_error_df <- data.frame(STUDYID = character() , Block = character(), ErrorMessage = character(), Time = POSIXct(), stringsAsFactors = FALSE)
+  master_error_df <- data.frame(STUDYID = character() ,
+                                Block = character(),
+                                ErrorMessage = character(),
+                                #Time = POSIXct(),
+                                stringsAsFactors = FALSE)
 
-# Initialize an empty data frame to store the names of studies with errors
-Error_studies <- list()
 
-# Initialize the master error data frame to have the details of the errors
-#master_error_df <- data.frame(STUDYID = character() , Block = character(), ErrorMessage = character(), Time = POSIXct(), stringsAsFactors = FALSE)
-master_error_df <- data.frame(STUDYID = character() ,
-                              Block = character(),
-                              ErrorMessage = character(),
-                              #Time = POSIXct(),
-                              stringsAsFactors = FALSE)
+} else {
+  # Create FOUR SCORE DATA FRAME for "LiverToBodyweight" , "LB" & "MI" Score
+  FOUR_Liver_Score_avg <-  data.frame(STUDYID = NA, BWzScore_avg = NA, liverToBW_avg = NA, LB_score_avg = NA, MI_score_avg = NA)
 
+  # Initialize an empty data frame to store the names of studies with errors
+  Error_studies <- list()
+
+  # Initialize the master error data frame to have the details of the errors
+  #master_error_df <- data.frame(STUDYID = character() , Block = character(), ErrorMessage = character(), Time = POSIXct(), stringsAsFactors = FALSE)
+  master_error_df <- data.frame(STUDYID = character() ,
+                                Block = character(),
+                                ErrorMessage = character(),
+                                #Time = POSIXct(),
+                                stringsAsFactors = FALSE)
+}
 
 for (studyid in selected_studies){
 
@@ -76,7 +89,7 @@ for (studyid in selected_studies){
   if (!first_block_success) {
 
     # Append STUDYID  to the error_studies list
-    Error_studies <<- c(Error_studies, studyid)
+    Error_studies <- c(Error_studies, studyid)
 
     next
   }
@@ -356,8 +369,9 @@ if (output_individual_scores ) {
    if (output_individual_scores) {
     return(list(master_liverToBW = master_liverToBW,
               master_lb_score_six = master_lb_score_six,
-              master_mi_df  = master_mi_df))
-             # master_error_df = master_error_df))
+              master_mi_df  = master_mi_df,
+              Error_studies =  Error_studies,
+              master_error_df = master_error_df))
    } else {
    return(FOUR_Liver_Score_avg)
   }
