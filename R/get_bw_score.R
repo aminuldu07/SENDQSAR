@@ -31,8 +31,10 @@ studyid <- as.character(studyid)
 path <- path_db
 
 
-  if (fake_study == TRUE & use_xpt_file == FALSE) {
+  if (fake_study == TRUE && use_xpt_file == FALSE) {
     # Code for when fake_study is TRUE and use_xpt_file is FALSE
+    # fake study is in sqlite database
+    # Reads from an SQLite database for the fake study.
     con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
     con_db <- function(domain){
       domain <- toupper(domain)
@@ -49,16 +51,15 @@ path <- path_db
     # Select specific columns from dm
     bw <- bw[,c('STUDYID','USUBJID',"BWTESTCD" ,"BWSTRESN", "VISITDY")]
 
-  } else if (fake_study == TRUE & use_xpt_file == TRUE) {
+  } else if (fake_study == TRUE && use_xpt_file == TRUE) {
     # Code for when fake_study is TRUE and use_xpt_file is TRUE
+    # Reads from an .xpt file for the fake study.
 
     bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
 
 
-  } else if (fake_study == FALSE & use_xpt_file == TRUE) {
-    # Code for when fake_study is FALSE and use_xpt_file is TRUE
-
-  } else {
+  } else if (fake_study == FALSE && use_xpt_file == FALSE) {
+    # Reads from an SQLite database for the real study.
     # Code for the remaining case (i.e., fake_study is FALSE and use_xpt_file is FALSE)
 
     con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
@@ -73,7 +74,15 @@ path <- path_db
 
     #Pull relevant domain data for each domain
     bw <- con_db('bw')
+
+  } else if (fake_study == FALSE && use_xpt_file == TRUE) {
+    # Reads from an .xpt file for the real study.
+    # Code for when fake_study is FALSE and use_xpt_file is TRUE
+    bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
   }
+
+
+
 
   #.................. "BodyWeight_zScore" .....calculation........
   #................... Initial BW weight calculation..............
