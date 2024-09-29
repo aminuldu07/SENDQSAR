@@ -24,49 +24,56 @@ get_bw_score <- function(studyid,
                          path_db,
                          fake_study = FALSE,
                          master_compiledata = NULL,
-                         return_individual_scores = FALSE) {
-
+                         return_individual_scores = FALSE,
+                         use_xpt_file = FALSE) {
+#browser()
 studyid <- as.character(studyid)
 path <- path_db
-con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
 
-  con_db <- function(domain){
-    domain <- toupper(domain)
-    stat <- paste0('SELECT * FROM ', domain, " WHERE STUDYID = (:x)")
-    domain <- DBI::dbGetQuery(con,
-                              statement = stat,
-                              params=list(x=studyid))
-    domain
-}
 
-  if(fake_study){
+  if (fake_study == TRUE & use_xpt_file == FALSE) {
+    # Code for when fake_study is TRUE and use_xpt_file is FALSE
+    con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
+    con_db <- function(domain){
+      domain <- toupper(domain)
+      stat <- paste0('SELECT * FROM ', domain, " WHERE STUDYID = (:x)")
+      domain <- DBI::dbGetQuery(con,
+                                statement = stat,
+                                params=list(x=studyid))
+      domain
+    }
+
     bw <- con_db('bw')
     data.table::setDT(bw)
 
     # Select specific columns from dm
     bw <- bw[,c('STUDYID','USUBJID',"BWTESTCD" ,"BWSTRESN", "VISITDY")]
 
-  } else{
+  } else if (fake_study == TRUE & use_xpt_file == TRUE) {
+    # Code for when fake_study is TRUE and use_xpt_file is TRUE
+
+    bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
+
+
+  } else if (fake_study == FALSE & use_xpt_file == TRUE) {
+    # Code for when fake_study is FALSE and use_xpt_file is TRUE
+
+  } else {
+    # Code for the remaining case (i.e., fake_study is FALSE and use_xpt_file is FALSE)
+
+    con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
+    con_db <- function(domain){
+      domain <- toupper(domain)
+      stat <- paste0('SELECT * FROM ', domain, " WHERE STUDYID = (:x)")
+      domain <- DBI::dbGetQuery(con,
+                                statement = stat,
+                                params=list(x=studyid))
+      domain
+    }
 
     #Pull relevant domain data for each domain
     bw <- con_db('bw')
   }
-
-
-
-  #Pull relevant domain data for each domain
-  # bw <- con_db('bw')
-  # ts <- con_db('ts')
-  # pooldef <- con_db('pooldef')
-  # pp <- con_db('pp')
-
-
-
-    # Species <- ts$TSVAL[which(ts$TSPARMCD == "SPECIES")]
-    # TRTName <- ts$TSVAL[which(ts$TSPARMCD == "TRT")]
-    # Duration <-ts$TSVAL[which(ts$TSPARMCD == "DOSDUR")]
-    # "BodyWeight_zScore" calculation
-    # Initial BW weight calculation
 
   #.................. "BodyWeight_zScore" .....calculation........
   #................... Initial BW weight calculation..............
@@ -266,23 +273,41 @@ con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
 #'  #<><><><><><><><><><><><><><><><>... Remove TK animals and Recovery animals......<><><><><><>.............
     #<><><><><><><><> master_compiledata is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
 
-    #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    if (is.null(master_compiledata) & fake_study == TRUE) {
-      # Call the master_compiledata function to generate the data frame for fake study
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = TRUE)
-    } else if (is.null(master_compiledata) & fake_study == FALSE) {
-      # Call the master_compiledata function to generate the data frame for real study
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = FALSE)
-    } else {
-      # If master_compiledata is already set, no action needed
-      master_compiledata = master_compiledata
-    }
+    #' #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #'
+    #' if (is.null(master_compiledata) & fake_study == TRUE) {
+    #'   # Call the master_compiledata function to generate the data frame for fake study
+    #'   master_compiledata <- get_compile_data(studyid, path_db, fake_study = TRUE, use_xpt_file = FALSE)
+    #'
+    #' } else if (is.null(master_compiledata) & fake_study == FALSE) {
+    #'   # Call the master_compiledata function to generate the data frame for real study
+    #'   master_compiledata <- get_compile_data(studyid, path_db, fake_study = FALSE)
+    #' } else {
+    #'   # If master_compiledata is already set, no action needed
+    #'   master_compiledata = master_compiledata
+    #' }
 
     #' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+    if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
+      # Call the master_compiledata function to generate the data frame for fake study
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = TRUE, use_xpt_file == FALSE)
 
+    } else if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == TRUE) {
+      # Call the master_compiledata function to generate the data frame for fake study using xpt file
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = TRUE, use_xpt_file == TRUE)
 
+    } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == TRUE) {
+      # Call the master_compiledata function for real study using xpt file
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = FALSE, use_xpt_file == TRUE)
+
+      } else {
+      # If master_compiledata is already set, no action needed
+      #master_compiledata = master_compiledata
+        # No action needed if master_compiledata is already set
+    }
+
+    #' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #Substract TK animals from the "StudyInitialWeights" and StudyBodyWeights" data frame
     #tk_less_StudyBodyWeights <- StudyBodyWeights[!(StudyBodyWeights$USUBJID %in% tK_animals_df$USUBJID),]
 

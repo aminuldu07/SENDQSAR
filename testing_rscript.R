@@ -124,7 +124,8 @@ fake_bw <- get_bw_score(studyid,
                         path_db,
                         fake_study = TRUE,
                         master_compiledata = NULL,
-                        return_individual_scores = FALSE)
+                        return_individual_scores = FALSE,
+                        use_xpt_file = FALSE)
 
 fake_bwliverwRatio <- get_liver_livertobw_score(studyid,
                                        path_db,
@@ -158,26 +159,31 @@ rm(list = ls())
 devtools::load_all(".")
 
 path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/FAKE10663'
-
-fake_xpt_compiltdata <- get_compile_data(studyid = NULL,
-                                                path_db,
-                                                fake_study = TRUE,
-                                                use_xpt_file = TRUE)
-
-
-studyid = '10663'
-path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/liver_1.db'
-fake_compiledata <- get_compile_data(studyid,
-                                                 path_db,
-                                                 fake_study = TRUE,
-                                                 use_xpt_file = FALSE)
-
-
+#
+# fake_xpt_compiltdata <- get_compile_data(studyid = NULL,
+#                                                 path_db,
+#                                                 fake_study = TRUE,
+#                                                 use_xpt_file = TRUE)
+#
+#
+# studyid = '10663'
+# path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/liver_1.db'
+# fake_compiledata <- get_compile_data(studyid,
+#                                                  path_db,
+#                                                  fake_study = TRUE,
+#                                                  use_xpt_file = FALSE)
 
 
 
 
 
+
+fake_bw_xpt <- get_bw_score(studyid = NULL,
+                        path_db,
+                        fake_study = TRUE,
+                        master_compiledata = NULL,
+                        return_individual_scores = FALSE,
+                        use_xpt_file = TRUE)
 
 
 
