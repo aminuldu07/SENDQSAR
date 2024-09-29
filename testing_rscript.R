@@ -145,3 +145,46 @@ fake_mi_score <- get_mi_score (studyid,
                                           fake_study=TRUE,
                                           master_compiledata = NULL,
                                           return_individual_scores = TRUE)
+
+### xpt--file input system testing
+end_time <- Sys.time()
+time_taken <- end_time - start_time
+print(time_taken)
+#####
+
+####bw##score testing
+######
+rm(list = ls())
+devtools::load_all(".")
+studyid = '10663'
+path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/FAKE10663'
+
+xpt_compiltdata <- get_compile_data(studyid = NULL,
+                                                path_db,
+                                                fake_study = TRUE,
+                                                use_xpt_file = TRUE)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

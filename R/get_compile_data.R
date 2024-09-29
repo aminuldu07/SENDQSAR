@@ -13,31 +13,15 @@
 #' }
 #' @export
 
-get_compile_data <- function(studyid,
+get_compile_data <- function(studyid = NULL,
                              path_db,
                              fake_study = FALSE,
                              use_xpt_file = FALSE) {
 
-if (use_xpt_file ==TRUE) {
-  studyid <- "something important"
 
-} else {
   studyid <- as.character(studyid)
-}
   path <- path_db
-  #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
-  # Correct way to connect to SQLite database using RSQLite
-  con <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
-# function for domain
-  con_db <- function(domain){
-    domain <- toupper(domain)
-    stat <- paste0('SELECT * FROM ', domain, " WHERE STUDYID = (:x)")
-    domain <- DBI::dbGetQuery(con,
-                              statement = stat,
-                              params=list(x=studyid))
-    domain
-  }
 
 
   if(fake_study == TRUE & use_xpt_file == FALSE){
@@ -77,15 +61,33 @@ if (use_xpt_file ==TRUE) {
 
 
   } else if(fake_study == TRUE & use_xpt_file == TRUE) {
-
+browser()
   # get the required domain
-    bw <- haven::read_xpt(fs::path(xpt_dir,'bw.xpt'))
-    dm <- haven::read_xpt(fs::path(xpt_dir,'dm.xpt'))
-    ds <- haven::read_xpt(fs::path(xpt_dir,'ds.xpt'))
-    ts <- haven::read_xpt(fs::path(xpt_dir,'ts.xpt'))
-    tx <- haven::read_xpt(fs::path(xpt_dir,'tx.xpt'))
+    bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
+    dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
+    ts <- haven::read_xpt(fs::path(path,'ts.xpt'))
+    tx <- haven::read_xpt(fs::path(path,'tx.xpt'))
+
+    ## IN case of FAKE DATA, POOLDEF, DS AND PP ARE ABSENT
+    ## THEREFORE, BELOW ELSE CONDITONS ARE EXECUTED
+    ## MEANING EMPTY TK_ANIMAL_DF CREATED
+    ##### DS DOMAIN FOR THE RECOVERY ANIMALS
 
   } else {
+    # For the sqlite database option
+    #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
+    # Correct way to connect to SQLite database using RSQLite
+    con <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+
+    # function for domain
+    con_db <- function(domain){
+      domain <- toupper(domain)
+      stat <- paste0('SELECT * FROM ', domain, " WHERE STUDYID = (:x)")
+      domain <- DBI::dbGetQuery(con,
+                                statement = stat,
+                                params=list(x=studyid))
+      domain
+    }
 
 #Pull relevant domain data for each domain
   bw <- con_db('bw')
@@ -151,23 +153,57 @@ if (use_xpt_file ==TRUE) {
     ## cat("Displaying unique values in ds$DSDECOD before filtering :\n")
     ## print(unique(ds$DSDECOD))
 
-    # filter for specific "DSDECOD" values...( Keep the mentioned four ) ...
-    filtered_ds <- ds %>%
-      dplyr::filter(DSDECOD %in% c('TERMINAL SACRIFICE',
-                                   'MORIBUND SACRIFICE',
-                                   'REMOVED FROM STUDY ALIVE',
-                                   'NON-MORIBUND SACRIFICE'))
-    # check the unique value in "DSDECOD" column
-    ## cat("Displaying unique values in ds$DSDECOD after filtering:\n")
-    ## print(unique(filtered_ds$DSDECOD))
+    if (!exists("ds") || is.null(ds) || nrow(ds) == 0) {
+      # If 'ds' is not present, null, or empty, proceed without filtering based on 'ds'
+      recovery_cleaned_CompileData <- CompileData
+    } else {
+      # If 'ds' exists, filter for specific "DSDECOD" values
+      filtered_ds <- ds %>%
+        dplyr::filter(DSDECOD %in% c('TERMINAL SACRIFICE',
+                                     'MORIBUND SACRIFICE',
+                                     'REMOVED FROM STUDY ALIVE',
+                                     'NON-MORIBUND SACRIFICE'))
 
-    #Filter "CompileData" to keep rows where USUBJID is in "filtered_ds"~~
+      # Filter 'CompileData' based on the 'USUBJID' values in 'filtered_ds'
+      recovery_cleaned_CompileData <- CompileData %>%
+        dplyr::filter(USUBJID %in% filtered_ds$USUBJID)
+    }
 
-    # Filter "CompileData" to keep rows where USUBJID is in "filtered_ds"
-  # meaning removing recovery animals
-    recovery_cleaned_CompileData <- CompileData %>%
-      dplyr::filter(USUBJID %in% filtered_ds$USUBJID)
 
+  #   if(!is.null(ds) && nrow(ds) > 0) {
+  #
+  #   # filter for specific "DSDECOD" values...( Keep the mentioned four ) ...
+  #   filtered_ds <- ds %>%
+  #     dplyr::filter(DSDECOD %in% c('TERMINAL SACRIFICE',
+  #                                  'MORIBUND SACRIFICE',
+  #                                  'REMOVED FROM STUDY ALIVE',
+  #                                  'NON-MORIBUND SACRIFICE'))
+  #   # check the unique value in "DSDECOD" column
+  #   ## cat("Displaying unique values in ds$DSDECOD after filtering:\n")
+  #   ## print(unique(filtered_ds$DSDECOD))
+  #
+  #   #Filter "CompileData" to keep rows where USUBJID is in "filtered_ds"~~
+  #
+  #   # Filter "CompileData" to keep rows where USUBJID is in "filtered_ds"
+  # # meaning removing recovery animals
+  #   recovery_cleaned_CompileData <- CompileData %>%
+  #     dplyr::filter(USUBJID %in% filtered_ds$USUBJID)
+  #
+  #   } else {
+  #     # If ds is NULL or empty, return CompileData as is
+  #     recovery_cleaned_CompileData <- CompileData
+  #   }
+  #
+    if ((!exists("pp") || is.null(pp) || nrow(pp) == 0) &&
+        (!exists("pooldef") || is.null(pooldef) || nrow(pooldef) == 0))  {
+      # Create a empty data frame named "tK_animals_df"
+      tK_animals_df <- data.frame(PP_PoolID = character(),
+                                  STUDYID = character(),
+                                  USUBJID = character(),
+                                  POOLID = character(),
+                                  stringsAsFactors = FALSE)
+
+    } else {
 
     # Step-3 :: # REMOVE THE TK ANIMALS IF SPECIES IS RAT from the
    # "recovery_cleaned_CompileData"
@@ -192,7 +228,7 @@ if (use_xpt_file ==TRUE) {
 
       # Check if TKPools is not empty
       if (length(TKPools) > 0) {
-# For each pool ID in TKPools, retrieve corresponding rows from pooldef table
+      # For each pool ID in TKPools, retrieve corresponding rows from pooldef table
         for (pool_id in TKPools) {
           pooldef_data <- pooldef[pooldef$POOLID == pool_id, ]
 
@@ -227,9 +263,10 @@ if (use_xpt_file ==TRUE) {
                                   stringsAsFactors = FALSE)
     }
 
+  }
 
     # Subtract "TK_animals_df" data from the "recovery_cleaned_CompileData"
- cleaned_CompileData <- recovery_cleaned_CompileData[
+    cleaned_CompileData <- recovery_cleaned_CompileData[
    !(recovery_cleaned_CompileData$USUBJID %in% tK_animals_df$USUBJID),]
 
 
