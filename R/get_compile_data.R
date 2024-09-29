@@ -24,6 +24,7 @@ get_compile_data <- function(studyid = NULL,
 
 
   if(fake_study == TRUE & use_xpt_file == FALSE){
+    # Code for when fake_study is TRUE and use_xpt_file is FALSE~~~~~~~~~~
     # For the sqlite database option
     #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
     # Correct way to connect to SQLite database using RSQLite
@@ -74,6 +75,7 @@ get_compile_data <- function(studyid = NULL,
 
 
   } else if(fake_study == TRUE & use_xpt_file == TRUE) {
+    # Code for when fake_study is TRUE and use_xpt_file is TRUE
 
   # get the required domain
     #bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
@@ -122,6 +124,10 @@ get_compile_data <- function(studyid = NULL,
     ## MEANING EMPTY TK_ANIMAL_DF CREATED
     ##### DS DOMAIN FOR THE RECOVERY ANIMALS
 
+  } else if(fake_study == FALSE & use_xpt_file == TRUE) {
+    # Code for when fake_study is FALSE and use_xpt_file is TRUE
+
+
   } else {
     # For the sqlite database option
     #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
@@ -149,11 +155,6 @@ get_compile_data <- function(studyid = NULL,
  }
 
 
-
-# # Combine into list of assigned name
-  # studyData <- list('bw' = bw, 'dm' = dm, 'ds' = ds,
-  #                   'pooldef' = pooldef,
-  #                   'ts' = ts,  'tx' = tx, 'pp' = pp)
     #..Creation of compilation data...(Compilation of DM Data).........
     # Step-1 :: # CompileData is basically the compilation of DM data
     CompileData <- data.frame(STUDYID = NA, Species = NA,
