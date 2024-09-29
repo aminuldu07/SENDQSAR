@@ -135,5 +135,9 @@ fake_bwliverwRatio <- get_liver_livertobw_score(studyid,
 
 
 
-
+fake_lb_score <- get_lb_score (studyid,
+                                          path_db,
+                                          fake_study= TRUE,
+                                          master_compiledata = NULL,
+                                          return_individual_scores = TRUE)
 

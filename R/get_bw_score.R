@@ -27,9 +27,8 @@ get_bw_score <- function(studyid,
                          return_individual_scores = FALSE) {
 
 studyid <- as.character(studyid)
-
 path <- path_db
-  con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
+con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
 
   con_db <- function(domain){
     domain <- toupper(domain)
@@ -369,3 +368,4 @@ path <- path_db
     }
 
 }
+
