@@ -8,7 +8,8 @@ compile_data <- get_compile_data(studyid='876', path_db='C:/Users/mdaminulisla.p
 
 fake_compile_data <- get_compile_data(studyid = '10663',
                                       path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/liver_1.db',
-                                      fake_study = TRUE)
+                                      fake_study = TRUE,
+                                      use_xpt_file = FALSE)
 
 
 #dbtoken

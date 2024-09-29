@@ -21,28 +21,29 @@ get_compile_data <- function(studyid = NULL,
   studyid <- as.character(studyid)
   path <- path_db
 
-
-
   if(fake_study == TRUE & use_xpt_file == FALSE){
-    # Code for when fake_study is TRUE and use_xpt_file is FALSE~~~~~~~~~~
-    # For the sqlite database option
-    #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
-    # Correct way to connect to SQLite database using RSQLite
-    con <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+    # Establish a connection to the SQLite database
+    db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
-    con_db <- function(domain){
-      domain <- toupper(domain)
-      stat <- paste0('SELECT * FROM ', domain, " WHERE STUDYID = (:x)")
-      domain <- DBI::dbGetQuery(con,
-                                statement = stat,
-                                params=list(x=studyid))
-      domain
+    #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
+
+    # Define a function to query the database by domain
+    fetch_domain_data <- function(connection, domain_name, studyid) {
+      domain_name <- toupper(domain_name)
+      query_statement <- paste0('SELECT * FROM ', domain_name, " WHERE STUDYID = :x")
+      query_result <- DBI::dbGetQuery(db_connection, statement = query_statement, params = list(x = studyid))
+      query_result
     }
 
-   dm <- con_db('dm')
+    # Fetch data for the 'dm' domain
+    dm <- fetch_domain_data(db_connection, 'dm', studyid)
+
+
   data.table::setDT(dm)
 
-  ts <- con_db('ts')
+  # Fetch data for the 'ts' domain
+  ts <- fetch_domain_data(db_connection, 'ts', studyid)
+
   data.table::setDT(ts)
 
   # Fetch species value from ts table where TSPARMCD equals 'SPECIES
@@ -75,7 +76,6 @@ get_compile_data <- function(studyid = NULL,
 
 
   } else if(fake_study == TRUE & use_xpt_file == TRUE) {
-    # Code for when fake_study is TRUE and use_xpt_file is TRUE
 
   # get the required domain
     #bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
@@ -119,41 +119,48 @@ get_compile_data <- function(studyid = NULL,
     data.table::setDF(dm)
     return(dm)
 
-    ## IN case of FAKE DATA, POOLDEF, DS AND PP ARE ABSENT
-    ## THEREFORE, BELOW ELSE CONDITONS ARE EXECUTED
-    ## MEANING EMPTY TK_ANIMAL_DF CREATED
-    ##### DS DOMAIN FOR THE RECOVERY ANIMALS
-
-  } else if(fake_study == FALSE & use_xpt_file == TRUE) {
-    # Code for when fake_study is FALSE and use_xpt_file is TRUE
+    ## {{{ IN case of FAKE DATA, dm are exported as master_compileDAT
+    ## THerfore, where is the tk_animals and recover animals data }}}
 
 
-  } else {
-    # For the sqlite database option
+  } else if(fake_study == FALSE & use_xpt_file == FALSE) {
+
+    # Establish a connection to the SQLite database
+    db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+
     #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
-    # Correct way to connect to SQLite database using RSQLite
-    con <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
-    con_db <- function(domain){
-      domain <- toupper(domain)
-      stat <- paste0('SELECT * FROM ', domain, " WHERE STUDYID = (:x)")
-      domain <- DBI::dbGetQuery(con,
-                                statement = stat,
-                                params=list(x=studyid))
-      domain
+    # Define a function to query the database by domain
+    fetch_domain_data <- function(connection, domain_name, studyid) {
+      domain_name <- toupper(domain_name)
+      query_statement <- paste0('SELECT * FROM ', domain_name, " WHERE STUDYID = :x")
+      query_result <- DBI::dbGetQuery(db_connection, statement = query_statement, params = list(x = studyid))
+      query_result
     }
 
-#Pull relevant domain data for each domain
-  bw <- con_db('bw')
-  dm <- con_db('dm')
-  ds <- con_db('ds')
-  ts <- con_db('ts')
-  tx <- con_db('tx')
-  pooldef <- con_db('pooldef')
-  pp <- con_db('pp')
+    # Fetch data for the 'dm' domain
+    #Pull relevant domain data for each domain
+    bw <- fetch_domain_data(db_connection, 'bw', studyid)
+    dm <- fetch_domain_data(db_connection, 'dm', studyid)
+    ds <- fetch_domain_data(db_connection, 'ds', studyid)
+    ts <- fetch_domain_data(db_connection, 'ts', studyid)
+    tx <- fetch_domain_data(db_connection, 'tx', studyid)
+    pp <- fetch_domain_data(db_connection, 'pp', studyid)
+    pooldef <- fetch_domain_data(db_connection, 'pooldef', studyid)
+
+
+  } else if (fake_study == FALSE & use_xpt_file == TRUE) {
+
+    # get the required domain
+    bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
+    dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
+    ds <- haven::read_xpt(fs::path(path,'ds.xpt'))
+    ts <- haven::read_xpt(fs::path(path,'ts.xpt'))
+    tx <- haven::read_xpt(fs::path(path,'tx.xpt'))
+    pp <- haven::read_xpt(fs::path(path,'pp.xpt'))
+    pooldef <- haven::read_xpt(fs::path(path,'pooldef.xpt'))
 
  }
-
 
     #..Creation of compilation data...(Compilation of DM Data).........
     # Step-1 :: # CompileData is basically the compilation of DM data
