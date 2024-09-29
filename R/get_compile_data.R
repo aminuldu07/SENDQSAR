@@ -15,13 +15,17 @@
 
 get_compile_data <- function(studyid,
                              path_db,
-                             fake_study = FALSE) {
+                             fake_study = FALSE,
+                             use_xpt_file = FALSE) {
 
+if (use_xpt_file ==TRUE) {
+  studyid <- "something important"
 
+} else {
   studyid <- as.character(studyid)
+}
   path <- path_db
   #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
-
   # Correct way to connect to SQLite database using RSQLite
   con <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
@@ -36,7 +40,7 @@ get_compile_data <- function(studyid,
   }
 
 
-  if(fake_study){
+  if(fake_study == TRUE & use_xpt_file == FALSE){
    dm <- con_db('dm')
   data.table::setDT(dm)
 
@@ -72,7 +76,16 @@ get_compile_data <- function(studyid,
   return(dm)
 
 
-  } else{
+  } else if(fake_study == TRUE & use_xpt_file == TRUE) {
+
+  # get the required domain
+    bw <- haven::read_xpt(fs::path(xpt_dir,'bw.xpt'))
+    dm <- haven::read_xpt(fs::path(xpt_dir,'dm.xpt'))
+    ds <- haven::read_xpt(fs::path(xpt_dir,'ds.xpt'))
+    ts <- haven::read_xpt(fs::path(xpt_dir,'ts.xpt'))
+    tx <- haven::read_xpt(fs::path(xpt_dir,'tx.xpt'))
+
+  } else {
 
 #Pull relevant domain data for each domain
   bw <- con_db('bw')
