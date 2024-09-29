@@ -20,11 +20,39 @@ get_mi_score <- function(studyid,
                          master_compiledata = NULL,
                          return_individual_scores = FALSE) {
 
+# studyid <- as.character(studyid)
+# path <- path_db
+# con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
+# mi <- DBI::dbGetQuery(con, statement = "SELECT * FROM MI WHERE STUDYID = (:x)",
+#                         params = list(x=studyid))
+
 studyid <- as.character(studyid)
 path <- path_db
-  con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
-  mi <- DBI::dbGetQuery(con, statement = "SELECT * FROM MI WHERE STUDYID = (:x)",
-                        params = list(x=studyid))
+con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
+
+con_db <- function(domain){
+  domain <- toupper(domain)
+  stat <- paste0('SELECT * FROM ', domain, " WHERE STUDYID = (:x)")
+  domain <- DBI::dbGetQuery(con,
+                            statement = stat,
+                            params=list(x=studyid))
+  domain
+}
+
+if(fake_study){
+  mi <- con_db('mi')
+  data.table::setDT(mi)
+
+  # Select specific columns from lb
+  # lb <- lb[,c('STUDYID','USUBJID',"LBSPEC","LBTESTCD",
+  #             "LBSTRESN", "VISITDY")]
+
+} else{
+
+  #Pull relevant domain data for each domain
+  mi <- con_db('mi')
+}
+
 
   # Initialize the  MI_final_score DATA FRAME
     MI_final_score <- data.frame( STUDYID = unique(mi$STUDYID), avg_MI_score = NA )
