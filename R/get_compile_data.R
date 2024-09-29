@@ -18,13 +18,26 @@ get_compile_data <- function(studyid = NULL,
                              fake_study = FALSE,
                              use_xpt_file = FALSE) {
 
-
   studyid <- as.character(studyid)
   path <- path_db
 
 
 
   if(fake_study == TRUE & use_xpt_file == FALSE){
+    # For the sqlite database option
+    #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
+    # Correct way to connect to SQLite database using RSQLite
+    con <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+
+    con_db <- function(domain){
+      domain <- toupper(domain)
+      stat <- paste0('SELECT * FROM ', domain, " WHERE STUDYID = (:x)")
+      domain <- DBI::dbGetQuery(con,
+                                statement = stat,
+                                params=list(x=studyid))
+      domain
+    }
+
    dm <- con_db('dm')
   data.table::setDT(dm)
 
@@ -61,12 +74,48 @@ get_compile_data <- function(studyid = NULL,
 
 
   } else if(fake_study == TRUE & use_xpt_file == TRUE) {
-browser()
+
   # get the required domain
-    bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
+    #bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
     dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
     ts <- haven::read_xpt(fs::path(path,'ts.xpt'))
-    tx <- haven::read_xpt(fs::path(path,'tx.xpt'))
+   # tx <- haven::read_xpt(fs::path(path,'tx.xpt'))
+
+    #dm <- con_db('dm')
+    dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
+    data.table::setDT(dm)
+
+    #ts <- con_db('ts')
+    ts <- haven::read_xpt(fs::path(path,'ts.xpt'))
+    data.table::setDT(ts)
+
+    # Fetch species value from ts table where TSPARMCD equals 'SPECIES
+    species <- ts$TSVAL[which(ts$TSPARMCD=='SPECIES')]
+
+    # Select specific columns from dm
+    dm <- dm[,c('STUDYID','USUBJID','SPECIES','SEX','ARMCD','ARM','SETCD')]
+
+    #dm[,data.table::`:=`(Species=species,SPECIES=NULL,ARMCD=ARM,ARM=NULL)]
+
+    # Assuming dm is already defined as a data frame or tibble
+    dm <- dm %>%
+      dplyr::mutate(Species = SPECIES) %>%   # Add or update the Species column
+      dplyr::select(-SPECIES, -ARMCD) %>%  # Remove  ARMCD
+      dplyr::rename(ARMCD = ARM)  %>%   # Rename ARM to ARMCD (if ARMCD is needed)
+      dplyr::select("STUDYID", "USUBJID", "Species","SEX", "ARMCD","SETCD")
+
+    #  Update 'ARMCD' to 'vehicle' where it originally equals 'Control'
+    #dm[ARMCD=='Control',`:=`(ARMCD='vehicle')]
+    dm <- dm %>%
+      dplyr::mutate(ARMCD = dplyr::if_else(ARMCD == 'Control', 'vehicle', ARMCD))
+
+    # Filter 'dm' to include only rows where 'ARMCD' is either 'vehicle' or 'HD'
+    #dm <- dm[ARMCD %in% c('vehicle','HD')]
+    dm <- dm %>%
+      dplyr::filter( ARMCD %in% c("vehicle", "HD"))
+
+    data.table::setDF(dm)
+    return(dm)
 
     ## IN case of FAKE DATA, POOLDEF, DS AND PP ARE ABSENT
     ## THEREFORE, BELOW ELSE CONDITONS ARE EXECUTED
@@ -79,7 +128,6 @@ browser()
     # Correct way to connect to SQLite database using RSQLite
     con <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
-    # function for domain
     con_db <- function(domain){
       domain <- toupper(domain)
       stat <- paste0('SELECT * FROM ', domain, " WHERE STUDYID = (:x)")
@@ -153,57 +201,42 @@ browser()
     ## cat("Displaying unique values in ds$DSDECOD before filtering :\n")
     ## print(unique(ds$DSDECOD))
 
-    if (!exists("ds") || is.null(ds) || nrow(ds) == 0) {
-      # If 'ds' is not present, null, or empty, proceed without filtering based on 'ds'
-      recovery_cleaned_CompileData <- CompileData
-    } else {
-      # If 'ds' exists, filter for specific "DSDECOD" values
-      filtered_ds <- ds %>%
-        dplyr::filter(DSDECOD %in% c('TERMINAL SACRIFICE',
-                                     'MORIBUND SACRIFICE',
-                                     'REMOVED FROM STUDY ALIVE',
-                                     'NON-MORIBUND SACRIFICE'))
+    # if (!exists("ds") || is.null(ds) || nrow(ds) == 0) {
+    #   # If 'ds' is not present, null, or empty, proceed without filtering based on 'ds'
+    #   recovery_cleaned_CompileData <- CompileData
+    # } else {
+    #   # If 'ds' exists, filter for specific "DSDECOD" values
+    #   filtered_ds <- ds %>%
+    #     dplyr::filter(DSDECOD %in% c('TERMINAL SACRIFICE',
+    #                                  'MORIBUND SACRIFICE',
+    #                                  'REMOVED FROM STUDY ALIVE',
+    #                                  'NON-MORIBUND SACRIFICE'))
+    #
+    #   # Filter 'CompileData' based on the 'USUBJID' values in 'filtered_ds'
+    #   recovery_cleaned_CompileData <- CompileData %>%
+    #     dplyr::filter(USUBJID %in% filtered_ds$USUBJID)
+    # }
 
-      # Filter 'CompileData' based on the 'USUBJID' values in 'filtered_ds'
-      recovery_cleaned_CompileData <- CompileData %>%
-        dplyr::filter(USUBJID %in% filtered_ds$USUBJID)
-    }
+
+    # filter for specific "DSDECOD" values...( Keep the mentioned four ) ...
+    filtered_ds <- ds %>%
+      dplyr::filter(DSDECOD %in% c('TERMINAL SACRIFICE',
+                                   'MORIBUND SACRIFICE',
+                                   'REMOVED FROM STUDY ALIVE',
+                                   'NON-MORIBUND SACRIFICE'))
+    # check the unique value in "DSDECOD" column
+    ## cat("Displaying unique values in ds$DSDECOD after filtering:\n")
+    ## print(unique(filtered_ds$DSDECOD))
+
+    #Filter "CompileData" to keep rows where USUBJID is in "filtered_ds"~~
+
+    # Filter "CompileData" to keep rows where USUBJID is in "filtered_ds"
+  # meaning removing recovery animals
+    recovery_cleaned_CompileData <- CompileData %>%
+      dplyr::filter(USUBJID %in% filtered_ds$USUBJID)
 
 
-  #   if(!is.null(ds) && nrow(ds) > 0) {
-  #
-  #   # filter for specific "DSDECOD" values...( Keep the mentioned four ) ...
-  #   filtered_ds <- ds %>%
-  #     dplyr::filter(DSDECOD %in% c('TERMINAL SACRIFICE',
-  #                                  'MORIBUND SACRIFICE',
-  #                                  'REMOVED FROM STUDY ALIVE',
-  #                                  'NON-MORIBUND SACRIFICE'))
-  #   # check the unique value in "DSDECOD" column
-  #   ## cat("Displaying unique values in ds$DSDECOD after filtering:\n")
-  #   ## print(unique(filtered_ds$DSDECOD))
-  #
-  #   #Filter "CompileData" to keep rows where USUBJID is in "filtered_ds"~~
-  #
-  #   # Filter "CompileData" to keep rows where USUBJID is in "filtered_ds"
-  # # meaning removing recovery animals
-  #   recovery_cleaned_CompileData <- CompileData %>%
-  #     dplyr::filter(USUBJID %in% filtered_ds$USUBJID)
-  #
-  #   } else {
-  #     # If ds is NULL or empty, return CompileData as is
-  #     recovery_cleaned_CompileData <- CompileData
-  #   }
-  #
-    if ((!exists("pp") || is.null(pp) || nrow(pp) == 0) &&
-        (!exists("pooldef") || is.null(pooldef) || nrow(pooldef) == 0))  {
-      # Create a empty data frame named "tK_animals_df"
-      tK_animals_df <- data.frame(PP_PoolID = character(),
-                                  STUDYID = character(),
-                                  USUBJID = character(),
-                                  POOLID = character(),
-                                  stringsAsFactors = FALSE)
 
-    } else {
 
     # Step-3 :: # REMOVE THE TK ANIMALS IF SPECIES IS RAT from the
    # "recovery_cleaned_CompileData"
@@ -263,7 +296,6 @@ browser()
                                   stringsAsFactors = FALSE)
     }
 
-  }
 
     # Subtract "TK_animals_df" data from the "recovery_cleaned_CompileData"
     cleaned_CompileData <- recovery_cleaned_CompileData[

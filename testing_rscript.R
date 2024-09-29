@@ -156,17 +156,21 @@ print(time_taken)
 ######
 rm(list = ls())
 devtools::load_all(".")
-studyid = '10663'
+
 path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/FAKE10663'
 
-xpt_compiltdata <- get_compile_data(studyid = NULL,
+fake_xpt_compiltdata <- get_compile_data(studyid = NULL,
                                                 path_db,
                                                 fake_study = TRUE,
                                                 use_xpt_file = TRUE)
 
 
-
-
+studyid = '10663'
+path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/liver_1.db'
+fake_compiledata <- get_compile_data(studyid,
+                                                 path_db,
+                                                 fake_study = TRUE,
+                                                 use_xpt_file = FALSE)
 
 
 
