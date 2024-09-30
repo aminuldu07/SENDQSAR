@@ -21,14 +21,14 @@ get_compile_data <- function(studyid = NULL,
   studyid <- as.character(studyid)
   path <- path_db
 
-  if(fake_study == TRUE & use_xpt_file == FALSE){
+  if(fake_study == TRUE & use_xpt_file == FALSE){#1
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
     #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
 
     # Define a function to query the database by domain
-    fetch_domain_data <- function(connection, domain_name, studyid) {
+    fetch_domain_data <- function(db_connection, domain_name, studyid) {
       domain_name <- toupper(domain_name)
       query_statement <- paste0('SELECT * FROM ', domain_name, " WHERE STUDYID = :x")
       query_result <- DBI::dbGetQuery(db_connection, statement = query_statement, params = list(x = studyid))
@@ -75,19 +75,13 @@ get_compile_data <- function(studyid = NULL,
   return(dm)
 
 
-  } else if(fake_study == TRUE & use_xpt_file == TRUE) {
+  } else if(fake_study == TRUE & use_xpt_file == TRUE) {#2
 
   # get the required domain
-    #bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
     dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
     ts <- haven::read_xpt(fs::path(path,'ts.xpt'))
-   # tx <- haven::read_xpt(fs::path(path,'tx.xpt'))
-
-    #dm <- con_db('dm')
     dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
     data.table::setDT(dm)
-
-    #ts <- con_db('ts')
     ts <- haven::read_xpt(fs::path(path,'ts.xpt'))
     data.table::setDT(ts)
 
@@ -131,7 +125,7 @@ get_compile_data <- function(studyid = NULL,
     #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
 
     # Define a function to query the database by domain
-    fetch_domain_data <- function(connection, domain_name, studyid) {
+    fetch_domain_data <- function(db_connection, domain_name, studyid) {
       domain_name <- toupper(domain_name)
       query_statement <- paste0('SELECT * FROM ', domain_name, " WHERE STUDYID = :x")
       query_result <- DBI::dbGetQuery(db_connection, statement = query_statement, params = list(x = studyid))
@@ -162,6 +156,9 @@ get_compile_data <- function(studyid = NULL,
 
  }
 
+
+
+ #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #..Creation of compilation data...(Compilation of DM Data).........
     # Step-1 :: # CompileData is basically the compilation of DM data
     CompileData <- data.frame(STUDYID = NA, Species = NA,
