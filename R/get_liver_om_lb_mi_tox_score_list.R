@@ -5,7 +5,9 @@
 get_liver_om_lb_mi_tox_score_list <- function (selected_studies,
                                                path_db,
                                                fake_study = FALSE,
+                                               use_xpt_file = FALSE,
                                                output_individual_scores = FALSE) {
+
 if(output_individual_scores ) {
   # master liverToBW_df
   master_liverToBW <-  data.frame(STUDYID = NULL, avg_liverToBW_zscore = NULL)
@@ -17,7 +19,7 @@ if(output_individual_scores ) {
                                     avg_alt_zscore = NULL, avg_bili_zscore = NULL, avg_ggt_zscore = NULL)
 
   # Create FOUR SCORE DATA FRAME for "LiverToBodyweight" , "LB" & "MI" Score
-  FOUR_Liver_Score <-  data.frame(STUDYID = NA, liverToBW = NA, LB_score = NA, MI_score = NA, scored_liverToBW = NA, scored_LBScore = NA)
+  FOUR_Liver_Score <-  data.frame(STUDYID = NA, liverToBW = NA, LB_score = NA, MI_score = NA)
 
   # Initialize an empty data frame to store the names of studies with errors
   Error_studies <- list()
@@ -56,9 +58,17 @@ for (studyid in selected_studies){
 
   # First Block with its own tryCatch for master_compiledata~~~~~~~~~~~~~~~~~~
   tryCatch({
+    # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
+    studyid <- if (use_xpt_file) NULL else studyid
 
-    # Call "get_liver_compiledata" function to get the cleaned_compiledata
-    output_get_compile_data <- get_compile_data(studyid, path_db, fake_study = FALSE) #return as.data.frame "master_compiledata"
+     # if use_xpt_file = TRUE,studyid should be NULL..........................
+    # Call "get_liver_compiledata" function to get the master_compiledata
+    output_get_compile_data <- get_compile_data(studyid = studyid ,
+                                                path_db = path_db,
+                                                fake_study = fake_study,
+                                                use_xpt_file = use_xpt_file)
+
+    #return as.data.frame "master_compiledata"
     #master_compiledata
 
     # GET the  "master_compiledata" -data frame- from the output of the --
@@ -108,12 +118,9 @@ for (studyid in selected_studies){
     new_row_in_four_liver_scr <- data.frame(STUDYID = unique(master_compiledata$STUDYID),
                                             liverToBW = NA,
                                             LB_score = NA,
-                                            MI_score = NA,
-                                            scored_liverToBW = NA,
-                                            scored_LBScore = NA)
+                                            MI_score = NA)
 
     FOUR_Liver_Score <- rbind(FOUR_Liver_Score, new_row_in_four_liver_scr)
-    # FOUR_Liver_Score <- FOUR_Liver_Score[-1,] # remove the first column
 
     } else {
       new_row_in_four_liver_scr_avg <- data.frame(STUDYID = unique(master_compiledata$STUDYID),
@@ -123,8 +130,6 @@ for (studyid in selected_studies){
                                               MI_score_avg = NA)
 
       FOUR_Liver_Score_avg <- rbind(FOUR_Liver_Score_avg, new_row_in_four_liver_scr_avg)
-      # FOUR_Liver_Score_avg <- FOUR_Liver_Score_avg[-1,]
-      # print(FOUR_Liver_Score_avg)
     }
 
   }, error = function(e) {
@@ -147,19 +152,25 @@ for (studyid in selected_studies){
   tryCatch({
 
     if(output_individual_scores){
+      # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
+      studyid <- if (use_xpt_file) NULL else studyid
 
-    bwzscore_BW <- get_bw_score (studyid,
-                                 path_db,
-                                 fake_study = FALSE,
+    bwzscore_BW <- get_bw_score (studyid = studyid,
+                                 path_db = path_db,
+                                 fake_study = fake_study,
+                                 use_xpt_file = use_xpt_file,
                                  master_compiledata = master_compiledata ,
                                  return_individual_scores = TRUE)
     } else {
+      # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
+      studyid <- if (use_xpt_file) NULL else studyid
 
-      averaged_HD_BWzScore <- get_bw_score (studyid,
-                                   path_db,
-                                   fake_study = FALSE,
-                                   master_compiledata = master_compiledata,
-                                   return_individual_scores = FALSE)
+      averaged_HD_BWzScore <- get_bw_score (studyid = studyid,
+                                            path_db = path_db,
+                                            fake_study = fake_study,
+                                            use_xpt_file = use_xpt_file,
+                                            master_compiledata = master_compiledata ,
+                                            return_individual_scores = FALSE)
 
       # # Add the liverToBW_zscore to "FOUR_Liver_Score" data frame................
 
@@ -188,9 +199,14 @@ for (studyid in selected_studies){
 
 #---------------------------"OM_DATA"-(Liver_Organ to Body Weight zScore)-------
   tryCatch({
+    # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
+    studyid <- if (use_xpt_file) NULL else studyid
+    browser()
     if(output_individual_scores){
-      HD_liver_zscore_df <- get_liver_livertobw_score (studyid, path_db,
-                                                       fake_study = FALSE,
+      HD_liver_zscore_df <- get_liver_livertobw_score (studyid = studyid,
+                                                       path_db = path_db,
+                                                       fake_study = fake_study,
+                                                       use_xpt_file = use_xpt_file,
                                                        master_compiledata = master_compiledata,
                                                        bwzscore_BW = bwzscore_BW ,
                                                        return_individual_scores = TRUE)
@@ -198,11 +214,21 @@ for (studyid in selected_studies){
       master_liverToBW <- rbind(master_liverToBW, HD_liver_zscore_df )
 
     } else {
+      # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
+      studyid <- if (use_xpt_file) NULL else studyid
 
+      if (is.null(bwzscore_BW)) {
+      bwzscore_BW <- get_bw_score (studyid = studyid,
+                                   path_db = path_db,
+                                   fake_study = fake_study,
+                                   use_xpt_file = use_xpt_file,
+                                   master_compiledata = master_compiledata ,
+                                   return_individual_scores = TRUE)
+      }
       averaged_liverToBW_df <- get_liver_livertobw_score (studyid, path_db,
-                                                       fake_study = FALSE,
+                                                       fake_study = fake_study,
                                                        master_compiledata = master_compiledata,
-                                                       bwzscore_BW = NULL ,
+                                                       bwzscore_BW = bwzscore_BW ,
                                                        return_individual_scores = FALSE)
       # {{{{...... N.B. Here is special case, if we use bwzscore_BW in else
       # condition from the previous step, it will provide
@@ -242,11 +268,14 @@ for (studyid in selected_studies){
 
   #<><><><><><><><><><><><><><><><><><>"""LB"""" zscoring <><><><><><><><><><><>
   tryCatch({
+    # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
+    studyid <- if (use_xpt_file) NULL else studyid
 
     if(output_individual_scores){
-    master_lb_scores <- get_lb_score(studyid,
-                                     path_db,
-                                     fake_study= FALSE,
+    master_lb_scores <- get_lb_score(studyid = studyid,
+                                     path_db = path_db,
+                                     fake_study= fake_study,
+                                     use_xpt_file = use_xpt_file,
                                      master_compiledata = master_compiledata,
                                      return_individual_scores = TRUE)
 
@@ -254,12 +283,15 @@ for (studyid in selected_studies){
     master_lb_score_six <- rbind(master_lb_score_six , master_lb_scores)
 
     } else {
+      # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
+      studyid <- if (use_xpt_file) NULL else studyid
 
-      averaged_LB_score <- get_lb_score(studyid,
-                                         path_db,
-                                         fake_study= FALSE,
-                                         master_compiledata = master_compiledata,
-                                         return_individual_scores = FALSE)
+      averaged_LB_score <- get_lb_score(studyid = studyid,
+                                        path_db = path_db,
+                                        fake_study= fake_study,
+                                        use_xpt_file = use_xpt_file ,
+                                        master_compiledata = master_compiledata,
+                                        return_individual_scores = FALSE)
 
         # Append the LB_zscore to the "FOUR_Liver_Score_avg" data frame
         # Extract the LB_score value for the current STUDYID from LB_df
@@ -271,7 +303,7 @@ for (studyid in selected_studies){
 
         #master_lbxx_list[[j]] <- lb_score_final_list
         #master_lb_score_six <- rbind(master_lb_score_six , averaged_LB_score)
-
+browser()
      }
 
   }, error = function(e) {
@@ -292,26 +324,33 @@ for (studyid in selected_studies){
     #mi_score_final_list <- get_liver_mi_score(j, dbtoken, ts, master_compiledata)
 
     #master_mixx_list[[j]] <- mi_score_final_list
+
    if(output_individual_scores ){
 
-     mi_score_final_list_df <- get_mi_score(studyid,
-                                            path_db,
-                                            fake_study = FALSE,
+     # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
+     studyid <- if (use_xpt_file) NULL else studyid
+
+     mi_score_final_list_df <- get_mi_score(studyid = studyid,
+                                            path_db = path_db,
+                                            fake_study = fake_study,
+                                            use_xpt_file = use_xpt_file,
                                             master_compiledata = master_compiledata ,
                                             return_individual_scores = TRUE)
 
      master_mi_df <- dplyr::bind_rows(master_mi_df, mi_score_final_list_df)
 
-
-
     #master_mi_df <- dplyr::bind_rows(master_mi_df, mi_score_final_list_df)
 
    } else {
-     averaged_MI_score <- get_mi_score(studyid,
-                                            path_db,
-                                            fake_study = FALSE,
-                                            master_compiledata = master_compiledata ,
-                                            return_individual_scores = FALSE)
+     # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
+     studyid <- if (use_xpt_file) NULL else studyid
+
+     averaged_MI_score <- get_mi_score(studyid = studyid,
+                                       path_db = path_db,
+                                       fake_study = fake_study,
+                                       use_xpt_file = use_xpt_file,
+                                       master_compiledata = master_compiledata ,
+                                       return_individual_scores = FALSE)
 
      # Append the "MI_zscore"MI_score_avg" to the "FOUR_Liver_Score_avg" data frame
      # Extract the "LB_score"MI_score_avg" value for the current STUDYID from
@@ -340,32 +379,30 @@ for (studyid in selected_studies){
 }
 
 
-
-if (output_individual_scores ) {
-
-
-
-} else  {
-
-  FOUR_Liver_Score_avg <- FOUR_Liver_Score_avg [-1,]
-  # # Reassigned the variable
-  # liver_scored_Four_Liver_Score <- FOUR_Liver_Score
-  #
-  # # Create averaged_liver_score column for un_scored columns
-  # liver_scored_Four_Liver_Score <- liver_scored_Four_Liver_Score %>%
-  #   dplyr::mutate(averaged_liver_score = rowMeans(select(., liverToBW, LB_score, MI_score), na.rm = TRUE))
-  #
-  #
-  # # Create scored_averaged_liver_score column for scored columns
-  # liver_scored_Four_Liver_Score <- liver_scored_Four_Liver_Score %>%
-  #   dplyr::mutate(scored_averaged_liver_score = rowMeans(dplyr::select(.,MI_score, scored_liverToBW, scored_LBScore), na.rm = TRUE))
-  #
-  # # remove NAs from "scored_averaged_liver_score" column
-  # final_liver_scored_Four_Liver_Score <- liver_scored_Four_Liver_Score %>%
-  #                dplyr::filter(!is.na(scored_averaged_liver_score))
-  #.........................................................................................................................
-}
-
+#####
+# if (output_individual_scores ) {
+#
+# } else  {
+#
+#   FOUR_Liver_Score_avg <- FOUR_Liver_Score_avg [-1,]
+#   # # Reassigned the variable
+#   # liver_scored_Four_Liver_Score <- FOUR_Liver_Score
+#   #
+#   # # Create averaged_liver_score column for un_scored columns
+#   # liver_scored_Four_Liver_Score <- liver_scored_Four_Liver_Score %>%
+#   #   dplyr::mutate(averaged_liver_score = rowMeans(select(., liverToBW, LB_score, MI_score), na.rm = TRUE))
+#   #
+#   #
+#   # # Create scored_averaged_liver_score column for scored columns
+#   # liver_scored_Four_Liver_Score <- liver_scored_Four_Liver_Score %>%
+#   #   dplyr::mutate(scored_averaged_liver_score = rowMeans(dplyr::select(.,MI_score, scored_liverToBW, scored_LBScore), na.rm = TRUE))
+#   #
+#   # # remove NAs from "scored_averaged_liver_score" column
+#   # final_liver_scored_Four_Liver_Score <- liver_scored_Four_Liver_Score %>%
+#   #                dplyr::filter(!is.na(scored_averaged_liver_score))
+#   #.........................................................................................................................
+# }
+##########
    if (output_individual_scores) {
     return(list(master_liverToBW = master_liverToBW,
               master_lb_score_six = master_lb_score_six,
