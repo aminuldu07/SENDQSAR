@@ -22,12 +22,9 @@ get_compile_data <- function(studyid = NULL,
   path <- path_db
 
   if(fake_study == TRUE && use_xpt_file == FALSE){
-    # studyid <- as.character(studyid)
-    # path <- path_db
+
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
-
-    #con <- DBI::dbConnect(DsBI::dbDriver('SQLite'), dbname = path)
 
     # Define a function to query the database by domain
     fetch_domain_data <- function(db_connection, domain_name, studyid) {
@@ -52,8 +49,6 @@ get_compile_data <- function(studyid = NULL,
   # Select specific columns from dm
   dm <- dm[,c('STUDYID','USUBJID','SPECIES','SEX','ARMCD','ARM','SETCD')]
 
-  #dm[,data.table::`:=`(Species=species,SPECIES=NULL,ARMCD=ARM,ARM=NULL)]
-
   # Assuming dm is already defined as a data frame or tibble
   dm <- dm %>%
   dplyr::mutate(Species = SPECIES) %>%   # Add or update the Species column
@@ -62,12 +57,10 @@ get_compile_data <- function(studyid = NULL,
   dplyr::select("STUDYID", "USUBJID", "Species","SEX", "ARMCD","SETCD")
 
   #  Update 'ARMCD' to 'vehicle' where it originally equals 'Control'
-  #dm[ARMCD=='Control',`:=`(ARMCD='vehicle')]
   dm <- dm %>%
     dplyr::mutate(ARMCD = dplyr::if_else(ARMCD == 'Control', 'vehicle', ARMCD))
 
   # Filter 'dm' to include only rows where 'ARMCD' is either 'vehicle' or 'HD'
-  #dm <- dm[ARMCD %in% c('vehicle','HD')]
   dm <- dm %>%
     dplyr::filter( ARMCD %in% c("vehicle", "HD"))
 
@@ -76,8 +69,6 @@ get_compile_data <- function(studyid = NULL,
 
 
   } else if (fake_study == TRUE && use_xpt_file == TRUE) {
-    #studyid <- as.character(studyid)
-   # path <- path_db
 
   # get the required domain
     dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
@@ -93,8 +84,6 @@ get_compile_data <- function(studyid = NULL,
     # Select specific columns from dm
     dm <- dm[,c('STUDYID','USUBJID','SPECIES','SEX','ARMCD','ARM','SETCD')]
 
-    #dm[,data.table::`:=`(Species=species,SPECIES=NULL,ARMCD=ARM,ARM=NULL)]
-
     # Assuming dm is already defined as a data frame or tibble
     dm <- dm %>%
       dplyr::mutate(Species = SPECIES) %>%   # Add or update the Species column
@@ -103,12 +92,10 @@ get_compile_data <- function(studyid = NULL,
       dplyr::select("STUDYID", "USUBJID", "Species","SEX", "ARMCD","SETCD")
 
     #  Update 'ARMCD' to 'vehicle' where it originally equals 'Control'
-    #dm[ARMCD=='Control',`:=`(ARMCD='vehicle')]
     dm <- dm %>%
       dplyr::mutate(ARMCD = dplyr::if_else(ARMCD == 'Control', 'vehicle', ARMCD))
 
     # Filter 'dm' to include only rows where 'ARMCD' is either 'vehicle' or 'HD'
-    #dm <- dm[ARMCD %in% c('vehicle','HD')]
     dm <- dm %>%
       dplyr::filter( ARMCD %in% c("vehicle", "HD"))
 
@@ -120,13 +107,9 @@ get_compile_data <- function(studyid = NULL,
 
 
   } else if(fake_study == FALSE && use_xpt_file == FALSE) {
-    # studyid <- as.character(studyid)
-    # path <- path_db
 
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
-
-    #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
 
     # Define a function to query the database by domain
     fetch_domain_data <- function(db_connection, domain_name, studyid) {
@@ -136,7 +119,6 @@ get_compile_data <- function(studyid = NULL,
       query_result
     }
 
-    # Fetch data for the 'dm' domain
     #Pull relevant domain data for each domain
     bw <- fetch_domain_data(db_connection, 'bw', studyid)
     dm <- fetch_domain_data(db_connection, 'dm', studyid)
@@ -148,8 +130,6 @@ get_compile_data <- function(studyid = NULL,
 
 
   } else if (fake_study == FALSE && use_xpt_file == TRUE) {
-    #studyid <- as.character(studyid)
-    #path <- path_db
 
     # get the required domain
     bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
@@ -161,8 +141,6 @@ get_compile_data <- function(studyid = NULL,
     pooldef <- haven::read_xpt(fs::path(path,'pooldef.xpt'))
 
  }
-
-
 
  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #..Creation of compilation data...(Compilation of DM Data).........
@@ -209,25 +187,6 @@ get_compile_data <- function(studyid = NULL,
 
     # Step-2 :: # REMOVE THE RECOVERY ANIMALS from "CompileData"...<>"Recovery
   #  animals" cleaning.. using "DS domain"
-    ## cat("Displaying unique values in ds$DSDECOD before filtering :\n")
-    ## print(unique(ds$DSDECOD))
-
-    # if (!exists("ds") || is.null(ds) || nrow(ds) == 0) {
-    #   # If 'ds' is not present, null, or empty, proceed without filtering based on 'ds'
-    #   recovery_cleaned_CompileData <- CompileData
-    # } else {
-    #   # If 'ds' exists, filter for specific "DSDECOD" values
-    #   filtered_ds <- ds %>%
-    #     dplyr::filter(DSDECOD %in% c('TERMINAL SACRIFICE',
-    #                                  'MORIBUND SACRIFICE',
-    #                                  'REMOVED FROM STUDY ALIVE',
-    #                                  'NON-MORIBUND SACRIFICE'))
-    #
-    #   # Filter 'CompileData' based on the 'USUBJID' values in 'filtered_ds'
-    #   recovery_cleaned_CompileData <- CompileData %>%
-    #     dplyr::filter(USUBJID %in% filtered_ds$USUBJID)
-    # }
-
 
     # filter for specific "DSDECOD" values...( Keep the mentioned four ) ...
     filtered_ds <- ds %>%
@@ -239,7 +198,6 @@ get_compile_data <- function(studyid = NULL,
     ## cat("Displaying unique values in ds$DSDECOD after filtering:\n")
     ## print(unique(filtered_ds$DSDECOD))
 
-    #Filter "CompileData" to keep rows where USUBJID is in "filtered_ds"~~
 
     # Filter "CompileData" to keep rows where USUBJID is in "filtered_ds"
   # meaning removing recovery animals
@@ -247,9 +205,8 @@ get_compile_data <- function(studyid = NULL,
       dplyr::filter(USUBJID %in% filtered_ds$USUBJID)
 
 
+    # Step-3 :: # REMOVE THE TK ANIMALS IF SPECIES IS RAT from the~~~~~~~~~~~
 
-
-    # Step-3 :: # REMOVE THE TK ANIMALS IF SPECIES IS RAT from the
    # "recovery_cleaned_CompileData"
     # Initialize an empty data frame to store the results
     tK_animals_df <- data.frame(PP_PoolID = character(), STUDYID = character(),
@@ -447,19 +404,5 @@ get_compile_data <- function(studyid = NULL,
 
   as.data.frame(master_compiledata)
   return(master_compiledata)
-  }
+}
 
-  # if(fake_study){
-  #   dm <- dm
-  # } else {
-  #   master_compiledata <- master_compiledata
-  # }
-
-  # if (fake_study) {
-  #   return(dm)
-  # } else {
-    #return(master_compiledata)
-  #}
-#}
-
-# test more

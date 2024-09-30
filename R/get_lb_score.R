@@ -471,10 +471,10 @@ get_lb_score <- function(studyid = NULL,
     }
 
 
-if (return_individual_scores) {
+  if (return_individual_scores) {
   return(master_lb_scores)
-} else {
-  return(averaged_LB_score)
-}
+ } else {
+   return(averaged_LB_score)
+ }
 
 }

@@ -171,27 +171,6 @@ mi_fake_XPT_mi_zscore <- get_mi_score (studyid = NULL,
                                        master_compiledata = NULL,
                                        return_individual_scores = TRUE)
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #dbtoken
 
 #########

@@ -21,12 +21,6 @@ get_mi_score <- function(studyid = NULL,
                          master_compiledata = NULL,
                          return_individual_scores = FALSE) {
 
-# studyid <- as.character(studyid)
-# path <- path_db
-# con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
-# mi <- DBI::dbGetQuery(con, statement = "SELECT * FROM MI WHERE STUDYID = (:x)",
-#                         params = list(x=studyid))
-
 studyid <- as.character(studyid)
 path <- path_db
 
@@ -58,17 +52,10 @@ if (fake_study == TRUE && use_xpt_file == FALSE){
   # Close the database connection
   DBI::dbDisconnect(db_connection)
 
-  # om <- con_db('om')
-  # data.table::setDT(om)
-  # Select specific columns from dm
-  #lb <- om[,c('USUBJID',"OMSPEC" ,"OMSTRESN", "OMTEST")]
-
 } else if (fake_study == TRUE && use_xpt_file == TRUE){
 
   # Read data from .xpt files
   mi <- read_xpt_data(path, 'mi')
-  # Select specific columns from dm
-  #om <- om[,c('USUBJID',"OMSPEC" ,"OMSTRESN", "OMTEST")]
 
 } else if (fake_study == FALSE && use_xpt_file == FALSE) {
   # Establish a connection to the SQLite database
@@ -81,31 +68,11 @@ if (fake_study == TRUE && use_xpt_file == FALSE){
   # Close the database connection
   DBI::dbDisconnect(db_connection)
 
-  # Select specific columns from dm
-  #om <- om[,c('USUBJID',"OMSPEC" ,"OMSTRESN", "OMTEST")]
-
 }else if (fake_study == FALSE && use_xpt_file == TRUE) {
 
   # Read data from .xpt files
   mi <- read_xpt_data(path, 'mi')
-  #om <- haven::read_xpt(fs::path(path,'om.xpt'))
-  # Select specific columns from dm
-  #om <- om[,c('USUBJID',"OMSPEC" ,"OMSTRESN", "OMTEST")]
 }
-
-# con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
-#
-# con_db <- function(domain){
-#   domain <- toupper(domain)
-#   stat <- paste0('SELECT * FROM ', domain, " WHERE STUDYID = (:x)")
-#   domain <- DBI::dbGetQuery(con,
-#                             statement = stat,
-#                             params=list(x=studyid))
-#   domain
-# }
-
-
-
 
 # Check if mi data frame is empty
 if (nrow(mi) == 0) {
@@ -118,7 +85,6 @@ if (nrow(mi) == 0) {
 
   return(mi_empty_df)
 }
-
 
   # Initialize the  MI_final_score DATA FRAME
     MI_final_score <- data.frame( STUDYID = unique(mi$STUDYID), avg_MI_score = NA )
@@ -198,39 +164,11 @@ if (nrow(mi) == 0) {
     # Create a copy of MIData
     MIData_copy <- MIData
 
-    #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+    #....................................................................
     # Remove the "Recovery animals and tk animals from "MIData"
-    #<><><><><><><><> master_compiledata is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
-    #:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-    #' #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #' #browser()
-    #' # Check if master_compiledata is NULL
-    #' if (is.null(master_compiledata)) {
-    #'   fake_study = fake_study
-    #'   # Call the master_compiledata function to generate the data frame
-    #'   master_compiledata <- get_compile_data(studyid, path_db,fake_study = fake_study)
-    #' }
+    #<><><> master_compiledata is free of TK animals and Recovery animals<><><>
 
-
-     # master_compiledata <- get_compile_data(studyid = studyid,
-     #                                   path_db = path_db,fake_study = fake_study)
-
-    #' #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #' #browser()
-    #' if (is.null(master_compiledata) & fake_study == TRUE) {
-    #'   # Call the master_compiledata function to generate the data frame for fake study
-    #'   master_compiledata <- get_compile_data(studyid, path_db, fake_study = TRUE)
-    #' } else if (is.null(master_compiledata) & fake_study == FALSE) {
-    #'   # Call the master_compiledata function to generate the data frame for real study
-    #'   master_compiledata <- get_compile_data(studyid, path_db, fake_study = FALSE)
-    #' } else {
-    #'   # If master_compiledata is already set, no action needed
-    #'   master_compiledata = master_compiledata
-    #' }
-    #' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    #
-    #' #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
       # Call the master_compiledata function to generate the data frame for fake study
@@ -250,7 +188,6 @@ if (nrow(mi) == 0) {
       master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
     }
 
-browser()
     # Filtering the tk animals and the recovery animals
     tk_recovery_less_MIData <- MIData %>% dplyr::filter (USUBJID %in% master_compiledata$USUBJID)
 
@@ -263,11 +200,11 @@ browser()
     MIData_cleaned_copy <- MIData_cleaned
 
     # cat("MIData_cleaned : \n", toString(head(MIData_cleaned)), "\nDimensions:",
-    #     paste(dim(MIData_cleaned), collapse = 'x'), "\n") # ..............................................................
+    #     paste(dim(MIData_cleaned), collapse = 'x'), "\n") .
 
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~Merge Severity MI Data into Compile Data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #~~~~~~~~~~~~Merge Severity MI Data into Compile Data~~~~~~~~~~~~~~~~~~~
+    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     MIIncidencePRIME <-MIData_cleaned[,c(1,2,4)]
 
@@ -287,7 +224,7 @@ browser()
     final_working_compile_data_bef_normal <- mi_CompileData
 
     ## cat("mi_CompileData : \n", toString(head(MIData_cleaned)), "\nDimensions:",
-    ##     paste(dim(mi_CompileData), collapse = 'x'), "\n") ### ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    ##     paste(dim(mi_CompileData), collapse = 'x'), "\n")
 
 
     # Remove Normal MI Results
@@ -300,12 +237,12 @@ browser()
     final_working_compile_data_afer_normal <- mi_CompileData
 
     # cat("mi_CompileData : \n", toString(head(MIData_cleaned)), "\nDimensions:",
-    #     paste(dim(mi_CompileData), collapse = 'x'), "\n") ### ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #     paste(dim(mi_CompileData), collapse = 'x'), "\n")
 
     # Check the data types of the columns before conversion
     #str(mi_CompileData)
 
-    #####????????????????????????? check the number~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #####-------------------- check the number~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # Convert columns 7 to the last column  of mi_CompileData to numeric
     mi_CompileData[, 7:ncol(mi_CompileData)] <- sapply(mi_CompileData[, 7:ncol(mi_CompileData)], as.numeric)
@@ -313,8 +250,6 @@ browser()
     # Check the data types of the columns after conversion
     #str(mi_CompileData)
 
-
-    #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@-------------------@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     print_MIIncidencePRIME <- MIIncidencePRIME
     print_mi_CompileData <- mi_CompileData
 
@@ -391,17 +326,13 @@ browser()
       MIIncidence <- GroupIncid
 
       # cat("MIIncidence : \n", toString(head(MIData_cleaned)), "\nDimensions:",
-      #     paste(dim(MIIncidence), collapse = 'x'), "\n") #......................
+      #     paste(dim(MIIncidence), collapse = 'x'), "\n")
 
-      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      #~~~~~~~~~~~~~~~~~~~~~~~~Create a copy of mi_CompileData named mi_CompileData2 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      #browser()
       # Create a copy of mi_CompileData named mi_CompileData2
-      mi_CompileData2 <- mi_CompileData #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      mi_CompileData2 <- mi_CompileData
 
-      # Severity calculation and recalculation.........................................................................
-      # Adjustment of the severity score based on the Incidence score .................................................
+      # Severity calculation and recalculation.
+      # Adjustment of the severity score based on the Incidence score
 
       # Initialize ScoredData with the first 6 columns of "mi_CompileData2"
       ScoredData <- mi_CompileData2[,1:6]
@@ -417,17 +348,13 @@ browser()
         colName <- colnames(mi_CompileData2)[i]
         ScoredData[[colName]] <- NA
 
-        #Score Severity # changing the current severity value in MISEV column???????????
+        #Score Severity # changing the current severity value in MISEV column
         # Score Severity based on mi_CompileData2 #
 
         x <- ifelse(mi_CompileData2[,i] == 5, 5,
                     ifelse(mi_CompileData2[,i] > 3, 3,
                            ifelse(mi_CompileData2[,i] == 3, 2,
                                   ifelse(mi_CompileData2[,i] > 0, 1, 0))))
-
-        # x <- ifelse(mi_CompileData2[,i]>3,3,
-        #             ifelse(mi_CompileData2[,i]==3,2,
-        #                    ifelse(mi_CompileData2[,i]>0,1,0)))
 
         ScoredData[,colName] <-x
 
@@ -485,9 +412,6 @@ browser()
         function(x) as.numeric(as.character(x))
       )
 
-      #' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
       # Check the number of columns
       num_cols_ScoredData_subset_HD <- ncol(ScoredData_subset_HD)
 
@@ -506,7 +430,6 @@ browser()
       ScoredData_subset_HD <- ScoredData_subset_HD[, c(1:2, ncol(ScoredData_subset_HD), 3:(ncol(ScoredData_subset_HD)-1))]
 
       if(return_individual_scores){
-        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         #~~~~~~~~~~ GET all the severity as individual in a list ~~~~~~~~~~~~~~
 
         # Create a variable for "ScoredData_subset_HD" data frame
@@ -535,15 +458,13 @@ browser()
         # Convert the list to data frame
         mi_score_final_list_df <- dplyr::bind_rows(mi_score_final_list, .id = "iteration")
 
-
-
       } else {
-        # averaged zscore per STUDYID for 'MI'..................................................................................
+        # averaged zscore per STUDYID for 'MI'
         # Step 1: Filter for HD
         #MI_final_score <- ScoredData_subset_HD [ARMCD == "HD"]
         MI_final_score <- ScoredData_subset_HD %>% dplyr::filter(ARMCD == "HD")
 
-        # Step 2: Convert highest_score to numeric # FACTOR value to numeric......?????????
+        # Step 2: Convert highest_score to numeric # FACTOR value to numeric
         MI_final_score <- MI_final_score %>%  dplyr::mutate(highest_score = as.numeric(highest_score))
 
         # Step 3: Group by STUDYID

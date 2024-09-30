@@ -31,12 +31,10 @@ get_bw_score <- function(studyid = NULL,
   path <- path_db
 
     if (fake_study == TRUE && use_xpt_file == FALSE) {
-    # studyid <- as.character(studyid)
-    # path <- path_db
+
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
-    #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
     # Define a function to query the database by domain
     fetch_domain_data <- function(db_connection, domain_name, studyid) {
       domain_name <- toupper(domain_name)
@@ -47,15 +45,11 @@ get_bw_score <- function(studyid = NULL,
 
     # Fetch data for the 'dm' domain
     bw <- fetch_domain_data(db_connection, 'bw', studyid)
-    #data.table::setDT(bw)
 
     # Select specific columns from dm
     bw <- bw[,c('STUDYID','USUBJID',"BWTESTCD" ,"BWSTRESN", "VISITDY")]
 
   } else if (fake_study == TRUE && use_xpt_file == TRUE) {
-    #studyid <- as.character(studyid)
-    #path <- path_db
-    # Code for when fake_study is TRUE and use_xpt_file is TRUE
     # Reads from an .xpt file for the fake study.
 
     bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
@@ -64,15 +58,9 @@ get_bw_score <- function(studyid = NULL,
     bw <- bw[,c('STUDYID','USUBJID',"BWTESTCD" ,"BWSTRESN", "VISITDY")]
 
   } else if (fake_study == FALSE && use_xpt_file == FALSE) {
-    # studyid <- as.character(studyid)
-    # path <- path_db
 
-    # Reads from an SQLite database for the real study.
-    # Code for the remaining case (i.e., fake_study is FALSE and use_xpt_file is FALSE)
-    # Establish a connection to the SQLite database
+    # Reads from an SQLite database for the real study
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
-
-    #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
 
     # Define a function to query the database by domain
     fetch_domain_data <- function(db_connection, domain_name, studyid) {
@@ -91,11 +79,9 @@ get_bw_score <- function(studyid = NULL,
 
   } else if (fake_study == FALSE && use_xpt_file == TRUE) {
 
-    #studyid <- as.character(studyid)
-    # path <- path_db
     # Reads from an .xpt file for the real study.
-    # Code for when fake_study is FALSE and use_xpt_file is TRUE
     bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
+
     # Select specific columns from dm
     bw <- bw[,c('STUDYID','USUBJID',"BWTESTCD" ,"BWSTRESN", "VISITDY")]
   }
@@ -105,15 +91,13 @@ get_bw_score <- function(studyid = NULL,
   #................... Initial BW weight calculation..............
 
     StudyInitialWeights <- data.frame("STUDYID" = NA, "USUBJID" = NA,
-                                      "BWSTRESN" = NA, "VISITDY" = NA) #,
-                                      # "BWNOMDY" = NA, "BWNOMLBL"= NA,
-                                      # "BWBLFL" = NA)
+                                      "BWSTRESN" = NA, "VISITDY" = NA)
 
     # Initialize dataframe for unmatched USUBJIDs
     UnmatchedUSUBJIDs <- data.frame("USUBJID" = character(), stringsAsFactors = FALSE)
 
 
-    ## if (TRUE){
+     if (TRUE){
       # Get unique USUBJIDs in the current study
       unique_subjids <- unique(bw$USUBJID)
 
@@ -130,7 +114,7 @@ get_bw_score <- function(studyid = NULL,
 
         # 1. Check if VISITDY == 1 is present
         SubjectInitialWeight <- subj_data[subj_data$VISITDY == 1,
-                                          c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY")] #,"BWNOMDY","BWNOMLBL","BWBLFL")]
+                                          c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY")]
 
 
         # 2. If no initial weight with VISITDY == 1,  try VISITDY < 0
@@ -138,7 +122,7 @@ get_bw_score <- function(studyid = NULL,
           negative_visits <- subj_data[subj_data$VISITDY < 0, ]
           if (nrow(negative_visits) > 0) {
             closest_row <- which.min(abs(negative_visits$VISITDY))
-            SubjectInitialWeight <- negative_visits[closest_row, c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY")] #,"BWNOMDY","BWNOMLBL","BWBLFL")]
+            SubjectInitialWeight <- negative_visits[closest_row, c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY")]
           }
         }
 
@@ -149,7 +133,7 @@ get_bw_score <- function(studyid = NULL,
           if (nrow(five_visitdy) > 0) {
             # If there are rows where 1 < VISITDY <= 5, choose the one with the minimum VISITDY value
             closest_row_five <- which.min(five_visitdy$VISITDY)
-            SubjectInitialWeight <- five_visitdy[closest_row_five, c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY")] #, "BWNOMDY", "BWNOMLBL", "BWBLFL")]
+            SubjectInitialWeight <- five_visitdy[closest_row_five, c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY")]
           }
         }
 
@@ -163,7 +147,7 @@ get_bw_score <- function(studyid = NULL,
 
             # Choose the row with the minimum BWDY value greater than 5
             closest_row_null_visitdy <- which.min(null_visitdy_large_bw$VISITDY)
-            SubjectInitialWeight <- null_visitdy_large_bw[closest_row_null_visitdy, c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY")] #, "BWNOMDY", "BWNOMLBL", "BWBLFL")]
+            SubjectInitialWeight <- null_visitdy_large_bw[closest_row_null_visitdy, c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY")]
           }
         }
         # If SubjectInitialWeight is still empty, add currentUSUBJID to UnmatchedUSUBJIDs
@@ -173,7 +157,7 @@ get_bw_score <- function(studyid = NULL,
         # Store Values to "StudyInitialWeights" data frame
         StudyInitialWeights <- rbind(StudyInitialWeights,SubjectInitialWeight)
       }
-    ## }
+   }
 
     # remove the first row (initialized with NAs)
     StudyInitialWeights <- StudyInitialWeights[-1, ]
@@ -185,16 +169,15 @@ get_bw_score <- function(studyid = NULL,
     duplicates_exist <- any(duplicated(StudyInitialWeights$USUBJID))
 
     # Output result
-    ## if (duplicates_exist) {
-    ##   ## print("There are duplicate USUBJID values in StudyInitialWeights")
-    ## } else {
-    ##   print("No duplicate USUBJID values found in StudyInitialWeights")
-    ## }
+     if (duplicates_exist) {
+        print("There are duplicate USUBJID values in StudyInitialWeights")
+     } else {
+       print("No duplicate USUBJID values found in StudyInitialWeights")
+     }
 
     #  see the duplicate values
     if (duplicates_exist) {
       duplicate_usubjids <- StudyInitialWeights$USUBJID[duplicated(StudyInitialWeights$USUBJID)]
-      ## print(duplicate_usubjids)
     }
 
     # Duplicate rows handling
@@ -211,14 +194,14 @@ get_bw_score <- function(studyid = NULL,
 
     # Initialize "StudyBodyWeights" empty data frame
     StudyBodyWeights <- data.frame("STUDYID" = NA, "USUBJID" = NA, "BWTESTCD" = NA,
-                                   "BWSTRESN" = NA, "VISITDY" = NA) #, "BWNOMDY" = NA, "BWNOMLBL"= NA, "BWBLFL" = NA)
+                                   "BWSTRESN" = NA, "VISITDY" = NA)
 
     # Initialize dataframe for unmatched USUBJIDs
     BodyWeights_UnmatchedUSUBJIDs <- data.frame("USUBJID" = character(),
                                                 stringsAsFactors = FALSE)
 
 
-    #if(TRUE) {
+    if(TRUE) {
       # Get unique USUBJIDs in the current study
       unique_bw_subjids <- unique(bw$USUBJID)
 
@@ -259,7 +242,7 @@ get_bw_score <- function(studyid = NULL,
         # Store Values to "StudyBodyWeights" data frame
         StudyBodyWeights  <- rbind(StudyBodyWeights ,SubjectBodyWeight)
       }
-    #}
+    }
 
     # Remove the first row (initialized with NAs)
     StudyBodyWeights <- StudyBodyWeights[-1, ]
@@ -271,16 +254,16 @@ get_bw_score <- function(studyid = NULL,
     stbw_duplicates_exist <- any(duplicated(StudyBodyWeights$USUBJID))
 
     # Output result
-    ## if (stbw_duplicates_exist) {
-    ##   print("There are duplicate USUBJID values in StudyBodyWeights")
-    ## } else {
-    ##   print("No duplicate USUBJID values found in StudyBodyWeights")
-    ## }
+     if (stbw_duplicates_exist) {
+       print("There are duplicate USUBJID values in StudyBodyWeights")
+     } else {
+       print("No duplicate USUBJID values found in StudyBodyWeights")
+     }
 
     # See the duplicate values
     if (stbw_duplicates_exist) {
       stbw_duplicate_usubjids <- StudyBodyWeights$USUBJID[duplicated(StudyBodyWeights$USUBJID)]
-      ## print( stbw_duplicate_usubjids)
+       print( stbw_duplicate_usubjids)
     }
 
     # Duplicate "StudyBodyWeights" rows handling
@@ -299,50 +282,24 @@ get_bw_score <- function(studyid = NULL,
 #'  #<><><><><><><><><><><><><><><><>... Remove TK animals and Recovery animals......<><><><><><>.............
     #<><><><><><><><> master_compiledata is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
 
-    #' #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
     if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
       # Call the master_compiledata function to generate the data frame for fake study
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = TRUE, use_xpt_file = FALSE)
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
 
     } else if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == TRUE) {
       # Call the master_compiledata function to generate the data frame for fake study using xpt file
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = TRUE, use_xpt_file = TRUE)
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
 
     } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == FALSE) {
 
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = FALSE, use_xpt_file = FALSE)
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
 
-     } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == TRUE) {
+    } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == TRUE) {
 
-        # Call the master_compiledata function for real study using xpt file
-        master_compiledata <- get_compile_data(studyid, path_db, fake_study = FALSE, use_xpt_file = TRUE)
+      # Call the master_compiledata function for real study using xpt file
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+
     }
-
-    #' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    # if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
-    #   # Call the master_compiledata function to generate the data frame for fake study
-    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-    #
-    # } else if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == TRUE) {
-    #   # Call the master_compiledata function to generate the data frame for fake study using xpt file
-    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-    #
-    # } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == FALSE) {
-    #
-    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-    #
-    # } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == TRUE) {
-    #
-    #   # Call the master_compiledata function for real study using xpt file
-    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-    #
-    # }
-
-
-
-
 
     #Substract TK animals from the "StudyInitialWeights" and StudyBodyWeights" data frame
     #tk_less_StudyBodyWeights <- StudyBodyWeights[!(StudyBodyWeights$USUBJID %in% tK_animals_df$USUBJID),]
@@ -367,9 +324,8 @@ get_bw_score <- function(studyid = NULL,
 
     # Select specific columns from joined_BW_df
     BW_df_selected_column <- joined_BW_df[, c("USUBJID", "STUDYID", "BWSTRESN", "BWSTRESN_Init")]
-#' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    # Add "ARMCD","SETCD","SEX" to "selected_df"
 
+    # Add "ARMCD","SETCD","SEX" to "selected_df"
     STUDYID_less_master_compiledata <- master_compiledata[, c("USUBJID", "ARMCD","SETCD","SEX")]
     BW_df_merged_ARMCD <- merge(BW_df_selected_column, STUDYID_less_master_compiledata, by = "USUBJID")
 
@@ -419,8 +375,6 @@ get_bw_score <- function(studyid = NULL,
                                                        ifelse(BWzScore_avg  >= 1, 1, 0))))
   }
 
-
-#print(HD_BWzScore_averaged)
     # Return based on score_in_list_format
     if (return_individual_scores) {
       return(bwzscore_BW)
