@@ -14,48 +14,96 @@
 #' }
 #' @export
 
-get_lb_score <- function(studyid,
+get_lb_score <- function(studyid = NULL,
                          path_db,
                          fake_study= FALSE,
+                         use_xpt_file = FALSE,
                          master_compiledata = NULL,
                          return_individual_scores = FALSE) {
 
-  # studyid <- as.character(studyid)
-  # path <- path_db
+  studyid <- as.character(studyid)
+  path <- path_db
+
+  # Helper function to fetch data from SQLite database
+  fetch_domain_data <- function(db_connection, domain_name, studyid) {
+    domain_name <- toupper(domain_name)
+    query_statement <- paste0('SELECT * FROM ', domain_name, " WHERE STUDYID = :x")
+    query_result <- DBI::dbGetQuery(db_connection, statement = query_statement, params = list(x = studyid))
+    query_result
+  }
+
+  #Helper function to read data from .xpt files
+  read_xpt_data <- function(path, domain_name) {
+    domain_data <- haven::read_xpt(fs::path(path, paste0(domain_name, '.xpt')))
+    data.table::setDT(domain_data)
+    return(domain_data)
+  }
+
   # con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
   #   lb <- DBI::dbGetQuery(con, statement = "SELECT * FROM LB WHERE STUDYID = (:x)",
   #                               params = list(x=studyid))
-    studyid <- as.character(studyid)
-    path <- path_db
-    con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
+    # studyid <- as.character(studyid)
+    # path <- path_db
+    # con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
+    #
+    # con_db <- function(domain){
+    #   domain <- toupper(domain)
+    #   stat <- paste0('SELECT * FROM ', domain, " WHERE STUDYID = (:x)")
+    #   domain <- DBI::dbGetQuery(con,
+    #                             statement = stat,
+    #                             params=list(x=studyid))
+    #   domain
+    # }
 
-    con_db <- function(domain){
-      domain <- toupper(domain)
-      stat <- paste0('SELECT * FROM ', domain, " WHERE STUDYID = (:x)")
-      domain <- DBI::dbGetQuery(con,
-                                statement = stat,
-                                params=list(x=studyid))
-      domain
-    }
+  # GET THE REQUIRED DOMAIN DATA
 
-    if(fake_study){
-      lb <- con_db('lb')
-      data.table::setDT(lb)
+  if (fake_study == TRUE && use_xpt_file == FALSE){
 
-      # Select specific columns from lb
-      # lb <- lb[,c('STUDYID','USUBJID',"LBSPEC","LBTESTCD",
-      #             "LBSTRESN", "VISITDY")]
+    # Establish a connection to the SQLite database
+    db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
-    } else{
+    # Fetch data for required domains
+    lb <- fetch_domain_data(db_connection, 'lb', studyid)
 
-      #Pull relevant domain data for each domain
-      lb <- con_db('lb')
-    }
+    # Close the database connection
+    DBI::dbDisconnect(db_connection)
+
+    # om <- con_db('om')
+    # data.table::setDT(om)
+    # Select specific columns from dm
+    #lb <- om[,c('USUBJID',"OMSPEC" ,"OMSTRESN", "OMTEST")]
+
+  } else if (fake_study == TRUE && use_xpt_file == TRUE){
+
+    # Read data from .xpt files
+    lb <- read_xpt_data(path, 'lb')
+    # Select specific columns from dm
+    #om <- om[,c('USUBJID',"OMSPEC" ,"OMSTRESN", "OMTEST")]
+
+  } else if (fake_study == FALSE && use_xpt_file == FALSE) {
+    # Establish a connection to the SQLite database
+    db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+    # Fetch data for required domains
+    lb <- fetch_domain_data(db_connection, 'lb', studyid)
+
+    # Close the database connection
+    DBI::dbDisconnect(db_connection)
+
+    # Select specific columns from dm
+    #om <- om[,c('USUBJID',"OMSPEC" ,"OMSTRESN", "OMTEST")]
+
+  }else if (fake_study == FALSE && use_xpt_file == TRUE) {
+
+    # Read data from .xpt files
+    lb <- read_xpt_data(path, 'lb')
+    #om <- haven::read_xpt(fs::path(path,'om.xpt'))
+    # Select specific columns from dm
+    #om <- om[,c('USUBJID',"OMSPEC" ,"OMSTRESN", "OMTEST")]
+  }
+
+
 
 # check the lb data frame
-
-
-
 
     organTESTCDlist <- list('LIVER' = c('SERUM | ALT',
                                         'SERUM | AST',
@@ -140,17 +188,40 @@ get_lb_score <- function(studyid,
     #><><><><><>... Remove TK animals and Recovery animals......<><><><><><>.
     #<><> master_compiledata is free of TK animals and Recovery animals<><><>
 
-    #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #browser()
-    if (is.null(master_compiledata) & fake_study == TRUE) {
+    #' #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    #' #browser()
+    #' if (is.null(master_compiledata) & fake_study == TRUE) {
+    #'   # Call the master_compiledata function to generate the data frame for fake study
+    #'   master_compiledata <- get_compile_data(studyid, path_db, fake_study = TRUE)
+    #' } else if (is.null(master_compiledata) & fake_study == FALSE) {
+    #'   # Call the master_compiledata function to generate the data frame for real study
+    #'   master_compiledata <- get_compile_data(studyid, path_db, fake_study = FALSE)
+    #' } else {
+    #'   # If master_compiledata is already set, no action needed
+    #'   master_compiledata = master_compiledata
+    #' }
+
+    #' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    #
+    #' #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+    if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
       # Call the master_compiledata function to generate the data frame for fake study
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = TRUE)
-    } else if (is.null(master_compiledata) & fake_study == FALSE) {
-      # Call the master_compiledata function to generate the data frame for real study
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = FALSE)
-    } else {
-      # If master_compiledata is already set, no action needed
-      master_compiledata = master_compiledata
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+
+    } else if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == TRUE) {
+      # Call the master_compiledata function to generate the data frame for fake study using xpt file
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+
+    } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == FALSE) {
+
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+
+    } else if (is.null(master_compiledata) && fake_study == fake_study && use_xpt_file == TRUE) {
+
+      # Call the master_compiledata function for real study using xpt file
+      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
     }
 
 

@@ -8,7 +8,7 @@ get_liver_livertobw_score <- function (studyid,
                                        return_individual_scores = FALSE){
 
 #' @~~~~~~~get_liver_livertobw_scor--bwzscore_BW-SHOULD-ALWAYS-BE-IN-LIST-FORMAT
-
+  studyid <- as.character(studyid)
   path <- path_db
 
   # Helper function to fetch data from SQLite database
