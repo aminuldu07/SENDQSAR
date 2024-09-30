@@ -27,7 +27,7 @@ get_compile_data <- function(studyid = NULL,
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
-    #con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
+    #con <- DBI::dbConnect(DsBI::dbDriver('SQLite'), dbname = path)
 
     # Define a function to query the database by domain
     fetch_domain_data <- function(db_connection, domain_name, studyid) {

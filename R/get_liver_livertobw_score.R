@@ -7,10 +7,9 @@ get_liver_livertobw_score <- function (studyid,
                                        bwzscore_BW = NULL,
                                        return_individual_scores = FALSE){
 
-
+#' @~~~~~~~get_liver_livertobw_scor--bwzscore_BW-SHOULD-ALWAYS-BE-IN-LIST-FORMAT
 
   path <- path_db
-  con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
 
   # Helper function to fetch data from SQLite database
   fetch_domain_data <- function(db_connection, domain_name, studyid) {
@@ -20,7 +19,7 @@ get_liver_livertobw_score <- function (studyid,
     query_result
   }
 
-  # Helper function to read data from .xpt files
+  #Helper function to read data from .xpt files
   read_xpt_data <- function(path, domain_name) {
     domain_data <- haven::read_xpt(fs::path(path, paste0(domain_name, '.xpt')))
     data.table::setDT(domain_data)
@@ -32,12 +31,12 @@ get_liver_livertobw_score <- function (studyid,
   #   domain <- DBI::dbGetQuery(con,
   #                             statement = stat,
   #                             params=list(x=studyid))
-  #   domain
   # }
 
   # GET THE REQUIRED DOMAIN DATA
 
   if (fake_study == TRUE && use_xpt_file == FALSE){
+
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
@@ -53,6 +52,7 @@ get_liver_livertobw_score <- function (studyid,
     om <- om[,c('USUBJID',"OMSPEC" ,"OMSTRESN", "OMTEST")]
 
   } else if (fake_study == TRUE && use_xpt_file == TRUE){
+
     # Read data from .xpt files
     om <- read_xpt_data(path, 'om')
     # Select specific columns from dm
@@ -74,7 +74,7 @@ get_liver_livertobw_score <- function (studyid,
 
     # Read data from .xpt files
     om <- read_xpt_data(path, 'om')
-
+    #om <- haven::read_xpt(fs::path(path,'om.xpt'))
     # Select specific columns from dm
     om <- om[,c('USUBJID',"OMSPEC" ,"OMSTRESN", "OMTEST")]
   }
@@ -128,123 +128,123 @@ get_liver_livertobw_score <- function (studyid,
 
   #' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-  # # Check if bwzscore_BW is NULL
-  # if (is.null(bwzscore_BW) && fake_study == TRUE && use_xpt_file == FALSE) {
-  #   if (return_individual_scores) {
-  #   bwzscore_BW <-  get_bw_score (studyid,
-  #                                 path_db,
-  #                                 fake_study = TRUE,
-  #                                 use_xpt_file = FALSE,
-  #                                 master_compiledata,
-  #                                 return_individual_scores = TRUE)
-  #   } else {
-  #     bwzscore_BW <-  get_bw_score (studyid,
-  #                                   path_db,
-  #                                   fake_study = TRUE,
-  #                                   use_xpt_file = FALSE,
-  #                                   master_compiledata,
-  #                                   return_individual_scores = FALSE)
-  #
-  #   }
-  #
-  #
-  # } else if (is.null(bwzscore_BW) && fake_study == TRUE && use_xpt_file == TRUE) {
-  #
-  #   if (return_individual_scores) {
-  #   bwzscore_BW <-  get_bw_score (studyid = NULL,
-  #                                 path_db,
-  #                                 fake_study = TRUE,
-  #                                 use_xpt_file = TRUE,
-  #                                 master_compiledata,
-  #                                 return_individual_scores = TRUE)
-  #   } else {
-  #
-  #     bwzscore_BW <-  get_bw_score (studyid = NULL,
-  #                                   path_db,
-  #                                   fake_study = TRUE,
-  #                                   use_xpt_file = TRUE,
-  #                                   master_compiledata,
-  #                                   return_individual_scores = FALSE)
-  #
-  #   }
-  #
-  # } else if (is.null(bwzscore_BW) && fake_study == FALSE && use_xpt_file == FALSE) {
-  #   if (return_individual_scores) {
-  #   bwzscore_BW <-  get_bw_score (studyid,
-  #                                 path_db,
-  #                                 fake_study = FALSE,
-  #                                 use_xpt_file = FALSE,
-  #                                 master_compiledata,
-  #                                 return_individual_scores = TRUE)
-  #   } else {
-  #
-  #     bwzscore_BW <-  get_bw_score (studyid,
-  #                                   path_db,
-  #                                   fake_study = FALSE,
-  #                                   use_xpt_file = FALSE,
-  #                                   master_compiledata,
-  #                                   return_individual_scores = FALSE)
-  #   }
-  #
-  # } else if (is.null(bwzscore_BW) && fake_study == FALSE && use_xpt_file == TRUE) {
-  #   if (return_individual_scores) {
-  #   bwzscore_BW <-  get_bw_score (studyid = NULL,
-  #                                 path_db,
-  #                                 fake_study = FALSE,
-  #                                 use_xpt_file = TRUE,
-  #                                 master_compiledata,
-  #                                 return_individual_scores = TRUE)
-  #   } else {
-  #     bwzscore_BW <-  get_bw_score (studyid = NULL,
-  #                                   path_db,
-  #                                   fake_study = FALSE,
-  #                                   use_xpt_file = TRUE,
-  #                                   master_compiledata,
-  #                                   return_individual_scores = FALSE)
-  #   }
-  # }
-
-
-  # SECOND WAY----------------
   # Check if bwzscore_BW is NULL
   if (is.null(bwzscore_BW) && fake_study == TRUE && use_xpt_file == FALSE) {
+    if (return_individual_scores) {
+    bwzscore_BW <-  get_bw_score (studyid,
+                                  path_db,
+                                  fake_study = TRUE,
+                                  use_xpt_file = FALSE,
+                                  master_compiledata,
+                                  return_individual_scores = TRUE)
+    } else {
       bwzscore_BW <-  get_bw_score (studyid,
                                     path_db,
-                                    fake_study = fake_study,
-                                    use_xpt_file = use_xpt_file,
-                                    master_compiledata = master_compiledata,
-                                    return_individual_scores = return_individual_scores)
+                                    fake_study = TRUE,
+                                    use_xpt_file = FALSE,
+                                    master_compiledata,
+                                    return_individual_scores = TRUE)
+
+    }
 
 
   } else if (is.null(bwzscore_BW) && fake_study == TRUE && use_xpt_file == TRUE) {
 
+    if (return_individual_scores) {
+    bwzscore_BW <-  get_bw_score (studyid = NULL,
+                                  path_db,
+                                  fake_study = TRUE,
+                                  use_xpt_file = TRUE,
+                                  master_compiledata,
+                                  return_individual_scores = TRUE)
+    } else {
+
       bwzscore_BW <-  get_bw_score (studyid = NULL,
                                     path_db,
-                                    fake_study = fake_study,
-                                    use_xpt_file = use_xpt_file,
-                                    master_compiledata = master_compiledata,
-                                    return_individual_scores = return_individual_scores)
+                                    fake_study = TRUE,
+                                    use_xpt_file = TRUE,
+                                    master_compiledata,
+                                    return_individual_scores = TRUE)
+
+    }
 
   } else if (is.null(bwzscore_BW) && fake_study == FALSE && use_xpt_file == FALSE) {
+    if (return_individual_scores) {
+    bwzscore_BW <-  get_bw_score (studyid,
+                                  path_db,
+                                  fake_study = FALSE,
+                                  use_xpt_file = FALSE,
+                                  master_compiledata,
+                                  return_individual_scores = TRUE)
+    } else {
 
       bwzscore_BW <-  get_bw_score (studyid,
                                     path_db,
-                                    fake_study = fake_study ,
-                                    use_xpt_file = use_xpt_file,
-                                    master_compiledata = master_compiledata,
-                                    return_individual_scores = return_individual_scores)
+                                    fake_study = FALSE,
+                                    use_xpt_file = FALSE,
+                                    master_compiledata,
+                                    return_individual_scores = TRUE)
+    }
 
   } else if (is.null(bwzscore_BW) && fake_study == FALSE && use_xpt_file == TRUE) {
+    if (return_individual_scores) {
+    bwzscore_BW <-  get_bw_score (studyid = NULL,
+                                  path_db,
+                                  fake_study = FALSE,
+                                  use_xpt_file = TRUE,
+                                  master_compiledata,
+                                  return_individual_scores = TRUE)
+    } else {
       bwzscore_BW <-  get_bw_score (studyid = NULL,
                                     path_db,
-                                    fake_study = fake_study,
-                                    use_xpt_file = use_xpt_file,
-                                    master_compiledata= master_compiledata,
-                                    return_individual_scores = return_individual_scores)
+                                    fake_study = FALSE,
+                                    use_xpt_file = TRUE,
+                                    master_compiledata,
+                                    return_individual_scores = TRUE)
+    }
   }
 
 
 
+  # # Check if bwzscore_BW is NULL
+  # if (is.null(bwzscore_BW) && fake_study == TRUE && use_xpt_file == FALSE) {
+  #     bwzscore_BW <-  get_bw_score (studyid,
+  #                                   path_db,
+  #                                   fake_study = fake_study,
+  #                                   use_xpt_file = use_xpt_file,
+  #                                   master_compiledata = master_compiledata,
+  #                                   return_individual_scores = TRUE)
+  #
+  #
+  # } else if (is.null(bwzscore_BW) && fake_study == TRUE && use_xpt_file == TRUE) {
+  #
+  #     bwzscore_BW <-  get_bw_score (studyid = NULL,
+  #                                   path_db,
+  #                                   fake_study = fake_study,
+  #                                   use_xpt_file = use_xpt_file,
+  #                                   master_compiledata = master_compiledata,
+  #                                   return_individual_scores = TRUE)
+  #
+  # } else if (is.null(bwzscore_BW) && fake_study == FALSE && use_xpt_file == FALSE) {
+  #
+  #     bwzscore_BW <-  get_bw_score (studyid,
+  #                                   path_db,
+  #                                   fake_study = fake_study ,
+  #                                   use_xpt_file = use_xpt_file,
+  #                                   master_compiledata = master_compiledata,
+  #                                   return_individual_scores = TRUE)
+  #
+  # } else if (is.null(bwzscore_BW) && fake_study == FALSE && use_xpt_file == TRUE) {
+  #     bwzscore_BW <-  get_bw_score (studyid = NULL,
+  #                                   path_db,
+  #                                   fake_study = fake_study,
+  #                                   use_xpt_file = use_xpt_file,
+  #                                   master_compiledata= master_compiledata,
+  #                                   return_individual_scores = TRUE)
+  # }
+  #
+  #
+  #
 
 
 

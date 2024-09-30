@@ -90,6 +90,7 @@ get_bw_score <- function(studyid = NULL,
     bw <- bw[,c('STUDYID','USUBJID',"BWTESTCD" ,"BWSTRESN", "VISITDY")]
 
   } else if (fake_study == FALSE && use_xpt_file == TRUE) {
+
     #studyid <- as.character(studyid)
     # path <- path_db
     # Reads from an .xpt file for the real study.
