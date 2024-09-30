@@ -14,7 +14,7 @@
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_lb_mi_tox_score_list){
-  
+
   ###-----------------------------------------------------------------
   `%ni%` <- Negate('%in%')
   Impute <- T
@@ -34,71 +34,71 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
   Type = 1
   hyperparameter_tuning <- F
   removeEndpoints <- c('Infiltrate', 'UNREMARKABLE', 'THIKENING', 'POSITIVE')
-  
+
   ###-------------------------
-  # get lb score for Liver 
+  # get lb score for Liver
   Liver_master_LB_list <- Liver_get_liver_om_lb_mi_tox_score_list[['master_lb_score_six']]
   Liver_master_LB_list$indst_TO <- "Liver"
-  
+
   # get LivertoBW score for Liver
   Liver_master_liverToBW <- Liver_get_liver_om_lb_mi_tox_score_list[['master_liverToBW']]
   Liver_master_liverToBW $indst_TO   <- "Liver"
-  
+
   # For mi score for Liver
   Liver_master_MI_list <- Liver_get_liver_om_lb_mi_tox_score_list[['master_mi_df']]
   Liver_master_MI_list$indst_TO <- "Liver"
-  
+
   # Reorder the columns to make `indst_TO` the first column
   Liver_master_MI_list <- Liver_master_MI_list[, c("indst_TO", setdiff(names(Liver_master_MI_list), "indst_TO"))]
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   # get lb score for not_Liver
   not_Liver_master_LB_list <- not_Liver_get_liver_om_lb_mi_tox_score_list[['master_lb_score_six']]
   not_Liver_master_LB_list$indst_TO  <- "not_Liver"
-  
+
   # get LivertoBW score for not_Liver
   not_Liver_master_liverToBW <- not_Liver_get_liver_om_lb_mi_tox_score_list[['master_liverToBW']]
   not_Liver_master_liverToBW$indst_TO  <- "not_Liver"
-  
+
   # For mi score for not_Liver
   not_Liver_master_MI_list <- not_Liver_get_liver_om_lb_mi_tox_score_list[['master_mi_df']]
   not_Liver_master_MI_list$indst_TO <- "not_Liver"
-  
+
   # Reorder the columns to make `indst_TO` the first column
   not_Liver_master_MI_list <- not_Liver_master_MI_list[, c("indst_TO", setdiff(names(not_Liver_master_MI_list), "indst_TO"))]
-  
-  
+
+
   #--------------------------
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   LB <- rbind(Liver_master_LB_list, not_Liver_master_LB_list)
-  
+
   # Move the last column to the first position
   LB <- LB[, c(ncol(LB), 1:(ncol(LB)-1))]
-  
-  
+
+
   OM <- rbind(Liver_master_liverToBW, not_Liver_master_liverToBW)
-  
+
   # Move the last column to the first position
   OM <- OM[, c(ncol(OM), 1:(ncol(OM)-1))]
-  
+
   ###------------------------
   MIl <- Liver_master_MI_list
   # Replace spaces and commas in column names with dots
   colnames(MIl) <- gsub(' ', '.', colnames(MIl))
   colnames(MIl) <- gsub(',', '.', colnames(MIl))
   colnames(MIl) <- gsub('/', '.', colnames(MIl))
-  
-  
-  MIn <- not_Liver_master_MI_list 
+
+
+  MIn <- not_Liver_master_MI_list
   # Replace spaces and commas in column names with dots
   colnames(MIn) <- gsub(' ', '.', colnames(MIn))
   colnames(MIn) <- gsub(',', '.', colnames(MIn))
   colnames(MIn) <- gsub('/', '.', colnames(MIn))
-  
-  
-  
+
+
+
   MIinter <- intersect(colnames(MIl), colnames(MIn))
   MI <- rbind(MIl[, MIinter], MIn[, MIinter])
-  
+
   MIextraL <- setdiff(colnames(MIl), colnames(MIn))
   MIextraN <- setdiff(colnames(MIn), colnames(MIl))
   for (j in MIextraL) {
@@ -109,18 +109,18 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
     MI[, j] <- NA
     MI[seq((nrow(MIl) + 1), nrow(MI)), j] <- MIn[, j]
   }
-  
+
   MI[is.na(MI)] <- 0
-  
+
   #Identify Columns with Periods
   findings2replaceIndex <- grep('.', colnames(MI), fixed = T)
-  
+
   # Store Column Names with Periods
   f2replace <- colnames(MI)[findings2replaceIndex]
-  
+
   #Identify Unique Column Names without Periods
   fn2replace <- unique(toupper(colnames(MI)[-findings2replaceIndex]))
-  
+
   #Remove Specific Columns from Processing
   removeIndex <- which(fn2replace %in% c('INDST_TO',
                                          'STUDYID',
@@ -128,7 +128,7 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
                                          'THIKENING',
                                          'POSITIVE'))
   fn2replace <- fn2replace[-removeIndex]
-  
+
   #Harmonize Synonym Columns
   for (finding in fn2replace) {
     synonyms <- grep(finding, f2replace, ignore.case = T, value = T)
@@ -141,12 +141,12 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
       }
     }
   }
-  
+
   #Remove Synonym Columns
   MI <- MI[,-findings2replaceIndex]
-  
+
   #return(list(LB,OM,MI))
-  
+
   ###------------------------
   commonStudies <- Reduce(intersect, list(LB$STUDYID, OM$STUDYID, MI$STUDYID))
   extraDomains <- c('OM', 'MI')
@@ -167,11 +167,11 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
       Data <- rbind(Data, newRow)
     }
   }
-  
-  
+
+
   removeIndex <- which(colnames(Data) %in% removeEndpoints)
   Data <- Data[, -removeIndex]
-  
+
   if (Round == T) {
     zscoreIndex <- c(grep('avg_', colnames(Data)), grep('liver', colnames(Data)))
     for (i in zscoreIndex) {
@@ -185,11 +185,11 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
       Data[, i] <- ceiling(Data[, i])
     }
   }
-  
+
   columnSums <- sort(colSums(Data[,3:ncol(Data)], na.rm = T), decreasing = T)
   Data[,3:ncol(Data)] <- Data[, names(columnSums)]
   colnames(Data)[3:ncol(Data)] <- names(columnSums)
-  
+
   #write.csv(Data, 'mergedData.csv', row.names = F)
   ##---------------
   if (generateBarPlot == T) {
@@ -200,31 +200,31 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
       Finding <- c(Finding, finding)
       LIVER <- c(LIVER, 'Y')
       Value <- c(Value, mean(Data[which(Data$indst_TO == "Liver"), finding], na.rm = T))
-      
+
       Finding <- c(Finding, finding)
       LIVER <- c(LIVER, 'N')
       Value <- c(Value, mean(Data[which(Data$indst_TO != "Liver"), finding], na.rm = T))
-      
+
     }
     plotData <- as.data.frame(cbind(Finding, LIVER, Value))
     plotData$LIVER <- factor(plotData$LIVER)
     plotData$Finding <- factor(plotData$Finding)
     plotData$Value = as.numeric(plotData$Value)
     # plotData$Value = log(as.numeric(plotData$Value), base = 10)
-    
-    ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~check and double check 
-    p <- ggplot2::ggplot(plotData, aes(x = Finding, y = Value, fill = LIVER)) + 
+
+    ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~check and double check
+    p <- ggplot2::ggplot(plotData, aes(x = Finding, y = Value, fill = LIVER)) +
       ggplot2::geom_bar(stat="identity", position = 'dodge') +
       ggplot2::theme(text = element_text(size = 20),
             axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
       ggplot2::ylab('Average Score')
     print(p)
   }
-  
+
   #}
-  
+
   #'@********************************@ random forest model @********************
-  
+
 #########--------------####### Random Forest Modeling ########################
 ###-----------------------rfData preparation------------------------------------
   rfData <- Data[, -2]
@@ -232,15 +232,15 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
   rfData[which(rfData$indst_TO == 'not_Liver'), 1] <- 0
   # rfData[,1] <- as.numeric(rfData[,1])
   rfData[,1] <- factor(rfData[,1], levels = c(1, 0))
-  
+
   # removeIndex <- which(colnames(rfData) %in% c('INFILTRATE'))
   # rfData <- rfData[, -removeIndex]
-  
+
 #######-----------------------missing values imputation---------------------------
    ##missing values imputation
   if (Impute == T) {
     rfData <- randomForest::rfImpute(indst_TO ~ ., rfData)
-    
+
     if (Round == T) {
       zscoreIndex <- c(grep('avg_', colnames(rfData)), grep('liver', colnames(rfData)))
       for (i in zscoreIndex) {
@@ -255,28 +255,28 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
       }
     }
   }
-  
+
 ##------------------------------------------------------------------------
-  
+
 
   #' Model Training Loop
   count <- 0
   if (reps > 0) {
     for (rep in seq(reps)) {
       print(paste0(rep/reps*100, '% Complete...'))
-      
-#####------------------------------------------------------------------------------      
+
+#####------------------------------------------------------------------------------
 ########--------prepare training and testing data sets for model building-------------
       if (holdback == 1) {
         #If holdback == 1, a single instance is sampled for the test set,
-        # and the rest are used for training:::  Randomly assigns each row to 
+        # and the rest are used for training:::  Randomly assigns each row to
         #the training set (1) or test set (2) based on the holdback proportion.
         ind <- sample(seq(nrow(rfData)), 1) # selection of single rows
         train <- rfData[-ind,]
         test <- rfData[ind,]
         testIndex <- ind
       } else {
-        #Otherwise, the data is split into training and testing sets based 
+        #Otherwise, the data is split into training and testing sets based
         # on the holdback proportion.
         ## categorizing all rows into two groups based on probabilities.
         ind <- sample(2, nrow(rfData), replace = T, prob = c((1- holdback), holdback))
@@ -284,33 +284,33 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
         test <- rfData[ind==2,]
         testIndex <- which(ind == 2)
       }
-      
+
       # Under sampling for balancing the positive and negative instances
       if (Undersample == T) {
-        #If Undersample == TRUE, the training set is balanced by 
+        #If Undersample == TRUE, the training set is balanced by
         #undersampling the majority class
         posIndex <- which(train[,1] == 1)
         nPos <- length(posIndex)
         trainIndex <- c(posIndex, sample(which(train[,1] == 0), nPos, replace = F))
         train <- train[trainIndex,]
       }
-      
+
 ###------------------perform hyperparameter tuning and get model -----------
     if(hyperparameter_tuning == T) {
-      
+
        # "mtry" in Caret Package Grid Search
        #sets up the cross-validation method.
        control <- trainControl(method="repeatedcv", number=10, repeats=3)
        metric <- "Accuracy"
        mtry <- sqrt(ncol(train))
        tunegrid <- expand.grid(.mtry=mtry)
-       
+
        #Grid and Random Search (caret package)
        rf_default <- train(indst_TO~., data=train, method="rf", metric=metric, tuneGrid=tunegrid, trControl=control)
        rf_random <- train(indst_TO~., data=train, method="rf", metric=metric, tuneLength=15, trControl=control)
        print(rf_default)
        print(rf_random)
-       
+
        #mtry in Random Forest Parameter Tuning
        #tuning on the mtry parameter
        mtry <- tuneRF(rfData[,-1], rfData[,1], ntreeTry=500,
@@ -319,10 +319,10 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
        print(mtry)
        print(best.m)
     }
-      
-   
+
+
       best.m <- 4
-      
+
       rf <- randomForest::randomForest(indst_TO ~ ., data=train, mytry = best.m, importance = F, ntree = 500, proximity = F)
       # rf <- tuneRF(train[,-1], train[,1], doBest = T, stepFactor = 1.5)
 ###------------Error-Handling-(Flip-or-Prune)from "model predictions"-----------
@@ -331,12 +331,12 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
       if ((ErrorMethod == 'Flip')|(ErrorMethod == 'Prune')) {
         # Predict probabilities (using random_forest_package)
         p <- stats::predict(rf, test, type = 'prob')[,1]
-        
+
         # Find indices to flip or prune
         flipLiverIndex <- testIndex[which((rfData[testIndex, 'indst_TO'] == 1)&(as.numeric(p) < threshold))]
         flipnot_LiverIndex <- testIndex[which((rfData[testIndex, 'indst_TO'] == 0)&(as.numeric(p) > (1 - threshold)))]
-        
-        #If there are indices to flip or prune, the data set is modified 
+
+        #If there are indices to flip or prune, the data set is modified
         # accordingly and saved to a file
         if (length(flipLiverIndex) > 0) {
           count <- count + 1
@@ -370,7 +370,7 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
           } else {
             # Save the modified dataset
             saveRDS(rfData, paste0('rfData_', as.integer(reps), '_', threshold, '_', holdback, '_', ErrorMethod, '_', count, '.rds'))
-        
+
           }
         }
       }
@@ -392,8 +392,8 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
   Prevalence <- NULL
   Accuracy <- NULL
   nRemoved <- NULL
-  
-  
+
+
   #-----create and prepare "`rfTestData data` frame" for storing predictions----
   rfTestData <- rfData
   #replaces the existing column names with simple numeric identifiers
@@ -402,14 +402,14 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
   for (j in seq(ncol(rfTestData))) {
     rfTestData[,j] <- NA
   }
-  
+
   #prepares rfTestData to maintain a consistent structure with the necessary
   #columns for storing predictions in subsequent iterations of the loop
   rfTestData <- rfTestData[,1:2]
-  
+
   #remove 'gini' from the previous iteration
   if (exists('gini')) {rm(gini)}
-  
+
   # model building and testing---------------------------
   for (i in seq(testReps)) {
     if (i == 1) {
@@ -421,22 +421,22 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
     } else {
       ind <- sampleIndicies
     }
-    
+
     trainIndex <- which(seq(nrow(rfData)) %ni% ind)
     testIndex <- ind
-    
+
     # ind <- sample(2, nrow(rfData), replace = T, prob = c((1- testHoldBack), testHoldBack))
     train <- rfData[trainIndex,]
-  
+
     train_data_two <- train
     print(dim(train_data_two))
-    
+
     test <- rfData[testIndex,]
-    
-    rfAll <- randomForest::randomForest(indst_TO ~ ., data=rfData, mytry = best.m, 
+
+    rfAll <- randomForest::randomForest(indst_TO ~ ., data=rfData, mytry = best.m,
                           importance = F, ntree = 500, proximity = T)
     # print(rfAll)
-    
+
     if (Undersample == T) {
       posIndex <- which(train[,1] == 1)
       nPos <- length(posIndex)
@@ -444,51 +444,51 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
       train <- train[trainIndex,]
       test <- rbind(train[-trainIndex,], test)
     }
-    
+
     train_data_two <- train
     print(dim(train_data_two))
-    
+
 
     #model building with current train data
-    rf <- randomForest::randomForest(indst_TO ~ ., data=train, mytry = best.m, 
+    rf <- randomForest::randomForest(indst_TO ~ ., data=train, mytry = best.m,
                        importance = T, ntree = 500, proximity = T)
-    
+
     print(rf)
-    
+
     #predictions with current model  with current test data
-    
+
     #' @___________________this_line_has_problems_______
-    p2r <- stats::predict(rf, test, type = 'prob')[,1] 
-    
+    p2r <- stats::predict(rf, test, type = 'prob')[,1]
+
     #Store these predictions in a structured dataframe
     rfTestData[names(p2r), i] <- as.numeric(p2r)
-    
+
     #Identifying Indeterminate Predictions (Tracking Indeterminate Predictions)
     #Keeps track of the proportion of indeterminate predictions in each iteration
     #Proportion Tracking
     indeterminateIndex <- which((p2r < indeterminateUpper)&(p2r > indeterminateLower))
-    
+
     #Calculating the Proportion of Indeterminate Predictions
     #Sets the indeterminate predictions to NA, effectively marking them
     #as missing or invalid.
     nRemoved <- c(nRemoved, length(indeterminateIndex)/length(p2r))
-    
+
     #Handling Indeterminate Predictions
     p2r[indeterminateIndex] <- NA
-    
+
     #Rounding the Predictions:
     p2r <- round(p2r)
-    
-    
-    #"confusionMatrix" function from the caret package 
-    Results <- confusionMatrix(factor(p2r, levels = c(1, 0)), factor(test$indst_TO, levels = c(1, 0)))
+
+
+    #"confusionMatrix" function from the caret package
+    Results <- caret::confusionMatrix(factor(p2r, levels = c(1, 0)), factor(test$indst_TO, levels = c(1, 0)))
     Sensitivity <- c(Sensitivity, Results$byClass[['Sensitivity']])
     Specificity <- c(Specificity, Results$byClass[['Specificity']])
     PPV <- c(PPV, Results$byClass[['Pos Pred Value']])
     NPV <- c(NPV, Results$byClass[['Neg Pred Value']])
     Prevalence <- c(Prevalence, Results$byClass[['Prevalence']])
     Accuracy <- c(Accuracy, Results$byClass[['Balanced Accuracy']])
-    
+
     giniTmp <-  randomForest::importance(rf, type = Type)
     if (exists('gini')) {
       gini <- cbind(gini, giniTmp)
@@ -496,7 +496,7 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
       gini <- giniTmp
     }
   }
-  
+
   #' @Performance-and-Importance-Analysis~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #performance summary for the model and  dotchart of the top important
   #variables based on their mean decrease in accuracy or Gini index
@@ -509,7 +509,7 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
   PerformanceSummary <- colMeans(PerformanceMatrix, na.rm = T)
   print(PerformanceSummary)
   print(sort(rowMeans(gini), decreasing = T))
-  
+
   imp <- as.matrix(rowMeans(gini)[1:nTopImportance])
   if (Type == 1) {
     colnames(imp) <- 'MeanDecreaseAccuracy'
@@ -517,7 +517,7 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
     colnames(imp) <- 'MeanDecreaseGini'
   }
   ord <- order(imp[,1])
-  dotchart(imp[ord, 1], xlab = colnames(imp)[1], ylab = "", 
+  dotchart(imp[ord, 1], xlab = colnames(imp)[1], ylab = "",
            main = paste0('Top ', nrow(imp), ' - Variable Importance'))#, xlim = c(xmin, max(imp[, i])))
   # varImpPlot(rf,
   #            sort = T,
@@ -536,23 +536,23 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
   # 3. Plot the ROC curve
   plot(pred3,main=paste0("ROC Curve for Random Forest (AUC = ", round(AUC, digits = 3), ")"),col=2,lwd=2)
   abline(a=0,b=1,lwd=2,lty=2,col="gray")
-  
+
   #}
-  
-  
+
+
   # MDSplot(rf, train$indst_TO, k = 3, palette = rep(1, 3), pch = as.numeric(levels(train$indst_TO)))
-  
+
 ###-----------------------Visualization-and-Saving-Results----------------------
   #' @Visualization-and-Saving-Results~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   reprtree:::plot.reprtree(reprtree::ReprTree(rfAll, train, metric='d2'))
-  
+
   # saveRDS(rfData, paste0('rfData_', as.integer(reps), '_', threshold, '_', holdback, '_', ErrorMethod, '.rds'))
-  
+
   histoData <- as.data.frame(cbind(rowMeans(rfTestData, na.rm = T), rfData[,1]))
   histoData[which(histoData[,2] == 1), 2] <- 'Y'
   histoData[which(histoData[,2] == 2), 2] <- 'N'
   colnames(histoData) <- c('Probability', 'LIVER')
-  
+
   H <- p <- histoData %>%
     ggplot( aes(x=Probability, fill=LIVER)) +
     geom_histogram( color="#e9ecef", alpha=0.6, position = 'identity') +

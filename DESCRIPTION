@@ -36,7 +36,8 @@ Imports:
     ROCR,
     sendigR,
     stringr,
-    tidyr
+    tidyr,
+    ggplot2
 Suggests: 
     testthat (>= 3.0.0),
     usethis

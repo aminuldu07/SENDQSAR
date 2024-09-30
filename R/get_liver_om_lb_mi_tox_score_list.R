@@ -201,7 +201,7 @@ for (studyid in selected_studies){
   tryCatch({
     # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
     studyid <- if (use_xpt_file) NULL else studyid
-    browser()
+
     if(output_individual_scores){
       HD_liver_zscore_df <- get_liver_livertobw_score (studyid = studyid,
                                                        path_db = path_db,
@@ -303,7 +303,7 @@ for (studyid in selected_studies){
 
         #master_lbxx_list[[j]] <- lb_score_final_list
         #master_lb_score_six <- rbind(master_lb_score_six , averaged_LB_score)
-browser()
+
      }
 
   }, error = function(e) {
