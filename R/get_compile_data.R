@@ -18,10 +18,10 @@ get_compile_data <- function(studyid = NULL,
                              fake_study = FALSE,
                              use_xpt_file = FALSE) {
 
-  studyid <- as.character(studyid)
-  path <- path_db
 
-  if(fake_study == TRUE & use_xpt_file == FALSE){#1
+  if(fake_study == TRUE && use_xpt_file == FALSE){
+    studyid <- as.character(studyid)
+    path <- path_db
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
@@ -37,9 +37,7 @@ get_compile_data <- function(studyid = NULL,
 
     # Fetch data for the 'dm' domain
     dm <- fetch_domain_data(db_connection, 'dm', studyid)
-
-
-  data.table::setDT(dm)
+    data.table::setDT(dm)
 
   # Fetch data for the 'ts' domain
   ts <- fetch_domain_data(db_connection, 'ts', studyid)
@@ -75,7 +73,9 @@ get_compile_data <- function(studyid = NULL,
   return(dm)
 
 
-  } else if(fake_study == TRUE & use_xpt_file == TRUE) {#2
+  } else if (fake_study == TRUE && use_xpt_file == TRUE) {
+    #studyid <- as.character(studyid)
+    path <- path_db
 
   # get the required domain
     dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
@@ -117,7 +117,9 @@ get_compile_data <- function(studyid = NULL,
     ## THerfore, where is the tk_animals and recover animals data }}}
 
 
-  } else if(fake_study == FALSE & use_xpt_file == FALSE) {
+  } else if(fake_study == FALSE && use_xpt_file == FALSE) {
+    studyid <- as.character(studyid)
+    path <- path_db
 
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
@@ -143,7 +145,9 @@ get_compile_data <- function(studyid = NULL,
     pooldef <- fetch_domain_data(db_connection, 'pooldef', studyid)
 
 
-  } else if (fake_study == FALSE & use_xpt_file == TRUE) {
+  } else if (fake_study == FALSE && use_xpt_file == TRUE) {
+    #studyid <- as.character(studyid)
+    path <- path_db
 
     # get the required domain
     bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
@@ -305,7 +309,6 @@ get_compile_data <- function(studyid = NULL,
     # Subtract "TK_animals_df" data from the "recovery_cleaned_CompileData"
     cleaned_CompileData <- recovery_cleaned_CompileData[
    !(recovery_cleaned_CompileData$USUBJID %in% tK_animals_df$USUBJID),]
-
 
 
     #.."vehicle" and "HD animals" selection "for"cleaned_CompileData"

@@ -2,6 +2,7 @@ rm(list = ls())
 #setwd("C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/send-summarizer")
 devtools::load_all(".")
 
+##### compile_data_----------------------------
 R_SQL_compile_data <- get_compile_data(studyid='876', path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db', fake_study = FALSE,
                                       use_xpt_file = FALSE)
 
@@ -20,6 +21,46 @@ fake_XPT_compile_data <- get_compile_data(studyid = NULL,
                                            path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/FAKE10663',
                                            fake_study = TRUE,
                                            use_xpt_file = TRUE)
+
+#### bw_zscore_data---------------------------------------------
+
+rm(list = ls())
+#setwd("C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/send-summarizer")
+devtools::load_all(".")
+
+##### compile_data_----------------------------
+R_SQL_bw_zscore <- get_bw_score(studyid='876', path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db',
+                                               fake_study = FALSE,
+                                               master_compiledata = NULL,
+                                               return_individual_scores = FALSE,
+                                               use_xpt_file = FALSE)
+
+
+R_XPT_bw_zscore <- get_bw_score(studyid= NULL, path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/real_xpt_dir/IND051292_1017-3581',
+                                               fake_study = FALSE,
+                                               master_compiledata = NULL,
+                                               return_individual_scores = FALSE,
+                                               use_xpt_file = TRUE)
+
+
+fake_SQL_bw_zscore <- get_bw_score(studyid = '10663',
+                                          path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/liver_1.db',
+                                          fake_study = TRUE,
+                                          master_compiledata = NULL,
+                                          return_individual_scores = FALSE,
+                                          use_xpt_file = FALSE)
+
+
+fake_XPT_bw_zscore <- get_bw_score(studyid = NULL,
+                                          path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/FAKE10663',
+                                          fake_study = TRUE,
+                                          master_compiledata = NULL,
+                                          return_individual_scores = FALSE,
+                                          use_xpt_file = TRUE)
+
+
+#### liverTOBW_zscore_data---------------------------------------------
+
 
 
 
