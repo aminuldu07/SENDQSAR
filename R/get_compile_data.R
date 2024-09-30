@@ -18,10 +18,12 @@ get_compile_data <- function(studyid = NULL,
                              fake_study = FALSE,
                              use_xpt_file = FALSE) {
 
+  studyid <- as.character(studyid)
+  path <- path_db
 
   if(fake_study == TRUE && use_xpt_file == FALSE){
-    studyid <- as.character(studyid)
-    path <- path_db
+    # studyid <- as.character(studyid)
+    # path <- path_db
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
@@ -75,7 +77,7 @@ get_compile_data <- function(studyid = NULL,
 
   } else if (fake_study == TRUE && use_xpt_file == TRUE) {
     #studyid <- as.character(studyid)
-    path <- path_db
+   # path <- path_db
 
   # get the required domain
     dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
@@ -118,8 +120,8 @@ get_compile_data <- function(studyid = NULL,
 
 
   } else if(fake_study == FALSE && use_xpt_file == FALSE) {
-    studyid <- as.character(studyid)
-    path <- path_db
+    # studyid <- as.character(studyid)
+    # path <- path_db
 
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
@@ -147,7 +149,7 @@ get_compile_data <- function(studyid = NULL,
 
   } else if (fake_study == FALSE && use_xpt_file == TRUE) {
     #studyid <- as.character(studyid)
-    path <- path_db
+    #path <- path_db
 
     # get the required domain
     bw <- haven::read_xpt(fs::path(path,'bw.xpt'))

@@ -23,13 +23,16 @@
 get_bw_score <- function(studyid = NULL,
                          path_db,
                          fake_study = FALSE,
+                         use_xpt_file = FALSE,
                          master_compiledata = NULL,
-                         return_individual_scores = FALSE,
-                         use_xpt_file = FALSE) {
+                         return_individual_scores = FALSE) {
+
+  studyid <- as.character(studyid)
+  path <- path_db
 
     if (fake_study == TRUE && use_xpt_file == FALSE) {
-    studyid <- as.character(studyid)
-    path <- path_db
+    # studyid <- as.character(studyid)
+    # path <- path_db
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
@@ -51,7 +54,7 @@ get_bw_score <- function(studyid = NULL,
 
   } else if (fake_study == TRUE && use_xpt_file == TRUE) {
     #studyid <- as.character(studyid)
-    path <- path_db
+    #path <- path_db
     # Code for when fake_study is TRUE and use_xpt_file is TRUE
     # Reads from an .xpt file for the fake study.
 
@@ -61,8 +64,8 @@ get_bw_score <- function(studyid = NULL,
     bw <- bw[,c('STUDYID','USUBJID',"BWTESTCD" ,"BWSTRESN", "VISITDY")]
 
   } else if (fake_study == FALSE && use_xpt_file == FALSE) {
-    studyid <- as.character(studyid)
-    path <- path_db
+    # studyid <- as.character(studyid)
+    # path <- path_db
 
     # Reads from an SQLite database for the real study.
     # Code for the remaining case (i.e., fake_study is FALSE and use_xpt_file is FALSE)
@@ -88,7 +91,7 @@ get_bw_score <- function(studyid = NULL,
 
   } else if (fake_study == FALSE && use_xpt_file == TRUE) {
     #studyid <- as.character(studyid)
-    path <- path_db
+    # path <- path_db
     # Reads from an .xpt file for the real study.
     # Code for when fake_study is FALSE and use_xpt_file is TRUE
     bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
