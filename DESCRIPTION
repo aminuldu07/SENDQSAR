@@ -44,3 +44,5 @@ Suggests:
     testthat (>= 3.0.0),
     usethis
 Config/testthat/edition: 3
+URL: https://aminuldu07.github.io/SENDQSAR/, https://github.com/aminuldu07/SENDQSAR
+BugReports: https://github.com/aminuldu07/SENDQSAR/issues
