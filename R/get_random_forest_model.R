@@ -95,7 +95,7 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
   colnames(MIn) <- gsub('/', '.', colnames(MIn))
 
 
-
+browser()
   MIinter <- intersect(colnames(MIl), colnames(MIn))
   MI <- rbind(MIl[, MIinter], MIn[, MIinter])
 
@@ -146,7 +146,7 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
   MI <- MI[,-findings2replaceIndex]
 
   #return(list(LB,OM,MI))
-
+browser()
   ###------------------------
   commonStudies <- Reduce(intersect, list(LB$STUDYID, OM$STUDYID, MI$STUDYID))
   extraDomains <- c('OM', 'MI')
@@ -190,9 +190,12 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
   Data[,3:ncol(Data)] <- Data[, names(columnSums)]
   colnames(Data)[3:ncol(Data)] <- names(columnSums)
 
-  #write.csv(Data, 'mergedData.csv', row.names = F)
+  browser()
+
+   #write.csv(Data, 'mergedData.csv', row.names = F)
   ##---------------
   if (generateBarPlot == T) {
+    browser()
     Finding <- NULL
     LIVER <- NULL
     Value <- NULL
