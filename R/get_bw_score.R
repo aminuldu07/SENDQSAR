@@ -30,60 +30,44 @@ get_bw_score <- function(studyid = NULL,
   studyid <- as.character(studyid)
   path <- path_db
 
+  # Define a function to query the database by domain
+  fetch_domain_data <- function(db_connection, domain_name, studyid) {
+    domain_name <- toupper(domain_name)
+    query_statement <- paste0('SELECT * FROM ', domain_name, " WHERE STUDYID = :x")
+    query_result <- DBI::dbGetQuery(db_connection, statement = query_statement, params = list(x = studyid))
+    query_result
+  }
+
+
+
     if (fake_study == TRUE && use_xpt_file == FALSE) {
 
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
-    # Define a function to query the database by domain
-    fetch_domain_data <- function(db_connection, domain_name, studyid) {
-      domain_name <- toupper(domain_name)
-      query_statement <- paste0('SELECT * FROM ', domain_name, " WHERE STUDYID = :x")
-      query_result <- DBI::dbGetQuery(db_connection, statement = query_statement, params = list(x = studyid))
-      query_result
-    }
-
     # Fetch data for the 'dm' domain
     bw <- fetch_domain_data(db_connection, 'bw', studyid)
-
-    # Select specific columns from dm
-    bw <- bw[,c('STUDYID','USUBJID',"BWTESTCD" ,"BWSTRESN", "VISITDY")]
 
   } else if (fake_study == TRUE && use_xpt_file == TRUE) {
     # Reads from an .xpt file for the fake study.
 
     bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
 
-    # Select specific columns from dm
-    bw <- bw[,c('STUDYID','USUBJID',"BWTESTCD" ,"BWSTRESN", "VISITDY")]
-
   } else if (fake_study == FALSE && use_xpt_file == FALSE) {
 
     # Reads from an SQLite database for the real study
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
-    # Define a function to query the database by domain
-    fetch_domain_data <- function(db_connection, domain_name, studyid) {
-      domain_name <- toupper(domain_name)
-      query_statement <- paste0('SELECT * FROM ', domain_name, " WHERE STUDYID = :x")
-      query_result <- DBI::dbGetQuery(db_connection, statement = query_statement, params = list(x = studyid))
-      query_result
-    }
-
     # Fetch data for the 'dm' domain
     bw <- fetch_domain_data(db_connection, 'bw', studyid)
     #data.table::setDT(bw)
 
-    # Select specific columns from dm
-    bw <- bw[,c('STUDYID','USUBJID',"BWTESTCD" ,"BWSTRESN", "VISITDY")]
 
   } else if (fake_study == FALSE && use_xpt_file == TRUE) {
 
     # Reads from an .xpt file for the real study.
     bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
 
-    # Select specific columns from dm
-    bw <- bw[,c('STUDYID','USUBJID',"BWTESTCD" ,"BWSTRESN", "VISITDY")]
   }
 
 

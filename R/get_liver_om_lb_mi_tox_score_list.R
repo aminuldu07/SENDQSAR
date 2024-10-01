@@ -79,7 +79,7 @@ for (studyid in selected_studies){
 
     }, error = function(e) {
     # Handling errors
-    message("Error in BodyWeight Data Compilation calculation: ", e$message)
+    message("Error in master Compilation Data  calculation: ", e$message)
 
     # Log the error
     error_block1 <- data.frame(STUDYID = studyid,

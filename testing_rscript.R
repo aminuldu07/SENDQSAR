@@ -23,14 +23,29 @@ fake_XPT_compile_data <- get_compile_data(studyid = NULL,
                                            use_xpt_file = TRUE)
 
 #### bw_zscore_data---------------------------------------------
-bw_R_SQL_bw_zscore <- get_bw_score(studyid='876', path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db',
+rm(list = ls())
+devtools::load_all(".")
+
+#studyid_ifelse_is_na_VISITDY <- c("77053","76284", "72332", "72027","71796", "59709", "50343", "47568", "44950", "44396", "36289", "33808","32670")
+
+testingL_bw_zscore <- get_bw_score(studyid='77053',
+                                   path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA//2023-2024_projects/FAKE_DATABASES/fake_not_liver_update.db',
+                                   fake_study = TRUE,
+                                   master_compiledata = NULL,
+                                   return_individual_scores = FALSE,
+                                   use_xpt_file = FALSE)
+
+
+bw_R_SQL_bw_zscore <- get_bw_score(studyid='876',
+                                  path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db',
                                                fake_study = FALSE,
                                                master_compiledata = NULL,
                                                return_individual_scores = FALSE,
                                                use_xpt_file = FALSE)
 
 
-bw_R_XPT_bw_zscore <- get_bw_score(studyid= NULL, path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/real_xpt_dir/IND051292_1017-3581',
+bw_R_XPT_bw_zscore <- get_bw_score(studyid= NULL,
+                                   path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/real_xpt_dir/IND051292_1017-3581',
                                                fake_study = FALSE,
                                                master_compiledata = NULL,
                                                return_individual_scores = FALSE,
