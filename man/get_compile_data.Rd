@@ -4,7 +4,12 @@
 \alias{get_compile_data}
 \title{filter out tk and recovery animal}
 \usage{
-get_compile_data(studyid, path_db, fake_study = FALSE)
+get_compile_data(
+  studyid = NULL,
+  path_db,
+  fake_study = FALSE,
+  use_xpt_file = FALSE
+)
 }
 \arguments{
 \item{studyid}{Mandatory, character \cr

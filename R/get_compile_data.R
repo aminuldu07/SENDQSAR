@@ -13,6 +13,7 @@
 #' }
 #' @export
 
+
 get_compile_data <- function(studyid = NULL,
                              path_db,
                              fake_study = FALSE,
@@ -21,27 +22,33 @@ get_compile_data <- function(studyid = NULL,
   studyid <- as.character(studyid)
   path <- path_db
 
+  # Define a function to query the database by domain
+  fetch_domain_data <- function(db_connection, domain_name, studyid) {
+    domain_name <- toupper(domain_name)
+    query_statement <- paste0('SELECT * FROM ', domain_name, " WHERE STUDYID = :x")
+    query_result <- DBI::dbGetQuery(db_connection, statement = query_statement, params = list(x = studyid))
+    query_result
+  }
+
   if(fake_study == TRUE && use_xpt_file == FALSE){
 
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
-    # Define a function to query the database by domain
-    fetch_domain_data <- function(db_connection, domain_name, studyid) {
-      domain_name <- toupper(domain_name)
-      query_statement <- paste0('SELECT * FROM ', domain_name, " WHERE STUDYID = :x")
-      query_result <- DBI::dbGetQuery(db_connection, statement = query_statement, params = list(x = studyid))
-      query_result
-    }
-
     # Fetch data for the 'dm' domain
     dm <- fetch_domain_data(db_connection, 'dm', studyid)
+
+    # Fetch data for the 'ts' domain
+    ts <- fetch_domain_data(db_connection, 'ts', studyid)
+
+    # Close the database connection
+    DBI::dbDisconnect(db_connection)
+
+    # Convert 'dm' object to data.table
     data.table::setDT(dm)
 
-  # Fetch data for the 'ts' domain
-  ts <- fetch_domain_data(db_connection, 'ts', studyid)
-
-  data.table::setDT(ts)
+    # Convert 'ts' object to data.table
+    data.table::setDT(ts)
 
   # Fetch species value from ts table where TSPARMCD equals 'SPECIES
   species <- ts$TSVAL[which(ts$TSPARMCD=='SPECIES')]
@@ -67,15 +74,16 @@ get_compile_data <- function(studyid = NULL,
   data.table::setDF(dm)
   return(dm)
 
-
   } else if (fake_study == TRUE && use_xpt_file == TRUE) {
 
   # get the required domain
     dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
     ts <- haven::read_xpt(fs::path(path,'ts.xpt'))
-    dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
+
+    # Convert 'dm' object to data.table
     data.table::setDT(dm)
-    ts <- haven::read_xpt(fs::path(path,'ts.xpt'))
+
+    # Convert 'dm' object to data.table
     data.table::setDT(ts)
 
     # Fetch species value from ts table where TSPARMCD equals 'SPECIES
@@ -111,14 +119,6 @@ get_compile_data <- function(studyid = NULL,
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
-    # Define a function to query the database by domain
-    fetch_domain_data <- function(db_connection, domain_name, studyid) {
-      domain_name <- toupper(domain_name)
-      query_statement <- paste0('SELECT * FROM ', domain_name, " WHERE STUDYID = :x")
-      query_result <- DBI::dbGetQuery(db_connection, statement = query_statement, params = list(x = studyid))
-      query_result
-    }
-
     #Pull relevant domain data for each domain
     bw <- fetch_domain_data(db_connection, 'bw', studyid)
     dm <- fetch_domain_data(db_connection, 'dm', studyid)
@@ -127,6 +127,9 @@ get_compile_data <- function(studyid = NULL,
     tx <- fetch_domain_data(db_connection, 'tx', studyid)
     pp <- fetch_domain_data(db_connection, 'pp', studyid)
     pooldef <- fetch_domain_data(db_connection, 'pooldef', studyid)
+
+    # Close the database connection
+    DBI::dbDisconnect(db_connection)
 
 
   } else if (fake_study == FALSE && use_xpt_file == TRUE) {
@@ -185,8 +188,8 @@ get_compile_data <- function(studyid = NULL,
     CompileData_copy <- data.frame(CompileData)
 
 
-    # Step-2 :: # REMOVE THE RECOVERY ANIMALS from "CompileData"...<>"Recovery
-  #  animals" cleaning.. using "DS domain"
+   # Step-2 :: # REMOVE THE RECOVERY ANIMALS from "CompileData"...<>"Recovery
+   #  animals" cleaning.. using "DS domain"
 
     # filter for specific "DSDECOD" values...( Keep the mentioned four ) ...
     filtered_ds <- ds %>%
@@ -368,7 +371,7 @@ get_compile_data <- function(studyid = NULL,
       }
     }
 
-    #ADD DOSE_RANKING column in "selected_rows" data frame
+    # ADD DOSE_RANKING column in "selected_rows" data frame
     DOSE_RANKED_selected_rows <- dose_ranking %>%
       dplyr::group_by(STUDYID) %>%
       dplyr::mutate(

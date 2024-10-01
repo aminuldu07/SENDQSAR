@@ -32,31 +32,7 @@ get_lb_score <- function(studyid = NULL,
     query_result
   }
 
-  #Helper function to read data from .xpt files
-  read_xpt_data <- function(path, domain_name) {
-    domain_data <- haven::read_xpt(fs::path(path, paste0(domain_name, '.xpt')))
-    data.table::setDT(domain_data)
-    return(domain_data)
-  }
-
-  # con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
-  #   lb <- DBI::dbGetQuery(con, statement = "SELECT * FROM LB WHERE STUDYID = (:x)",
-  #                               params = list(x=studyid))
-    # studyid <- as.character(studyid)
-    # path <- path_db
-    # con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = path)
-    #
-    # con_db <- function(domain){
-    #   domain <- toupper(domain)
-    #   stat <- paste0('SELECT * FROM ', domain, " WHERE STUDYID = (:x)")
-    #   domain <- DBI::dbGetQuery(con,
-    #                             statement = stat,
-    #                             params=list(x=studyid))
-    #   domain
-    # }
-
   # GET THE REQUIRED DOMAIN DATA
-
   if (fake_study == TRUE && use_xpt_file == FALSE){
 
     # Establish a connection to the SQLite database
@@ -68,43 +44,30 @@ get_lb_score <- function(studyid = NULL,
     # Close the database connection
     DBI::dbDisconnect(db_connection)
 
-    # om <- con_db('om')
-    # data.table::setDT(om)
-    # Select specific columns from dm
-    #lb <- om[,c('USUBJID',"OMSPEC" ,"OMSTRESN", "OMTEST")]
-
   } else if (fake_study == TRUE && use_xpt_file == TRUE){
 
     # Read data from .xpt files
-    lb <- read_xpt_data(path, 'lb')
-    # Select specific columns from dm
-    #om <- om[,c('USUBJID',"OMSPEC" ,"OMSTRESN", "OMTEST")]
+    lb <- haven::read_xpt(fs::path(path,'lb.xpt'))
 
   } else if (fake_study == FALSE && use_xpt_file == FALSE) {
+
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+
     # Fetch data for required domains
     lb <- fetch_domain_data(db_connection, 'lb', studyid)
 
     # Close the database connection
     DBI::dbDisconnect(db_connection)
 
-    # Select specific columns from dm
-    #om <- om[,c('USUBJID',"OMSPEC" ,"OMSTRESN", "OMTEST")]
-
   }else if (fake_study == FALSE && use_xpt_file == TRUE) {
 
     # Read data from .xpt files
-    lb <- read_xpt_data(path, 'lb')
-    #om <- haven::read_xpt(fs::path(path,'om.xpt'))
-    # Select specific columns from dm
-    #om <- om[,c('USUBJID',"OMSPEC" ,"OMSTRESN", "OMTEST")]
+    lb <- haven::read_xpt(fs::path(path,'lb.xpt'))
+
   }
 
-
-
-# check the lb data frame
-
+    # check the lb data frame
     organTESTCDlist <- list('LIVER' = c('SERUM | ALT',
                                         'SERUM | AST',
                                         'SERUM | ALP',
@@ -185,26 +148,8 @@ get_lb_score <- function(studyid = NULL,
 
   # master_compiledata <- get_compile_data(studyid, path_db,fake_study = fake_study)
 
-    #><><><><><>... Remove TK animals and Recovery animals......<><><><><><>.
+    #<><><><><>... Remove TK animals and Recovery animals......<><><><><><>.
     #<><> master_compiledata is free of TK animals and Recovery animals<><><>
-
-    #' #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #' #browser()
-    #' if (is.null(master_compiledata) & fake_study == TRUE) {
-    #'   # Call the master_compiledata function to generate the data frame for fake study
-    #'   master_compiledata <- get_compile_data(studyid, path_db, fake_study = TRUE)
-    #' } else if (is.null(master_compiledata) & fake_study == FALSE) {
-    #'   # Call the master_compiledata function to generate the data frame for real study
-    #'   master_compiledata <- get_compile_data(studyid, path_db, fake_study = FALSE)
-    #' } else {
-    #'   # If master_compiledata is already set, no action needed
-    #'   master_compiledata = master_compiledata
-    #' }
-
-    #' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    #
-    #' #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
     if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
       # Call the master_compiledata function to generate the data frame for fake study
@@ -236,8 +181,8 @@ get_lb_score <- function(studyid = NULL,
       dplyr::inner_join(master_compiledata %>% dplyr::select(USUBJID, ARMCD), by = "USUBJID")
 
 
-    #::::::::::::::::::: "zScore Calculation" for LB data:::::::::::::::::::::
-    # First subset the LB_tk_recovery_filtered_ARMCD data frame .............
+    # "zScore Calculation" for LB data
+    # First subset the LB_tk_recovery_filtered_ARMCD data frame
 
     # .................Filtering data for each unique "LBTESTCD" value........
 
@@ -424,7 +369,7 @@ get_lb_score <- function(studyid = NULL,
     print(serum_ggt_final_zscore)
 
 
-    # Merging----------LB----zscores------------values---------------------------
+    # Merging----------LB----zscores------------values-------------------
     LB_zscore_merged_df <- serum_alb_final_zscore %>%
       dplyr::full_join(serum_ast_final_zscore, by = "STUDYID") %>%
       dplyr::full_join(serum_alp_final_zscore, by = "STUDYID") %>%

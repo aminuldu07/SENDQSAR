@@ -37,7 +37,8 @@ Imports:
     sendigR,
     stringr,
     tidyr,
-    ggplot2
+    ggplot2,
+    matrixStats
 Suggests: 
     testthat (>= 3.0.0),
     usethis

@@ -32,15 +32,7 @@ fetch_domain_data <- function(db_connection, domain_name, studyid) {
   query_result
 }
 
-#Helper function to read data from .xpt files
-read_xpt_data <- function(path, domain_name) {
-  domain_data <- haven::read_xpt(fs::path(path, paste0(domain_name, '.xpt')))
-  data.table::setDT(domain_data)
-  return(domain_data)
-}
-
 # GET THE REQUIRED DOMAIN DATA
-
 if (fake_study == TRUE && use_xpt_file == FALSE){
 
   # Establish a connection to the SQLite database
@@ -49,17 +41,23 @@ if (fake_study == TRUE && use_xpt_file == FALSE){
   # Fetch data for required domains
   mi <- fetch_domain_data(db_connection, 'mi', studyid)
 
+  dm <- fetch_domain_data(db_connection, 'dm', studyid)
+
   # Close the database connection
   DBI::dbDisconnect(db_connection)
 
 } else if (fake_study == TRUE && use_xpt_file == TRUE){
 
   # Read data from .xpt files
-  mi <- read_xpt_data(path, 'mi')
+  mi <- haven::read_xpt(fs::path(path,'mi.xpt'))
+
+  dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
 
 } else if (fake_study == FALSE && use_xpt_file == FALSE) {
+
   # Establish a connection to the SQLite database
   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+
   # Fetch data for required domains
   mi <- fetch_domain_data(db_connection, 'mi', studyid)
 
@@ -71,20 +69,27 @@ if (fake_study == TRUE && use_xpt_file == FALSE){
 }else if (fake_study == FALSE && use_xpt_file == TRUE) {
 
   # Read data from .xpt files
-  mi <- read_xpt_data(path, 'mi')
+  mi <- haven::read_xpt(fs::path(path,'mi.xpt'))
+  dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
 }
 
-# Check if mi data frame is empty
-if (nrow(mi) == 0) {
-  warning("The 'mi' data frame is empty. Returning an empty data frame.")
+cat("The dimension of 'dm' domain is:", dim(dm), "\n")
 
-  # Create an empty data frame with unique study IDs and warning messages
-  unique_study_ids <- unique(dm$STUDYID)
-  warning_messages <- rep("The 'mi' data frame is empty", length(unique_study_ids))
-  mi_empty_df <- data.frame(STUDYID = unique_study_ids, Warning = warning_messages)
+cat("The dimension of 'mi' domain is:", dim(mi), "\n")
 
-  return(mi_empty_df)
-}
+
+# # Check if mi data frame is empty
+# if (nrow(mi) == 0) {
+#   print(nrow(dm))
+#   warning("The 'mi' data frame is empty. Returning an empty data frame.")
+#
+#   # Create an empty data frame with unique study IDs and warning messages
+#   unique_study_ids <- unique(dm$STUDYID)
+#   warning_messages <- rep("The 'mi' data frame is empty", length(unique_study_ids))
+#   mi_empty_df <- data.frame(STUDYID = unique_study_ids, Warning = warning_messages)
+#
+#   return(mi_empty_df)
+# }
 
   # Initialize the  MI_final_score DATA FRAME
     MI_final_score <- data.frame( STUDYID = unique(mi$STUDYID), avg_MI_score = NA )
@@ -160,15 +165,15 @@ if (nrow(mi) == 0) {
 
     # remove empty
     MIData <- MIData[MIData$MISTRESC != '', ]  # Remove rows with empty MISTRESC
-    #........................................................................................
+
     # Create a copy of MIData
     MIData_copy <- MIData
 
-    #....................................................................
+
     # Remove the "Recovery animals and tk animals from "MIData"
     #<><><> master_compiledata is free of TK animals and Recovery animals<><><>
 
-    #' @get-master-compile-data~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    # get-master-compile-data
 
     if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
       # Call the master_compiledata function to generate the data frame for fake study

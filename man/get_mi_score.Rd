@@ -5,11 +5,12 @@
 \title{get MI score for a given studyid}
 \usage{
 get_mi_score(
-  studyid,
+  studyid = NULL,
   path_db,
   fake_study = FALSE,
-  master_CompileData = NULL,
-  score_in_list_format = FALSE
+  use_xpt_file = FALSE,
+  master_compiledata = NULL,
+  return_individual_scores = FALSE
 )
 }
 \arguments{

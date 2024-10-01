@@ -5,8 +5,8 @@
 \title{get LB score for a given studyid}
 \usage{
 get_random_forest_model(
-  liver_om_lb_mi_tox_score_list,
-  not_liver_om_lb_mi_tox_score_list
+  Liver_get_liver_om_lb_mi_tox_score_list,
+  not_Liver_get_liver_om_lb_mi_tox_score_lis
 )
 }
 \arguments{

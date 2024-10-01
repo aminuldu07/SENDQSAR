@@ -69,6 +69,9 @@ bw_fake_XPT_bw_zscore <- get_bw_score(studyid = NULL,
 
 
 #### liverTOBW_zscore_data---------------------------------------------
+# rm(list = ls())
+# devtools::load_all(".")
+
 liverTO_bw_R_SQL_bw_zscore <- get_liver_livertobw_score(studyid='A2018086-T002-01',
                                    path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db',
                                    fake_study = FALSE,
@@ -106,6 +109,9 @@ liverTO_bw_fake_XPT_bw_zscore <- get_liver_livertobw_score(studyid = NULL,
 
 
 ##### GET_lb_SCORES_-------------------
+# rm(list = ls())
+# devtools::load_all(".")
+
 lb_R_SQL_bw_zscore <- get_lb_score(studyid='A2018086-T002-01',
                                                         path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db',
                                                         fake_study = FALSE,
@@ -138,6 +144,9 @@ lb_fake_XPT_bw_zscore <- get_lb_score (studyid = NULL,
                                                            return_individual_scores = TRUE)
 
 ##### GET_mi_SCORES_-------------------
+rm(list = ls())
+devtools::load_all(".")
+
 mi_R_SQL_bw_zscore <- get_mi_score(studyid='A2018086-T002-01',
                                    path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db',
                                    fake_study = FALSE,
@@ -174,33 +183,33 @@ mi_fake_XPT_bw_zscore <- get_mi_score (studyid = NULL,
 #################
 
 ###########################-om-lb-mi-scores-#############################
-rm(list = ls())
-devtools::load_all(".")
-
-R_SQL_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list  (selected_studies = c("A2018086-T002-01"),
-                                               path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db',
-                                               fake_study = FALSE,
-                                               use_xpt_file = FALSE,
-                                               output_individual_scores = TRUE)
-
-R_XPT_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list  (selected_studies = c("A2018086-T002-01"),
-                                                         path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/real_xpt_dir/IND051292_1017-3581',
-                                                         fake_study = FALSE,
-                                                         use_xpt_file = TRUE,
-                                                         output_individual_scores = FALSE)
-
-
-fake_SQL_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list  (selected_studies = c("10663"),
-                                                         path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/liver_1.db',
-                                                         fake_study = TRUE,
-                                                         use_xpt_file = FALSE,
-                                                         output_individual_scores = TRUE)
-
-fake_XPT_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list  (selected_studies = c("10663"),
-                                                         path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/FAKE10663',
-                                                         fake_study = TRUE,
-                                                         use_xpt_file = TRUE,
-                                                         output_individual_scores = TRUE)
+# rm(list = ls())
+# devtools::load_all(".")
+#
+# R_SQL_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list  (selected_studies = c("A2018086-T002-01"),
+#                                                path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db',
+#                                                fake_study = FALSE,
+#                                                use_xpt_file = FALSE,
+#                                                output_individual_scores = TRUE)
+#
+# R_XPT_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list  (selected_studies = c("A2018086-T002-01"),
+#                                                          path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/real_xpt_dir/IND051292_1017-3581',
+#                                                          fake_study = FALSE,
+#                                                          use_xpt_file = TRUE,
+#                                                          output_individual_scores = FALSE)
+#
+#
+# fake_SQL_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list  (selected_studies = c("10663"),
+#                                                          path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/liver_1.db',
+#                                                          fake_study = TRUE,
+#                                                          use_xpt_file = FALSE,
+#                                                          output_individual_scores = TRUE)
+#
+# fake_XPT_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list  (selected_studies = c("10663"),
+#                                                          path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/FAKE10663',
+#                                                          fake_study = TRUE,
+#                                                          use_xpt_file = TRUE,
+#                                                          output_individual_scores = TRUE)
 
 #########################################################################
 
@@ -227,7 +236,7 @@ Liver_get_liver_om_lb_mi_tox_score_list <- get_liver_om_lb_mi_tox_score_list  (s
                                                                                use_xpt_file = FALSE,
                                                                                output_individual_scores = TRUE)
 
-#' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 dbtoken_not_liver <- sendigR::initEnvironment(dbType = 'sqlite',
                                           #dbPath = "/opt/rstudio/users/MdAminulIslam.Prodhan/DataCentral.db",
@@ -248,14 +257,27 @@ not_Liver_get_liver_om_lb_mi_tox_score_list <- get_liver_om_lb_mi_tox_score_list
                                                             output_individual_scores = TRUE)
 
 
-#' @random-forest-model----------------------------
-amin_get_random_forest_model <- get_random_forest_model(liver_om_lb_mi_tox_score_list, not_liver_om_lb_mi_tox_score_list)
+
+amin_get_random_forest_model <- get_random_forest_model(Liver_get_liver_om_lb_mi_tox_score_list,
+                                                        not_Liver_get_liver_om_lb_mi_tox_score_list)
 
 
 
+# rm(list = ls())
+# devtools::load_all(".")
+#
+# load('C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/Liver_get_liver_om_lb_mi_tox_score_list.RData')
+# load('C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/not_Liver_get_liver_om_lb_mi_tox_score_list.RData')
+#
+#
+# dbPath_liver = "C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/liver_1.db"
+# dbPath_not_liver = "C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/fake_not_liver_update.db"
+#
+# predicted_rf <- predicted_random_forest_model(dbPath_liver, dbPath_not_liver)
 
 
-########################
+
+#############################################################################
 
 
 

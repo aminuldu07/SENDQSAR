@@ -1,5 +1,5 @@
-#rm(list =ls())
-#' @title get LB score for a given studyid
+
+#' @title get_random_forest_model
 #' @param studyid Mandatory, character \cr
 #'   Studyid number
 #' @param database_path Mandatory, character \cr
@@ -11,11 +11,10 @@
 #' get_liver_lb_score(studyid='1234123', database_path = dbtoken)
 #' }
 #' @export
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_lb_mi_tox_score_list){
 
-  ###-----------------------------------------------------------------
+get_random_forest_model <- function(Liver_get_liver_om_lb_mi_tox_score_list, not_Liver_get_liver_om_lb_mi_tox_score_lis){
+
   `%ni%` <- Negate('%in%')
   Impute <- T
   ErrorMethod <- 'Prune' # Choose: "Flip" or "Prune" or "None"
@@ -95,7 +94,7 @@ get_random_forest_model <- function(liver_om_lb_mi_tox_score_list, not_liver_om_
   colnames(MIn) <- gsub('/', '.', colnames(MIn))
 
 
-browser()
+
   MIinter <- intersect(colnames(MIl), colnames(MIn))
   MI <- rbind(MIl[, MIinter], MIn[, MIinter])
 
@@ -146,7 +145,7 @@ browser()
   MI <- MI[,-findings2replaceIndex]
 
   #return(list(LB,OM,MI))
-browser()
+
   ###------------------------
   commonStudies <- Reduce(intersect, list(LB$STUDYID, OM$STUDYID, MI$STUDYID))
   extraDomains <- c('OM', 'MI')
@@ -190,16 +189,17 @@ browser()
   Data[,3:ncol(Data)] <- Data[, names(columnSums)]
   colnames(Data)[3:ncol(Data)] <- names(columnSums)
 
-  browser()
+
 
    #write.csv(Data, 'mergedData.csv', row.names = F)
   ##---------------
   if (generateBarPlot == T) {
-    browser()
+
     Finding <- NULL
     LIVER <- NULL
     Value <- NULL
     for (finding in colnames(Data)[3:ncol(Data)]) {
+
       Finding <- c(Finding, finding)
       LIVER <- c(LIVER, 'Y')
       Value <- c(Value, mean(Data[which(Data$indst_TO == "Liver"), finding], na.rm = T))
@@ -209,6 +209,7 @@ browser()
       Value <- c(Value, mean(Data[which(Data$indst_TO != "Liver"), finding], na.rm = T))
 
     }
+
     plotData <- as.data.frame(cbind(Finding, LIVER, Value))
     plotData$LIVER <- factor(plotData$LIVER)
     plotData$Finding <- factor(plotData$Finding)
@@ -216,17 +217,15 @@ browser()
     # plotData$Value = log(as.numeric(plotData$Value), base = 10)
 
     ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~check and double check
-    p <- ggplot2::ggplot(plotData, aes(x = Finding, y = Value, fill = LIVER)) +
+    p <- ggplot2::ggplot(plotData, ggplot2::aes(x = Finding, y = Value, fill = LIVER)) +
       ggplot2::geom_bar(stat="identity", position = 'dodge') +
-      ggplot2::theme(text = element_text(size = 20),
-            axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) +
+      ggplot2::theme(text = ggplot2::element_text(size = 20),
+            axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust=1)) +
       ggplot2::ylab('Average Score')
     print(p)
   }
 
   #}
-
-  #'@********************************@ random forest model @********************
 
 #########--------------####### Random Forest Modeling ########################
 ###-----------------------rfData preparation------------------------------------
@@ -262,7 +261,7 @@ browser()
 ##------------------------------------------------------------------------
 
 
-  #' Model Training Loop
+  # Model Training Loop
   count <- 0
   if (reps > 0) {
     for (rep in seq(reps)) {
@@ -330,7 +329,7 @@ browser()
       # rf <- tuneRF(train[,-1], train[,1], doBest = T, stepFactor = 1.5)
 ###------------Error-Handling-(Flip-or-Prune)from "model predictions"-----------
 ###------------Errored rows adjustment and final data set preparation-----------
-      #' @Error-Handling-(Flip-or-Prune):
+
       if ((ErrorMethod == 'Flip')|(ErrorMethod == 'Prune')) {
         # Predict probabilities (using random_forest_package)
         p <- stats::predict(rf, test, type = 'prob')[,1]
@@ -441,9 +440,11 @@ browser()
     # print(rfAll)
 
     if (Undersample == T) {
+
       posIndex <- which(train[,1] == 1)
       nPos <- length(posIndex)
-      trainIndex <- c(posIndex, sample(which(train[,1] == 0), nPos, replace = F))
+     # trainIndex <- c(posIndex, sample(which(train[,1] == 0), nPos, replace = F))
+      trainIndex <- c(posIndex, sample(which(train[,1] == 0), nPos, replace = T))
       train <- train[trainIndex,]
       test <- rbind(train[-trainIndex,], test)
     }
@@ -460,7 +461,7 @@ browser()
 
     #predictions with current model  with current test data
 
-    #' @___________________this_line_has_problems_______
+    # @___________________this_line_has_problems_______
     p2r <- stats::predict(rf, test, type = 'prob')[,1]
 
     #Store these predictions in a structured dataframe
@@ -500,7 +501,7 @@ browser()
     }
   }
 
-  #' @Performance-and-Importance-Analysis~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Performance-and-Importance-Analysis~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #performance summary for the model and  dotchart of the top important
   #variables based on their mean decrease in accuracy or Gini index
   PerformanceMatrix <- cbind(Sensitivity,
@@ -527,15 +528,15 @@ browser()
   #            n.var = 20,
   #            main = "Top 20 - Variable Importance")
 ###-----------------------@ROC-Curve-and-AUC------------------------------------
-  #' @ROC-Curve-and-AUC~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # @ROC-Curve-and-AUC~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   pred1= stats::predict(rfAll,type = "prob")
   perf = ROCR::prediction(pred1[,1], levels(rfData[,1])[rfData[,1]])
   # 1. Area under curve
-  auc = performance(perf, "auc")
+  auc = ROCR::performance(perf, "auc")
   AUC <- auc@y.values[[1]]
   print(AUC)
   # 2. True Positive and Negative Rate
-  pred3 = performance(perf, "tpr","fpr")
+  pred3 = ROCR::performance(perf, "tpr","fpr") # check the ROCR packge assignment here
   # 3. Plot the ROC curve
   plot(pred3,main=paste0("ROC Curve for Random Forest (AUC = ", round(AUC, digits = 3), ")"),col=2,lwd=2)
   abline(a=0,b=1,lwd=2,lty=2,col="gray")
@@ -546,7 +547,7 @@ browser()
   # MDSplot(rf, train$indst_TO, k = 3, palette = rep(1, 3), pch = as.numeric(levels(train$indst_TO)))
 
 ###-----------------------Visualization-and-Saving-Results----------------------
-  #' @Visualization-and-Saving-Results~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # @Visualization-and-Saving-Results~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   reprtree:::plot.reprtree(reprtree::ReprTree(rfAll, train, metric='d2'))
 
   # saveRDS(rfData, paste0('rfData_', as.integer(reps), '_', threshold, '_', holdback, '_', ErrorMethod, '.rds'))
@@ -557,25 +558,13 @@ browser()
   colnames(histoData) <- c('Probability', 'LIVER')
 
   H <- p <- histoData %>%
-    ggplot( aes(x=Probability, fill=LIVER)) +
-    geom_histogram( color="#e9ecef", alpha=0.6, position = 'identity') +
-    scale_fill_manual(values=c("#69b3a2", "#404080")) +
+    ggplot2::ggplot( ggplot2::aes(x=Probability, fill=LIVER)) +
+    ggplot2::geom_histogram( color="#e9ecef", alpha=0.6, position = 'identity') +
+    ggplot2::scale_fill_manual(values=c("#69b3a2", "#404080")) +
     # theme_ipsum() +
-    labs(fill = "LIVER", x = "Model Prediction P(LIVER)", y = "Count")
+    ggplot2::labs(fill = "LIVER", x = "Model Prediction P(LIVER)", y = "Count")
   print(H)
   return(list(rf = rf, train_data_two = train_data_two))
 }
 
-
-
-
-#' @param rfData_1000000_0.05_1_Prune_Round_8.rds Mandatory, character \cr
-#' @param -Liver_master_LB_list.csv- Mandatory, character \cr
-#' @param -not_Liver_master_LB_list.csv- Mandatory, character \cr
-#' @param -Liver_master_liverToBW.csv- Mandatory, character \cr
-#' @param -not_Liver_master_liverToBW.csv- Mandatory, character \cr
-#' @param -Liver_master_MI_list.csv- Mandatory, character \cr
-#' @param -not_Liver_master_MI_list.csv- Mandatory, character \cr
-#' @param -sa_liscr_mod_liver_result_df6_575.csv- Mandatory, character \cr
-#' @param -sa_nLiver_scr_mod_liver_result_df7_575.csv- Mandatory, character \cr
 

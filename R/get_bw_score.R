@@ -38,8 +38,6 @@ get_bw_score <- function(studyid = NULL,
     query_result
   }
 
-
-
     if (fake_study == TRUE && use_xpt_file == FALSE) {
 
     # Establish a connection to the SQLite database
@@ -48,9 +46,12 @@ get_bw_score <- function(studyid = NULL,
     # Fetch data for the 'dm' domain
     bw <- fetch_domain_data(db_connection, 'bw', studyid)
 
-  } else if (fake_study == TRUE && use_xpt_file == TRUE) {
-    # Reads from an .xpt file for the fake study.
+    # Close the database connection
+    DBI::dbDisconnect(db_connection)
 
+  } else if (fake_study == TRUE && use_xpt_file == TRUE) {
+
+    # Reads from an .xpt file for the fake study.
     bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
 
   } else if (fake_study == FALSE && use_xpt_file == FALSE) {
@@ -60,7 +61,9 @@ get_bw_score <- function(studyid = NULL,
 
     # Fetch data for the 'dm' domain
     bw <- fetch_domain_data(db_connection, 'bw', studyid)
-    #data.table::setDT(bw)
+
+    # Close the database connection
+    DBI::dbDisconnect(db_connection)
 
 
   } else if (fake_study == FALSE && use_xpt_file == TRUE) {
@@ -207,7 +210,7 @@ get_bw_score <- function(studyid = NULL,
 
         # If BWTESTCD == TERMBW not present,
         # 2. If no  BWTESTCD == TERMBW,try  VISITDY > 5"
-        # ??????????????????????should we do that ???????????????..............
+        # should we do that ..............
         if (nrow(SubjectBodyWeight) == 0) {
           positive_bw_VISITDY <- subj_bw_data[subj_bw_data$VISITDY > 5 , ]
 
@@ -259,11 +262,7 @@ get_bw_score <- function(studyid = NULL,
     # number of unique USUBJID
     unique_StudyBodyWeights_USUBJID <- length(unique(StudyBodyWeights$USUBJID))
 
-
-
-
-#' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-#'  #<><><><><><><><><><><><><><><><>... Remove TK animals and Recovery animals......<><><><><><>.............
+    #<><><><><><><><><><><><><><><><>... Remove TK animals and Recovery animals......<><><><><><>.............
     #<><><><><><><><> master_compiledata is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
 
     if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
