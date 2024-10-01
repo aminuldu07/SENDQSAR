@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_random_forest_model.R
 \name{get_random_forest_model}
 \alias{get_random_forest_model}
-\title{get LB score for a given studyid}
+\title{get_random_forest_model}
 \usage{
 get_random_forest_model(
   Liver_get_liver_om_lb_mi_tox_score_list,
@@ -20,7 +20,7 @@ path of database}
 score
 }
 \description{
-get LB score for a given studyid
+get_random_forest_model
 }
 \examples{
 \dontrun{

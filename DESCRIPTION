@@ -38,7 +38,8 @@ Imports:
     stringr,
     tidyr,
     ggplot2,
-    matrixStats
+    matrixStats,
+    pkgdown
 Suggests: 
     testthat (>= 3.0.0),
     usethis
