@@ -1,5 +1,9 @@
 pandoc: 3.1.1
 pkgdown: 2.1.1
 pkgdown_sha: ~
-articles: {}
-last_built: 2024-10-01T20:40Z
+articles:
+  vignettes: vignettes.html
+last_built: 2024-10-01T21:41Z
+urls:
+  reference: https://aminuldu07.github.io/SENDQSAR/reference
+  article: https://aminuldu07.github.io/SENDQSAR/articles

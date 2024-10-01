@@ -1,0 +1,13 @@
+rm(list = ls())
+devtools::load_all(".")
+
+# load('C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/Liver_get_liver_om_lb_mi_tox_score_list.RData')
+# load('C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/not_Liver_get_liver_om_lb_mi_tox_score_list.RData')
+#
+#
+dbPath_liver = "C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/liver_1.db"
+dbPath_not_liver = "C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/fake_not_liver_update.db"
+
+predicted_rf <- predicted_random_forest_model(dbPath_liver, dbPath_not_liver)
+
+## PAT configure

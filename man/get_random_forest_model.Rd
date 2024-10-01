@@ -6,7 +6,7 @@
 \usage{
 get_random_forest_model(
   Liver_get_liver_om_lb_mi_tox_score_list,
-  not_Liver_get_liver_om_lb_mi_tox_score_lis
+  not_Liver_get_liver_om_lb_mi_tox_score_list
 )
 }
 \arguments{
