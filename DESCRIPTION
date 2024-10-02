@@ -3,10 +3,11 @@ Title: Building a Quantitative Structure-Activity Relationship
        model leveraging SEND Database
 Version: 0.0.0.9000
 Authors@R: 
-    person("Md Aminul Islam", "Prodhan", 
-    email = "aminuldu07@gmail.com", 
-    role = c("aut", "cre"),
-    comment = c(ORCID = "YOUR-ORCID-ID"))
+    person(given = "Md Aminul Islam", 
+           family = "Prodhan", 
+           email = "aminuldu07@gmail.com", 
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0003-0205-1250"))
 Description: This package offers a comprehensive framework for developing 
  Quantitative Structure-Activity Relationship (QSAR) models using the 
  SEND (Standard for Exchange of Nonclinical Data) database. It streamlines 
@@ -26,6 +27,7 @@ Imports:
     caret,
     data.table,
     DBI,
+    fs,
     dplyr,
     magrittr,
     purrr,
@@ -34,7 +36,6 @@ Imports:
     reprtree,
     reshape2,
     ROCR,
-    sendigR,
     stringr,
     tidyr,
     ggplot2,
