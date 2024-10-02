@@ -41,21 +41,25 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
+      - name: Log R setup
         run: echo "R version ${{ matrix.config.r }} has been set up."
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
+
+      - name: Log R dependencies
         run: echo "R dependencies have been installed."
 
       - name: Check package
         run: |
          echo "Running R CMD check..."
-         run: R CMD check . --no-manual --as-cran
+         R CMD check . --no-manual --as-cran
 
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
 
+      - name: Log Package Check Completion
         run: echo "Package check complete and results uploaded."
