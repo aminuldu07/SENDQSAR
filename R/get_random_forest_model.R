@@ -532,7 +532,9 @@ get_random_forest_model <- function(Liver_get_liver_om_lb_mi_tox_score_list,
   #            main = "Top 20 - Variable Importance")
 ###-----------------------@ROC-Curve-and-AUC------------------------------------
   # @ROC-Curve-and-AUC~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  pred1= stats::predict(rfAll,type = "prob")
+ browser()
+
+   pred1= stats::predict(rfAll,type = "prob")
   perf = ROCR::prediction(pred1[,1], levels(rfData[,1])[rfData[,1]])
   # 1. Area under curve
   auc = ROCR::performance(perf, "auc")
