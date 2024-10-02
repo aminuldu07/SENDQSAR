@@ -53,7 +53,7 @@ jobs:
           echo "Installing devtools..."
           R -e "install.packages('devtools', repos = 'https://cloud.r-project.org/')"
 
-       shell: ${{ matrix.config.os == 'windows-latest' && 'pwsh' || 'bash' }} # Adjust shell based on OS
+      - shell: ${{ matrix.config.os == 'windows-latest' && 'pwsh' || 'bash' }} # Adjust shell based on OS
 
       - name: Log R dependencies
         run: echo "R dependencies have been installed."
