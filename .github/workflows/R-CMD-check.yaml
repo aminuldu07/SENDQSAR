@@ -6,7 +6,7 @@ on:
   pull_request:
     branches: [master]
 
-name: R-CMD-check
+name: R-CMD-check.yaml
 
 permissions: read-all
 
@@ -41,32 +41,42 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - name: Log R setup
-        run: echo "R version ${{ matrix.config.r }} has been set up."
-
-      - uses: r-lib/actions/setup-r-dependencies@v2
+      - uses: ./setup-r-dependencies
         with:
           extra-packages: any::rcmdcheck
+          needs: check
 
-      - name: Install devtools
-        run: |
-          echo "Installing devtools..."
-          R -e "install.packages('devtools', repos = 'https://cloud.r-project.org/')"
-
-      - shell: ${{ matrix.config.os == 'windows-latest' && 'pwsh' || 'bash' }} # Adjust shell based on OS
-
-      - name: Log R dependencies
-        run: echo "R dependencies have been installed."
-
-      - name: Check package
-        run: |
-          echo "Running R CMD check..."
-          Rscript -e "devtools::check(document = FALSE, args = c('--no-manual', '--as-cran'))"
-
-      - uses: r-lib/actions/check-r-package@v2
+      - uses: ./check-r-package
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
 
-      - name: Log Package Check Completion
-        run: echo "Package check complete and results uploaded."
+      # - name: Log R setup
+      #   run: echo "R version ${{ matrix.config.r }} has been set up."
+      #
+      # - uses: r-lib/actions/setup-r-dependencies@v2
+      #   with:
+      #     extra-packages: any::rcmdcheck
+
+      # - name: Install devtools
+      #   run: |
+      #     echo "Installing devtools..."
+      #     R -e "install.packages('devtools', repos = 'https://cloud.r-project.org/')"
+      #
+      # - shell: ${{ matrix.config.os == 'windows-latest' && 'pwsh' || 'bash' }} # Adjust shell based on OS
+      #
+      # - name: Log R dependencies
+      #   run: echo "R dependencies have been installed."
+      #
+      # - name: Check package
+      #   run: |
+      #     echo "Running R CMD check..."
+      #     Rscript -e "devtools::check(document = FALSE, args = c('--no-manual', '--as-cran'))"
+      #
+      # - uses: r-lib/actions/check-r-package@v2
+      #   with:
+      #     upload-snapshots: true
+      #     build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+      #
+      # - name: Log Package Check Completion
+      #   run: echo "Package check complete and results uploaded."
