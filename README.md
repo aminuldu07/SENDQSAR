@@ -10,7 +10,7 @@ SENDQSAR is an R package to generateQSAR model from SEND data.
 [![R-CMD-check](https://github.com/aminuldu07/SENDQSAR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/aminuldu07/SENDQSAR/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-The goal of SENDQSAR is to …
+The goal of SENDQSAR is to analyze the SEND database and built QSAR model …
 
 ## Installation
 
