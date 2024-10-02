@@ -31,17 +31,14 @@ Imports:
     DBI,
     fs,
     dplyr,
-    magrittr,
-    purrr,
     randomForest,
-    repr,
     reshape2,
     ROCR,
     stringr,
     tidyr,
     ggplot2,
     matrixStats,
-    pkgdown
+    haven
 Suggests: 
     knitr,
     rmarkdown,

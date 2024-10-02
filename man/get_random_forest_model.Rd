@@ -10,10 +10,10 @@ get_random_forest_model(
 )
 }
 \arguments{
-\item{studyid}{Mandatory, character \cr
+\item{Liver_get_liver_om_lb_mi_tox_score_list}{Mandatory, character \cr
 Studyid number}
 
-\item{database_path}{Mandatory, character \cr
+\item{not_Liver_get_liver_om_lb_mi_tox_score_list}{Mandatory, character \cr
 path of database}
 }
 \value{

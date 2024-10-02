@@ -1,8 +1,8 @@
 
 #' @title get_random_forest_model
-#' @param studyid Mandatory, character \cr
+#' @param Liver_get_liver_om_lb_mi_tox_score_list Mandatory, character \cr
 #'   Studyid number
-#' @param database_path Mandatory, character \cr
+#' @param not_Liver_get_liver_om_lb_mi_tox_score_list Mandatory, character \cr
 #'   path of database
 #' @return score
 #'
@@ -553,7 +553,7 @@ browser()
 
 ###-----------------------Visualization-and-Saving-Results----------------------
   # @Visualization-and-Saving-Results~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  reprtree:::plot.reprtree(reprtree::ReprTree(rfAll, train, metric='d2'))
+  #reprtree:::plot.reprtree(reprtree::ReprTree(rfAll, train, metric='d2'))
 
   # saveRDS(rfData, paste0('rfData_', as.integer(reps), '_', threshold, '_', holdback, '_', ErrorMethod, '.rds'))
 
