@@ -41,15 +41,24 @@ jobs:
           http-user-agent: ${{ matrix.config.http-user-agent }}
           use-public-rspm: true
 
-      - uses: ./setup-r-dependencies
+      - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
-          needs: check
 
-      - uses: ./check-r-package
+      - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
           build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
+
+      # - uses: ./setup-r-dependencies
+      #   with:
+      #     extra-packages: any::rcmdcheck
+      #     needs: check
+      #
+      # - uses: ./check-r-package
+      #   with:
+      #     upload-snapshots: true
+      #     build_args: 'c("--no-manual","--compact-vignettes=gs+qpdf")'
 
       # - name: Log R setup
       #   run: echo "R version ${{ matrix.config.r }} has been set up."
