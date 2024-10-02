@@ -48,6 +48,11 @@ jobs:
         with:
           extra-packages: any::rcmdcheck
 
+      - name: Install devtools
+        run: |
+          echo "Installing devtools..."
+          R -e "install.packages('devtools')"
+
       - name: Log R dependencies
         run: echo "R dependencies have been installed."
 
