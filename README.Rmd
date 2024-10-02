@@ -2,7 +2,7 @@
 title: "SENDQSAR"
 output: github_document
 ---
-SENDQSAR is an R package to generateQSAR model from SEND data.
+SENDQSAR is an R package to generateQSAR model from SEND data...
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
