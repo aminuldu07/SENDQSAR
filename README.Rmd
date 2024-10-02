@@ -1,4 +1,5 @@
 ---
+title: "SENDQSAR"
 output: github_document
 ---
 
@@ -42,7 +43,7 @@ library(SENDQSAR)
 What is special about using :
 
 ```{r cars}
-summary(cars)
+#summary(cars)
 ```
 
  skjdkdfkd .
