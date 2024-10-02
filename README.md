@@ -1,9 +1,10 @@
 SENDQSAR
 ================
 
+SENDQSAR is an R package to generateQSAR model from SEND data.
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# SENDQSAR
+# Overview
 
 <!-- badges: start -->
 

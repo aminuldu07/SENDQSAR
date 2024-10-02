@@ -2,7 +2,7 @@
 title: "SENDQSAR"
 output: github_document
 ---
-
+SENDQSAR is an R package to generateQSAR model from SEND data.
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-# SENDQSAR
+# Overview
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/aminuldu07/SENDQSAR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/aminuldu07/SENDQSAR/actions/workflows/R-CMD-check.yaml)
