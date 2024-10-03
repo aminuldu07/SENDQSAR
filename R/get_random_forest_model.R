@@ -443,7 +443,7 @@ get_random_forest_model <- function(Liver_get_liver_om_lb_mi_tox_score_list,
     # print(rfAll)
 
     if (Undersample == T) {
-browser()
+
       posIndex <- which(train[,1] == 1)
       nPos <- length(posIndex)
      # trainIndex <- c(posIndex, sample(which(train[,1] == 0), nPos, replace = F))
@@ -532,9 +532,8 @@ browser()
   #            main = "Top 20 - Variable Importance")
 ###-----------------------@ROC-Curve-and-AUC------------------------------------
   # @ROC-Curve-and-AUC~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
- browser()
 
-   pred1= stats::predict(rfAll,type = "prob")
+  pred1= stats::predict(rfAll,type = "prob")
   perf = ROCR::prediction(pred1[,1], levels(rfData[,1])[rfData[,1]])
   # 1. Area under curve
   auc = ROCR::performance(perf, "auc")
@@ -548,12 +547,16 @@ browser()
 
   #}
 
-
+browser()
   # MDSplot(rf, train$indst_TO, k = 3, palette = rep(1, 3), pch = as.numeric(levels(train$indst_TO)))
 
 ###-----------------------Visualization-and-Saving-Results----------------------
   # @Visualization-and-Saving-Results~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #reprtree:::plot.reprtree(reprtree::ReprTree(rfAll, train, metric='d2'))
+
+  ReprTree <- ReprTree(rfAll, train, metric='d2')
+
+  plot.reprtree(ReprTree(rfAll, train, metric='d2'))
 
   # saveRDS(rfData, paste0('rfData_', as.integer(reps), '_', threshold, '_', holdback, '_', ErrorMethod, '.rds'))
 

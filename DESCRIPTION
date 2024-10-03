@@ -38,7 +38,9 @@ Imports:
     tidyr,
     ggplot2,
     matrixStats,
-    haven
+    haven,
+    tree,
+    plotrix
 Suggests: 
     knitr,
     rmarkdown,
