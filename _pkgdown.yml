@@ -1,7 +1,0 @@
-url: https://aminuldu07.github.io/SENDQSAR/
-template:
-  bootstrap: 5
-  params:
-    bootswatch: flatly
-    ganalytics: UA-12345678-0
-
