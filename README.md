@@ -7,8 +7,7 @@ SENDQSAR is an R package to generateQSAR model from SEND data…
 # Overview
 
 <!-- badges: start -->
-
-[![R-CMD-check](https://github.com/aminuldu07/SENDQSAR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/aminuldu07/SENDQSAR/actions/workflows/R-CMD-check.yaml)
+<!--[![R-CMD-check](https://github.com/aminuldu07/SENDQSAR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/aminuldu07/SENDQS#AR/actions/workflows/R-CMD-check.yaml)-->
 <!-- badges: end -->
 
 The goal of SENDQSAR is to …
