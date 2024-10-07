@@ -1,18 +1,19 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
-<url><loc>/404.html</loc></url>
-<url><loc>/articles/index.html</loc></url>
-<url><loc>/articles/vignettes.html</loc></url>
-<url><loc>/authors.html</loc></url>
-<url><loc>/index.html</loc></url>
-<url><loc>/LICENSE-text.html</loc></url>
-<url><loc>/reference/get_bw_score.html</loc></url>
-<url><loc>/reference/get_compile_data.html</loc></url>
-<url><loc>/reference/get_lb_score.html</loc></url>
-<url><loc>/reference/get_liver_livertobw_score.html</loc></url>
-<url><loc>/reference/get_liver_om_lb_mi_tox_score_list.html</loc></url>
-<url><loc>/reference/get_mi_score.html</loc></url>
-<url><loc>/reference/get_random_forest_model.html</loc></url>
-<url><loc>/reference/index.html</loc></url>
-<url><loc>/reference/predicted_random_forest_model.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/404.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/articles/index.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/articles/Introduction.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/articles/vignettes.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/authors.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/index.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/LICENSE-text.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_bw_score.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_compile_data.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_lb_score.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_liver_livertobw_score.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_liver_om_lb_mi_tox_score_list.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_mi_score.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_random_forest_model.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/reference/index.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/reference/predicted_random_forest_model.html</loc></url>
 </urlset>
 

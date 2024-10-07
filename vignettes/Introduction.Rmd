@@ -1,0 +1,21 @@
+---
+title: "Introduction"
+output: html_document
+date: Sep-13-2024
+---
+
+# Introduction  
+The Standard for Exchange of Nonclinical Data (__SEND__), developed by the Clinical
+Data Interchange Standards Consortium (CDISC), offers a __structured__ __electronic__
+__format__  to organize and exchange __nonclinical__ study data among sponsor companies,
+contract research organizations (CROs), and health authorities.
+
+Test results, examinations, and observations for subjects in a nonclinical study
+are represented in a series of SEND domains. 
+
+A __domain__ is defined as a collection of logically related observations with a
+common topic.  Typically, each domain is represented by a single dataset. 
+- [Domain vs
+
+
+- MI documentation still in progress 
