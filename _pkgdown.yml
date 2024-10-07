@@ -29,6 +29,8 @@ navbar:
         href: articles/introduction.html
       - text: LB Score Caculation
         href: articles/lb_score_calculation_documentation.html
+      - text: MI Score Caculation
+        href: articles/mi_score_calculation_documentation.html
 
     # resources:
     #     text: Resources
