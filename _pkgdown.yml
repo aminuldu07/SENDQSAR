@@ -27,6 +27,9 @@ navbar:
       menu:
       - text: Introduction
         href: articles/Introduction.html
+      - text: LB score Calculation
+        href: articles/LB_score_calculation_documentation.html
+
     # resources:
     #     text: Resources
     #     href: https://github.com/phuse-org/toxSummary/wiki
