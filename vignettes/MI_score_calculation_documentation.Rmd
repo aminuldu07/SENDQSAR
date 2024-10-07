@@ -9,7 +9,7 @@ toc: false
 
 
 
-MI score calculation details are coming
+MI Zscore calculation details are coming
 
 
 

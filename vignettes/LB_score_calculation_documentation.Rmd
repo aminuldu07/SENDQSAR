@@ -6,7 +6,7 @@ author: Md Aminul Islam Prodhan
 toc: false
 ---
 
-LB score calculation details are coming
+LB Zscore calculation details are coming
 
 
 
