@@ -35,6 +35,7 @@
   <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
 <li><a class="dropdown-item" href="../articles/introduction.html">Introduction</a></li>
     <li><a class="dropdown-item" href="../articles/lb_score_calculation_documentation.html">LB Score Caculation</a></li>
+    <li><a class="dropdown-item" href="../articles/mi_score_calculation_documentation.html">MI Score Caculation</a></li>
   </ul>
 </li>
       </ul>
@@ -65,6 +66,15 @@ Prodhan</h4>
 
     
     
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># #| include=FALSE</span></span>
+<span><span class="co"># library(DT)</span></span>
+<span><span class="co"># library(data.table)</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># #| include=FALSE</span></span>
+<span><span class="co"># path &lt;- '~/OneDrive - FDA/yousuf/00_github_projects/SENDsanitizer/'</span></span>
+<span><span class="co"># file_org &lt;- 'no_git_dir/code/phuse/PDS/lb.xpt'</span></span>
+<span><span class="co"># file_fake  &lt;- 'no_git_dir/code/phuse/FAKE15218/lb.xpt'</span></span></code></pre></div>
 <div class="section level2">
 <h2 id="original-data">Original Data<a class="anchor" aria-label="anchor" href="#original-data"></a>
 </h2>
@@ -72,13 +82,13 @@ Prodhan</h4>
 <div class="section level2">
 <h2 id="columns-that-changed-in-original-red-background">Columns that changed in original (red background)<a class="anchor" aria-label="anchor" href="#columns-that-changed-in-original-red-background"></a>
 </h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># #| echo=FALSE</span></span>
 <span><span class="co"># DT::datatable(lb_org,options = list(pageLength=10)) |&gt;</span></span>
 <span><span class="co">#   DT::formatStyle(columns = c('STUDYID','USUBJID','LBORRES','LBSTRESC',</span></span>
 <span><span class="co">#                               'LBSTRESN','LBDTC','LBENDTC','LBRFTDTC'),</span></span>
 <span><span class="co">#                   backgroundColor = '#fbcccf')</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># #| include=FALSE</span></span>
 <span><span class="co"># lb_fake &lt;- haven::read_xpt(fs::path(path,file_fake))</span></span></code></pre></div>
 </div>
@@ -89,7 +99,7 @@ Prodhan</h4>
 <div class="section level2">
 <h2 id="columns-blue-background-that-have-changes-in-synthetic-data">Columns (blue background) that have changes in Synthetic Data<a class="anchor" aria-label="anchor" href="#columns-blue-background-that-have-changes-in-synthetic-data"></a>
 </h2>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># #| include=FALSE</span></span>
 <span><span class="co"># data.table::setDT(lb_org)</span></span>
 <span><span class="co"># data.table::setDT(lb_fake)</span></span></code></pre></div>
@@ -97,7 +107,7 @@ Prodhan</h4>
 <div class="section level2">
 <h2 id="column-by-column-comparison">Column by Column Comparison<a class="anchor" aria-label="anchor" href="#column-by-column-comparison"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># #| echo=FALSE</span></span>
 <span><span class="co"># lb_merge &lt;- merge(lb_org,lb_fake[,.(STUDYID,USUBJID,LBSTRESN,</span></span>
 <span><span class="co">#                                     LBSEQ,LBSTRESC,LBORRES,LBDTC,LBENDTC,LBRFTDTC)],</span></span>
