@@ -1,5 +1,5 @@
 ---
-title: "Laboratory Test (LB) Domain Zscore Calculation"
+title: "Microscopic Findings (MI) Domain Zscore Calculation"
 output: html_document
 date: Oct-06-2024
 author: Md Aminul Islam Prodhan
