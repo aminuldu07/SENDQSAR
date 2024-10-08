@@ -20,7 +20,7 @@
 #' }
 #' @export
 
-get_lb_score <- function(studyid = NULL,
+get_all_lb_TESTCD_zscore <- function(studyid = NULL,
                          path_db,
                          fake_study= FALSE,
                          use_xpt_file = FALSE,
@@ -243,13 +243,15 @@ get_lb_score <- function(studyid = NULL,
 
     if (return_individual_scores) {
 
-      LB_final_results <- final_results
+      LB_all_TESTCD_zscore <- final_results
 
 
     } else {
       # Calculate the average for all the LBTESTCD, ignoring NA values
       LB_final_results <- final_results
-      selected_cols <- 2:ncols(LB_final_results)
+
+      selected_cols <-  colnames(LB_final_results) [ , 2:ncols(LB_final_results)]
+
       LB_final_results$avg_all_LBTESTCD_zscores <- rowMeans(LB_final_results[selected_cols], na.rm = TRUE)
 
       # select the specific columns for calculation
