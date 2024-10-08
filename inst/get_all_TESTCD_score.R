@@ -124,7 +124,10 @@ LB_tk_recovery_filtered_ARMCD <- LB_tk_recovery_filtered %>%
 lbtestcd_list <- unique(max_visitdy_df$LBTESTCD)
 
 # Initialize an empty list to store the results
-results_list <- list()
+#results_list <- list()
+
+# Initialize an empty data frame for the final results
+final_results <- NULL
 
 for (lbtestcd in lbtestcd_list) {
   # Filter for the current LBTESTCD
@@ -157,17 +160,25 @@ print(lbtestcd)
                                       ifelse(avg_zscore >= 2, 2,
                                              ifelse(avg_zscore >= 1, 1, 0))))
 
+
+
+
   # Dynamically rename the avg_zscore column to aveg_lbtestcd
   final_zscore <- final_zscore %>%
-    dplyr::rename(!!glue::glue("aveg_{lbtestcd}") := avg_zscore) %>%
-    dplyr::select(STUDYID, !!glue::glue("aveg_{lbtestcd}"))
+    dplyr::rename(!!glue::glue("avg_{lbtestcd}") := avg_zscore) %>%
+    dplyr::select(STUDYID, !!glue::glue("avg_{lbtestcd}"))
 
-  # Store the result in the list
-  results_list[[lbtestcd]] <- final_zscore
+  # If final_results is NULL (first iteration), set it to final_zscore
+  if (is.null(final_results)) {
+    final_results <- final_zscore
+  } else {
+    # Otherwise, join with the existing final_results
+    final_results <- dplyr::full_join(final_results, final_zscore, by = "STUDYID")
+  }
 }
 
 # Combine the results into a single data frame
-final_results <- do.call(rbind, results_list)
+#final_results <- do.call(rbind, results_list)
 
 
 
