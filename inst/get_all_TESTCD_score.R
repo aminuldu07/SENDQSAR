@@ -121,13 +121,13 @@ LB_tk_recovery_filtered_ARMCD <- LB_tk_recovery_filtered %>%
 ###---zscore calculate for each of the 'lbtestcd'---------------------------
 #lbtestcd_list <- c("BILI", "ALB", "AST")
 
-lbtestcd_list <- unique(max_visitdy_df$LBTESTCD)
+lbtestcd_list <- unique(LB_tk_recovery_filtered_ARMCD$LBTESTCD)
 
 # Initialize an empty list to store the results
 #results_list <- list()
 
 # Initialize an empty data frame for the final results
-final_results <- NULL
+final_results_solo <- NULL
 
 for (lbtestcd in lbtestcd_list) {
   # Filter for the current LBTESTCD
@@ -169,11 +169,11 @@ print(lbtestcd)
     dplyr::select(STUDYID, !!glue::glue("avg_{lbtestcd}"))
 
   # If final_results is NULL (first iteration), set it to final_zscore
-  if (is.null(final_results)) {
-    final_results <- final_zscore
+  if (is.null(final_results_solo)) {
+    final_results_solo <- final_zscore
   } else {
     # Otherwise, join with the existing final_results
-    final_results <- dplyr::full_join(final_results, final_zscore, by = "STUDYID")
+    final_results_solo <- dplyr::full_join(final_results_solo, final_zscore, by = "STUDYID")
   }
 }
 

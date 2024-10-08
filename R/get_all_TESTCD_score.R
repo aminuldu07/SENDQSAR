@@ -89,8 +89,6 @@ get_all_lb_TESTCD_zscore <- function(studyid = NULL,
     LBData <- data.frame("STUDYID" = NA,"USUBJID" = NA,"LBSPEC" = NA,"LBTESTCD" = NA,
                          "LBSTRESN" = NA, "VISITDY" = NA)
 
-
-
     # for (Name in unique(filtered_combined_lb$STUDYID)) {
     # Filter the data for the current STUDYID
     #study_data_LB <- lb
@@ -195,19 +193,20 @@ get_all_lb_TESTCD_zscore <- function(studyid = NULL,
     # .................Filtering data for each unique "LBTESTCD" value........
 
     for (lbtestcd in lbtestcd_list) {
+
     current_lbtestcd_df <- LB_tk_recovery_filtered_ARMCD %>%
-      dplyr::filter(LBTESTCD == 'lbtestcd')
+      dplyr::filter(LBTESTCD == lbtestcd)
 
     # calculate the zscore for the current LBTESTCD
     zscore_df <- current_lbtestcd_df %>%
       dplyr::group_by(STUDYID) %>%
       dplyr::mutate(
-        mean_vehicle_alt = mean(LBSTRESN[ARMCD == "vehicle"], na.rm = TRUE),
-        sd_vehicle_alt = stats::sd(LBSTRESN[ARMCD == "vehicle"], na.rm = TRUE)
+        mean_vehicle = mean(LBSTRESN[ARMCD == "vehicle"], na.rm = TRUE),
+        sd_vehicle = stats::sd(LBSTRESN[ARMCD == "vehicle"], na.rm = TRUE)
       ) %>%
       dplyr::ungroup() %>%
       dplyr::mutate(
-        zscore = (LBSTRESN - mean_vehicle_alt) / sd_vehicle_alt)%>%
+        zscore = (LBSTRESN - mean_vehicle) / sd_vehicle)%>%
       dplyr::mutate(zscore = abs(zscore))
 
     # Average z-score per STUDYID for all subjects with the current LBTESTCD'
@@ -226,11 +225,12 @@ get_all_lb_TESTCD_zscore <- function(studyid = NULL,
       dplyr::rename(!!glue::glue("avg_{lbtestcd}") := avg_zscore) %>%
       dplyr::select(STUDYID, !!glue::glue("avg_{lbtestcd}"))
 
-    cat ("final_zscore_current:",final_zscore_current, "\n" )
+    print(final_zscore_current)
+    #cat ("final_zscore_current:",final_zscore_current, "\n" )
 
     # If final_results is NULL (first iteration), set it to final_zscore
     if (is.null(final_results)) {
-      final_results <- final_zscore
+      final_results <- final_zscore_current
     } else {
       # Otherwise, join with the existing final_results
       final_results <- dplyr::full_join(final_results, final_zscore_current, by = "STUDYID")
@@ -239,7 +239,7 @@ get_all_lb_TESTCD_zscore <- function(studyid = NULL,
 
  # output is : final_results
 
-
+print(final_results)
 
     if (return_individual_scores) {
 
@@ -248,29 +248,28 @@ get_all_lb_TESTCD_zscore <- function(studyid = NULL,
 
     } else {
       # Calculate the average for all the LBTESTCD, ignoring NA values
-      LB_final_results <- final_results
+      LB_all_TESTCD_zscore <- final_results
 
-      selected_cols <-  colnames(LB_final_results) [ , 2:ncols(LB_final_results)]
+      selected_cols <-  colnames(LB_all_TESTCD_zscore) [2:ncol(LB_all_TESTCD_zscore)]
 
-      LB_final_results$avg_all_LBTESTCD_zscores <- rowMeans(LB_final_results[selected_cols], na.rm = TRUE)
+      LB_all_TESTCD_zscore$avg_all_LBTESTCD_zscores <- rowMeans(LB_all_TESTCD_zscore[selected_cols], na.rm = TRUE)
 
       # select the specific columns for calculation
-      LB_all_liver_zscore_averaged <- LB_zscore_merged_df %>% dplyr::select (STUDYID, avg_all_LB_zscores)
+      LB_all_TESTCD_zscore_averaged <- LB_all_TESTCD_zscore %>% dplyr::select (STUDYID, avg_all_LBTESTCD_zscores)
 
       # Assigning the new variables
-      LB_final_score <- LB_all_liver_zscore_averaged
+      #LB_final_score <- LB_all_liver_zscore_averaged
 
       # Create "LB_df" for FOUR_Liver_Score
-      averaged_LB_score <- LB_final_score %>% dplyr::rename(LB_score_avg = avg_all_LB_zscores)
-
+      #averaged_LB_all_TESTCD_zscore  <- LB_final_score %>% dplyr::rename(LB_score_avg = avg_all_LB_zscores)
 
     }
 
 
   if (return_individual_scores) {
-  return(master_lb_scores)
+  return(LB_all_TESTCD_zscore )
  } else {
-   return(averaged_LB_score)
+   return(LB_all_TESTCD_zscore_averaged)
  }
 
 }
