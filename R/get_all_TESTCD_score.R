@@ -211,62 +211,46 @@ get_lb_score <- function(studyid = NULL,
       dplyr::mutate(zscore = abs(zscore))
 
     # Average z-score per STUDYID for all subjects with the current LBTESTCD'
-    final_zscore <- zscore_serum_alt %>%
+    final_zscore <- zscore_df %>%
       dplyr::filter(ARMCD == "HD") %>%  # Step 1: Filter for HD
       dplyr::group_by(STUDYID) %>%  # Step 2: Group by STUDYID
       dplyr::summarise(
         avg_zscore = mean(zscore, na.rm = TRUE),  # Step 3: Average alt_zscore
         LBTESTCD = dplyr::first(LBTESTCD)) %>% # Include LBTESTCD in the summarized data
-      dplyr::select (STUDYID, zscore )%>% #select (avg_alt_zscore ) %>%
-      dplyr::mutate(zscore = ifelse(zscore >= 3, 3,
-                                            ifelse(zscore >= 2, 2,
-                                                   ifelse(zscore >= 1, 1, 0))))
+      dplyr::select (STUDYID, avg_zscore )%>% #select (avg_alt_zscore ) %>%
+      dplyr::mutate(avg_zscore = ifelse(avg_zscore >= 3, 3,
+                                            ifelse(avg_zscore >= 2, 2,
+                                                   ifelse(avg_zscore >= 1, 1, 0))))
+    # Dynamically rename the avg_zscore column to aveg_lbtestcd
+    final_zscore_current <- final_zscore %>%
+      dplyr::rename(!!glue::glue("avg_{lbtestcd}") := avg_zscore) %>%
+      dplyr::select(STUDYID, !!glue::glue("avg_{lbtestcd}"))
 
+    cat ("final_zscore_current:",final_zscore_current, "\n" )
 
+    # If final_results is NULL (first iteration), set it to final_zscore
+    if (is.null(final_results)) {
+      final_results <- final_zscore
+    } else {
+      # Otherwise, join with the existing final_results
+      final_results <- dplyr::full_join(final_results, final_zscore_current, by = "STUDYID")
     }
+ }
 
+ # output is : final_results
 
-    print(serum_alb_final_zscore)
-    print(serum_ast_final_zscore)
-    print(serum_alp_final_zscore)
-    print(serum_alt_final_zscore)
-    print(serum_bili_final_zscore)
-    print(serum_ggt_final_zscore)
-
-
-    # Merging----------LB----zscores------------values-------------------
-    LB_zscore_merged_df <- serum_alb_final_zscore %>%
-      dplyr::full_join(serum_ast_final_zscore, by = "STUDYID") %>%
-      dplyr::full_join(serum_alp_final_zscore, by = "STUDYID") %>%
-      dplyr::full_join(serum_alt_final_zscore, by = "STUDYID") %>%
-      dplyr::full_join(serum_bili_final_zscore, by = "STUDYID") %>%
-      dplyr::full_join(serum_ggt_final_zscore, by = "STUDYID")
-
-
-    # Replace Inf, -Inf, and NaN with NA in the selected columns
-    selected_cols <- c("avg_alb_zscore", "avg_ast_zscore", "avg_alp_zscore",
-                       "avg_alt_zscore", "avg_bili_zscore", "avg_ggt_zscore")
-
-    LB_zscore_merged_df[selected_cols] <- lapply(LB_zscore_merged_df[selected_cols],
-                                             function(x) replace(x, is.infinite(x) | is.nan(x), NA))
 
 
     if (return_individual_scores) {
 
-      # Master LB list
-      master_LB_list <- data.frame(STUDYID = NA, avg_alb_zscore = NA, avg_ast_zscore = NA, avg_alp_zscore = NA,
-                                   avg_alt_zscore = NA, avg_bili_zscore = NA, avg_ggt_zscore = NA)
-
-      # Add LB_zscore_merged_df to master dataframe
-      master_LB_list <- dplyr::bind_rows(master_LB_list, LB_zscore_merged_df)
-
-      master_lb_scores <- master_LB_list #%>% master_lb_scores[-1,]
-      master_lb_scores   <- master_lb_scores[-1,] # remove the first column
+      LB_final_results <- final_results
 
 
     } else {
-      # Calculate the average for each row, ignoring NA values
-      LB_zscore_merged_df$avg_all_LB_zscores <- rowMeans(LB_zscore_merged_df[selected_cols], na.rm = TRUE)
+      # Calculate the average for all the LBTESTCD, ignoring NA values
+      LB_final_results <- final_results
+      selected_cols <- 2:ncols(LB_final_results)
+      LB_final_results$avg_all_LBTESTCD_zscores <- rowMeans(LB_final_results[selected_cols], na.rm = TRUE)
 
       # select the specific columns for calculation
       LB_all_liver_zscore_averaged <- LB_zscore_merged_df %>% dplyr::select (STUDYID, avg_all_LB_zscores)
