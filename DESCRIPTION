@@ -44,6 +44,7 @@ Imports:
     ggplot2,
     glue,
     matrixStats,
+    magrittr,
     haven
 Suggests: 
     knitr,
