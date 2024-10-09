@@ -32,7 +32,7 @@ get_bw_score <- function(studyid = NULL,
                          use_xpt_file = FALSE,
                          master_compiledata = NULL,
                          return_individual_scores = FALSE) {
-
+browser()
   studyid <- as.character(studyid)
   path <- path_db
 
@@ -79,6 +79,21 @@ get_bw_score <- function(studyid = NULL,
 
   }
 
+  # Ensuring "BWSTRESN", "VISITDY", "BWDY" columns are numeric
+  bw$BWSTRESN <- as.numeric(bw$BWSTRESN)
+  bw$VISITDY <- as.numeric(bw$VISITDY)
+  bw$BWDY <- as.numeric(bw$BWDY)
+
+  #check for NAs introduced by the conversion
+  if (any(is.na(bw$BWSTRESN))) {
+    warning("Non-numeric values in BWSTRESN were coerced to NA")
+  }
+  if (any(is.na(bw$VISITDY))) {
+    warning("Non-numeric values in VISITDY were coerced to NA")
+  }
+  if (any(is.na(bw$BWDY))) {
+    warning("Non-numeric values in BWDY were coerced to NA")
+  }
 
   #.................. "BodyWeight_zScore" .....calculation........
   #................... Initial BW weight calculation..............
@@ -138,7 +153,7 @@ get_bw_score <- function(studyid = NULL,
             # Set BWSTRESN to 0 for the rows that meet the condition
             null_visitdy_large_bw$BWSTRESN <- 0
 
-            # Choose the row with the minimum BWDY value greater than 5
+            # Choose the row with the minimum VISITDY value greater than 5
             closest_row_null_visitdy <- which.min(null_visitdy_large_bw$VISITDY)
             SubjectInitialWeight <- null_visitdy_large_bw[closest_row_null_visitdy, c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY")]
           }
@@ -179,7 +194,7 @@ get_bw_score <- function(studyid = NULL,
     # only the first occurrence of each unique USUBJID will be kept, and subsequent duplicates will be removed
     StudyInitialWeights <- StudyInitialWeights[!duplicated(StudyInitialWeights$USUBJID), ]
 
-
+browser()
     #.......................................................................
     # ..........Final day "StudyBodyWeights" calculation.....................
 
@@ -212,7 +227,7 @@ get_bw_score <- function(studyid = NULL,
 
         # 1. Check if BWTESTCD == TERMBW is present
         SubjectBodyWeight <- subj_bw_data[subj_bw_data$BWTESTCD == "TERMBW",
-                                          c("STUDYID", "USUBJID", "BWTESTCD","BWSTRESN", "VISITDY")] #,"BWNOMDY","BWNOMLBL","BWBLFL")]
+                                          c("STUDYID", "USUBJID", "BWTESTCD","BWSTRESN", "VISITDY")]
 
         # If BWTESTCD == TERMBW not present,
         # 2. If no  BWTESTCD == TERMBW,try  VISITDY > 5"
