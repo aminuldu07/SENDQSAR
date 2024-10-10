@@ -32,7 +32,7 @@ get_bw_score <- function(studyid = NULL,
                          use_xpt_file = FALSE,
                          master_compiledata = NULL,
                          return_individual_scores = FALSE) {
-browser()
+
   studyid <- as.character(studyid)
   path <- path_db
 
@@ -194,7 +194,7 @@ browser()
     # only the first occurrence of each unique USUBJID will be kept, and subsequent duplicates will be removed
     StudyInitialWeights <- StudyInitialWeights[!duplicated(StudyInitialWeights$USUBJID), ]
 
-browser()
+
     #.......................................................................
     # ..........Final day "StudyBodyWeights" calculation.....................
 
@@ -288,20 +288,20 @@ browser()
 
     if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
       # Call the master_compiledata function to generate the data frame for fake study
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+      master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
 
     } else if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == TRUE) {
       # Call the master_compiledata function to generate the data frame for fake study using xpt file
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+      master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
 
     } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == FALSE) {
 
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+      master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
 
     } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == TRUE) {
 
       # Call the master_compiledata function for real study using xpt file
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+      master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
 
     }
 

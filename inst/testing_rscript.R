@@ -462,43 +462,4 @@ predicted_rf <- predicted_random_forest_model(dbPath_liver, dbPath_not_liver)
 # #####
 #
 ####bw##score testing
-######
-rm(list = ls())
-devtools::load_all(".")
 
-path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/FAKE10663'
-path_db = "C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/FAKE11094"
-
-fake_bw_xpt <- get_bw_score(studyid = NULL,
-                        path_db,
-                        fake_study = TRUE,
-                        master_compiledata = NULL,
-                        return_individual_scores = FALSE,
-                        use_xpt_file = TRUE)
-
-# for multiple folders
-
-rm(list = ls())
-devtools::load_all(".")
-
-# Set the main directory
-main_dir <- "C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/"
-
-# List all subdirectories
-subdirs <- list.dirs(main_dir, full.names = TRUE, recursive = FALSE)
-
-fake_xpt_results <- list()
-
-# Loop through each subdirectory and process it
-for (subdir in subdirs) {
-  # Assuming your function works with each subdirectory
-  fake_bw_xpt <- get_bw_score(studyid = NULL,
-                              path_db = subdir,
-                              fake_study = TRUE,
-                              master_compiledata = NULL,
-                              return_individual_scores = FALSE,
-                              use_xpt_file = TRUE)
-
-  # Do something with the result, e.g., store it in a list
-  fake_xpt_results <- append(fake_xpt_results, list(fake_bw_xpt))
-}
