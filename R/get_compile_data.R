@@ -94,12 +94,21 @@ get_compile_data <- function(studyid = NULL,
     species <- ts$TSVAL[which(ts$TSPARMCD=='SPECIES')]
 
     # Select specific columns from dm
-    dm <- dm[,c('STUDYID','USUBJID','SPECIES','SEX','ARMCD','ARM','SETCD')]
+    #dm <- dm[,c('STUDYID','USUBJID','SPECIES','SEX','ARMCD','ARM','SETCD')]
+    dm <- dm[,c('STUDYID','USUBJID','SEX','ARMCD','ARM','SETCD')]
+
+    dm$Species <- species
+
+    # Assuming dm is already defined as a data frame or tibble
+    # dm <- dm %>%
+    #   dplyr::mutate(Species = SPECIES) %>%   # Add or update the Species column
+    #   dplyr::select(-SPECIES, -ARMCD) %>%  # Remove  ARMCD
+    #   dplyr::rename(ARMCD = ARM)  %>%   # Rename ARM to ARMCD (if ARMCD is needed)
+    #   dplyr::select("STUDYID", "USUBJID", "Species","SEX", "ARMCD","SETCD")
 
     # Assuming dm is already defined as a data frame or tibble
     dm <- dm %>%
-      dplyr::mutate(Species = SPECIES) %>%   # Add or update the Species column
-      dplyr::select(-SPECIES, -ARMCD) %>%  # Remove  ARMCD
+      dplyr::select(-ARMCD) %>%  # Remove  ARMCD
       dplyr::rename(ARMCD = ARM)  %>%   # Rename ARM to ARMCD (if ARMCD is needed)
       dplyr::select("STUDYID", "USUBJID", "Species","SEX", "ARMCD","SETCD")
 
