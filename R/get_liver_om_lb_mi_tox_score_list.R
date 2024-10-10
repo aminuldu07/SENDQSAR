@@ -259,7 +259,6 @@ print(path_db)
                                  ErrorMessage = e$message,
                                  #Time = Sys.time(),
                                  stringsAsFactors = FALSE)
-
     } else {
 
     error_block2 <- data.frame(STUDYID = studyid,

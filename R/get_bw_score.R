@@ -31,7 +31,8 @@ get_bw_score <- function(studyid = NULL,
                          fake_study = FALSE,
                          use_xpt_file = FALSE,
                          master_compiledata = NULL,
-                         return_individual_scores = FALSE) {
+                         return_individual_scores = FALSE,
+                         return_zscore_by_USUBJID = FALSE) {
 
   studyid <- as.character(studyid)
   path <- path_db
@@ -368,7 +369,7 @@ get_bw_score <- function(studyid = NULL,
     #                                        ifelse(BWzScore_avg  >= 2, 2,
     #                                               ifelse(BWzScore_avg  >= 1, 1, 0))))
 
-  } else {
+  } else if (return_individual_scores == FALSE ) {
 
     averaged_HD_BWzScore <- HD_BWzScore  %>%
       dplyr::select(STUDYID, BWZSCORE) %>%    # Select relevant columns
@@ -377,13 +378,18 @@ get_bw_score <- function(studyid = NULL,
       dplyr::mutate(BWzScore_avg  = ifelse(BWzScore_avg  >= 3, 3,
                                                 ifelse(BWzScore_avg  >= 2, 2,
                                                        ifelse(BWzScore_avg  >= 1, 1, 0))))
+  } else if ( return_zscore_by_USUBJID){
+
+         bwzscore_BW <- bwzscore_BW
   }
 
     # Return based on score_in_list_format
     if (return_individual_scores) {
       return(bwzscore_BW)
-    } else {
+    } else if (return_individual_scores == FALSE ) {
       return(averaged_HD_BWzScore)
+    } else if ( return_zscore_by_USUBJID){
+     return(bwzscore_BW)
     }
 
 }
