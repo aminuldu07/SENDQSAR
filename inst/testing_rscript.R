@@ -114,16 +114,18 @@ liverTO_bw_fake_XPT_bw_zscore <- get_liver_livertobw_score(studyid = NULL,
                                       return_individual_scores = TRUE)
 
 
+
 ##### GET_lb_SCORES_-------------------
-# rm(list = ls())
-# devtools::load_all(".")
+rm(list = ls())
+devtools::load_all(".")
 
 lb_R_SQL_bw_zscore <- get_lb_score(studyid='A2018086-T002-01',
                                                         path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db',
                                                         fake_study = FALSE,
                                                         use_xpt_file = FALSE,
                                                         master_compiledata = NULL,
-                                                        return_individual_scores = TRUE)
+                                                        return_individual_scores = TRUE,
+                                                        return_zscore_by_USUBJID = FALSE)
 
 
 lb_R_XPT_bw_zscore <- get_lb_score (studyid= NULL,

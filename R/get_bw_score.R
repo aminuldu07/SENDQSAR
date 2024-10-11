@@ -395,9 +395,13 @@ get_bw_score <- function(studyid = NULL,
   }
     # Return based on score_in_list_format
     if (return_individual_scores) {
+
       return(bwzscore_BW)
+
     } else if (return_zscore_by_USUBJID ) {
+
       return(bwzscore_BW)
+
     } else {
 
     # Handle case when (return_individual_scores == FALSE && return_zscore_by_USUBJID == FALSE
