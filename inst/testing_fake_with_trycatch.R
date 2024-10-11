@@ -8,9 +8,10 @@ path_db = "C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_
 fake_bw_xpt <- get_bw_score(studyid = NULL,
                             path_db,
                             fake_study = TRUE,
+                            use_xpt_file = TRUE,
                             master_compiledata = NULL,
                             return_individual_scores = FALSE,
-                            use_xpt_file = TRUE)
+                            return_zscore_by_USUBJID = FALSE)
 
 ########################for multiple folders#######################
 ###########################BW_testing_with_fake_liver_data---------
