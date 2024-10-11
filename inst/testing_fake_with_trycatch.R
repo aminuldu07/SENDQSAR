@@ -10,7 +10,7 @@ fake_bw_xpt <- get_bw_score(studyid = NULL,
                             fake_study = TRUE,
                             use_xpt_file = TRUE,
                             master_compiledata = NULL,
-                            return_individual_scores = FALSE,
+                            return_individual_scores = TRUE,
                             return_zscore_by_USUBJID = FALSE)
 
 ########################for multiple folders#######################

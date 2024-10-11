@@ -384,24 +384,38 @@ get_bw_score <- function(studyid = NULL,
 
   } else {
 
-    averaged_HD_BWzScore <- HD_BWzScore  %>%
+      # Handle case when (return_individual_scores == FALSE && return_zscore_by_USUBJID == FALSE)
+      averaged_HD_BWzScore <- HD_BWzScore  %>%
       dplyr::select(STUDYID, BWZSCORE) %>%    # Select relevant columns
       dplyr::group_by(STUDYID) %>%             # Group by STUDYID
       dplyr::summarize(BWzScore_avg = mean(abs(BWZSCORE), na.rm = TRUE)) %>%  # Calculate average, ignoring NAs
       dplyr::mutate(BWzScore_avg  = ifelse(BWzScore_avg  >= 3, 3,
                                            ifelse(BWzScore_avg  >= 2, 2,
                                                   ifelse(BWzScore_avg  >= 1, 1, 0))))
-
   }
-
     # Return based on score_in_list_format
     if (return_individual_scores) {
       return(bwzscore_BW)
     } else if (return_zscore_by_USUBJID ) {
       return(bwzscore_BW)
     } else {
+
+    # Handle case when (return_individual_scores == FALSE && return_zscore_by_USUBJID == FALSE
      return(averaged_HD_BWzScore)
     }
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
