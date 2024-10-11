@@ -72,16 +72,19 @@ bw_fake_XPT_bw_zscore <- get_bw_score(studyid = NULL,
 
 
 #### liverTOBW_zscore_data---------------------------------------------
-# rm(list = ls())
-# devtools::load_all(".")
+#studyid='A2018086-T002-01'
+rm(list = ls())
+devtools::load_all(".")
 
-liverTO_bw_R_SQL_bw_zscore <- get_liver_livertobw_score(studyid='A2018086-T002-01',
+liverTO_bw_R_SQL_bw_zscore <- get_liver_livertobw_score(studyid='5003635',
                                    path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db',
                                    fake_study = FALSE,
                                    use_xpt_file = FALSE,
+                                   multiple_xpt_folder = FALSE,
                                    master_compiledata = NULL,
                                    bwzscore_BW = NULL,
-                                   return_individual_scores = TRUE)
+                                   return_individual_scores = FALSE,
+                                   return_zscore_by_USUBJID = TRUE)
 
 
 liverTO_bw_R_XPT_bw_zscore <- get_liver_livertobw_score(studyid= NULL,

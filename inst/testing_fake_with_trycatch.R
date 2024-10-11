@@ -12,6 +12,10 @@ fake_bw_xpt <- get_bw_score(studyid = NULL,
                             master_compiledata = NULL,
                             return_individual_scores = TRUE,
                             return_zscore_by_USUBJID = FALSE)
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
 
 ########################for multiple folders#######################
 ###########################BW_testing_with_fake_liver_data---------

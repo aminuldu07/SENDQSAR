@@ -13,9 +13,10 @@
 #' whether use_xpt_file is used on not
 #' @param bwzscore_BW optional, Boolean \cr
 #' whether use_xpt_file is used on not
-#' @param return_individual_scores optional, Boolean \cr
+#' @param return_individual_scores optional, logical \cr
 #' whether use_xpt_file is used on not
-
+#' @param return_zscore_by_USUBJID optional, logical \cr
+#' whether use_xpt_file is used on not
 #' @return dataframe
 #'
 #' @examples
@@ -33,10 +34,11 @@ get_liver_livertobw_score <- function (studyid = NULL,
                                        path_db,
                                        fake_study = FALSE,
                                        use_xpt_file = FALSE,
-                                       multiple_xpt_folder = TRUE,
+                                       multiple_xpt_folder = FALSE,
                                        master_compiledata = NULL,
                                        bwzscore_BW = NULL,
-                                       return_individual_scores = FALSE){
+                                       return_individual_scores = FALSE,
+                                       return_zscore_by_USUBJID = FALSE){
 
 # need to define the folder path here
   #studyid <- as.character(studyid)
@@ -236,13 +238,19 @@ get_liver_livertobw_score <- function (studyid = NULL,
     dplyr::mutate(liverToBW_zscore = abs(liverToBW_zscore))
 
   # Filter and select specific columns
-  HD_liver_zscore <- liver_zscore_df %>%
+    HD_liver_zscore <- liver_zscore_df %>%
     dplyr::filter(ARMCD == "HD") %>%
     dplyr::select(STUDYID, USUBJID,  ARMCD, liverToBW_zscore)
 
+
+  # Enforce mutual exclusivity: If both are TRUE, throw an error or handle it
+  if (return_individual_scores && return_zscore_by_USUBJID) {
+    stop("Error: Both 'return_individual_scores' and 'return_zscore_by_USUBJID' cannot be TRUE at the same time.")
+  }
+
   if (return_individual_scores) {
 
-    HD_liver_zscore_df <- HD_liver_zscore %>%
+      HD_liver_zscore_df <- HD_liver_zscore %>%
       dplyr::group_by(STUDYID) %>%
       dplyr::mutate(liverToBW_zscore = replace(liverToBW_zscore,
                                                is.infinite(liverToBW_zscore), NA)) %>%
@@ -254,9 +262,22 @@ get_liver_livertobw_score <- function (studyid = NULL,
                                                          ifelse(avg_liverToBW_zscore >= 1, 1, 0))))
 
 
+  } else if (return_zscore_by_USUBJID ) {
+
+    # Create final_liverToBW_df for the current STUDYID by USUBJID.......................
+      HD_liverTOBW_zscore_by_USUBJID <- HD_liver_zscore %>%
+      dplyr::group_by(STUDYID) %>%
+      dplyr::mutate(liverToBW_zscore = replace(liverToBW_zscore,
+                                               is.infinite(liverToBW_zscore), NA)) %>%
+      dplyr::mutate(liverToBW_zscore = abs(liverToBW_zscore))  %>%
+      dplyr::select(STUDYID, USUBJID,liverToBW_zscore) %>%
+      dplyr::mutate(liverToBW_zscore = ifelse(liverToBW_zscore >= 3, 3,
+                                                  ifelse(liverToBW_zscore >= 2, 2,
+                                                         ifelse(liverToBW_zscore >= 1, 1, 0))))
+
   } else {
     # Create final_liverToBW_df for the current STUDYID by averaging.......................
-    averaged_liverToBW_df  <- HD_liver_zscore %>%
+      averaged_liverToBW_df  <- HD_liver_zscore %>%
       dplyr::group_by(STUDYID) %>%
       dplyr::mutate(liverToBW_zscore = replace(liverToBW_zscore,
                                                is.infinite(liverToBW_zscore), NA)) %>%
@@ -271,7 +292,10 @@ get_liver_livertobw_score <- function (studyid = NULL,
   # Return based on return_individual_scores
   if (return_individual_scores) {
     return(HD_liver_zscore_df)
-  } else {
+
+  } else if (return_zscore_by_USUBJID ) {
+    return(HD_liverTOBW_zscore_by_USUBJID)
+ } else {
     return(averaged_liverToBW_df)
   }
 

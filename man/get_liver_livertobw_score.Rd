@@ -9,10 +9,11 @@ get_liver_livertobw_score(
   path_db,
   fake_study = FALSE,
   use_xpt_file = FALSE,
-  multiple_xpt_folder = TRUE,
+  multiple_xpt_folder = FALSE,
   master_compiledata = NULL,
   bwzscore_BW = NULL,
-  return_individual_scores = FALSE
+  return_individual_scores = FALSE,
+  return_zscore_by_USUBJID = FALSE
 )
 }
 \arguments{
@@ -37,7 +38,10 @@ whether use_xpt_file is used on not}
 \item{bwzscore_BW}{optional, Boolean \cr
 whether use_xpt_file is used on not}
 
-\item{return_individual_scores}{optional, Boolean \cr
+\item{return_individual_scores}{optional, logical \cr
+whether use_xpt_file is used on not}
+
+\item{return_zscore_by_USUBJID}{optional, logical \cr
 whether use_xpt_file is used on not}
 }
 \value{
