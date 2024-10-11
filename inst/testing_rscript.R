@@ -154,13 +154,15 @@ lb_fake_XPT_bw_zscore <- get_lb_score (studyid = NULL,
 ##### GET_mi_SCORES_-------------------
 rm(list = ls())
 devtools::load_all(".")
+#studyid='5003635'
 
-mi_R_SQL_bw_zscore <- get_mi_score(studyid='A2018086-T002-01',
+mi_R_SQL_zscore <- get_mi_score(studyid='20218418',
                                    path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db',
                                    fake_study = FALSE,
                                    use_xpt_file = FALSE,
                                    master_compiledata = NULL,
-                                   return_individual_scores = TRUE)
+                                   return_individual_scores = FALSE,
+                                   return_zscore_by_USUBJID = TRUE)
 
 
 mi_R_XPT_bw_zscore <- get_mi_score (studyid= NULL,

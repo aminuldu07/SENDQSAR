@@ -7,7 +7,8 @@ all_testcd_zscore <- get_all_lb_TESTCD_zscore(studyid = '2170016',
                                   fake_study= FALSE,
                                   use_xpt_file = FALSE,
                                   master_compiledata = NULL,
-                                  return_individual_scores = TRUE)
+                                  return_individual_scores = TRUE,
+                                  return_zscore_by_USUBJID = FALSE)
 # Calculate row means from the second to the last column
 avg_all_testcd_zscore <- all_testcd_zscore %>%
   dplyr::mutate(avg_all_zscore = rowMeans(.[, 2:ncol(.)], na.rm = TRUE))
@@ -52,9 +53,6 @@ averaged_all_testcd_zscore <- get_all_lb_TESTCD_zscore(studyid = '2170016',
                                               use_xpt_file = FALSE,
                                               master_compiledata = NULL,
                                               return_individual_scores = FALSE)
-
-
-
 
 
 #########################################

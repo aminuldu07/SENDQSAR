@@ -265,7 +265,7 @@ get_liver_livertobw_score <- function (studyid = NULL,
   } else if (return_zscore_by_USUBJID ) {
 
     # Create final_liverToBW_df for the current STUDYID by USUBJID.......................
-      HD_liverTOBW_zscore_by_USUBJID <- HD_liver_zscore %>%
+      liverTOBW_zscore_by_USUBJID_HD <- HD_liver_zscore %>%
       dplyr::group_by(STUDYID) %>%
       dplyr::mutate(liverToBW_zscore = replace(liverToBW_zscore,
                                                is.infinite(liverToBW_zscore), NA)) %>%
@@ -294,7 +294,9 @@ get_liver_livertobw_score <- function (studyid = NULL,
     return(HD_liver_zscore_df)
 
   } else if (return_zscore_by_USUBJID ) {
-    return(HD_liverTOBW_zscore_by_USUBJID)
+
+    return(liverTOBW_zscore_by_USUBJID_HD)
+
  } else {
     return(averaged_liverToBW_df)
   }

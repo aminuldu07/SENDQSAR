@@ -430,7 +430,7 @@ get_lb_score <- function(studyid = NULL,
        # dplyr::mutate(LB_zscore = abs(LB_zscore))
       #browser()
         # work on zscore_lb
-        HD_LB_zscore <- zscore_lb %>%
+        LB_zscore_by_USUBJID_HD <- zscore_lb %>%
         dplyr::filter(ARMCD == "HD") %>%  # Step 1: Filter for HD
         dplyr::group_by(STUDYID) %>%  # Step 2: Group by STUDYID
         dplyr::mutate(LB_zscore = replace(LB_zscore,
@@ -465,7 +465,7 @@ get_lb_score <- function(studyid = NULL,
   return(master_lb_scores)
 
   } else if(return_zscore_by_USUBJID) {
-     return (HD_LB_zscore)
+     return (LB_zscore_by_USUBJID_HD )
 
  } else  {
    # Handle case when (return_individual_scores == FALSE && return_zscore_by_USUBJID == FALSE

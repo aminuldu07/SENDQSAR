@@ -380,7 +380,7 @@ get_bw_score <- function(studyid = NULL,
 
   } else if (return_zscore_by_USUBJID ) {
 
-    bwzscore_BW <- bwzscore_BW
+    BW_zscore_by_USUBJID_HD <- bwzscore_BW
 
   } else {
 
@@ -400,7 +400,7 @@ get_bw_score <- function(studyid = NULL,
 
     } else if (return_zscore_by_USUBJID ) {
 
-      return(bwzscore_BW)
+      return(BW_zscore_by_USUBJID_HD)
 
     } else {
 
