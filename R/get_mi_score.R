@@ -25,7 +25,8 @@ get_mi_score <- function(studyid = NULL,
                          fake_study=FALSE,
                          use_xpt_file = FALSE,
                          master_compiledata = NULL,
-                         return_individual_scores = FALSE) {
+                         return_individual_scores = FALSE,
+                         return_zscore_by_USUBJID = FALSE) {
 
 studyid <- as.character(studyid)
 path <- path_db
@@ -469,7 +470,12 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
         # Convert the list to data frame
         mi_score_final_list_df <- dplyr::bind_rows(mi_score_final_list, .id = "iteration")
 
-      } else {
+      } else if (return_zscore_by_USUBJID ) {
+
+
+
+
+      } else  {
         # averaged zscore per STUDYID for 'MI'
         # Step 1: Filter for HD
         #MI_final_score <- ScoredData_subset_HD [ARMCD == "HD"]
@@ -496,6 +502,10 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
 
         mi_score_final_list_df = data.frame()
 
+      } else if (return_zscore_by_USUBJID ) {
+
+        return_zscore_by_USUBJID <- data.frame()
+
       } else {
 
         averaged_MI_score <- data.frame()
@@ -506,8 +516,14 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
 
   # Return based on return_individual_scores
   if (return_individual_scores) {
+
     return(mi_score_final_list_df)
+
+  } else if (return_zscore_by_USUBJID) {
+
+
   } else {
+
     return(averaged_MI_score)
   }
 
