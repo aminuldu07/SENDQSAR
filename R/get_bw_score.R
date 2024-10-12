@@ -82,6 +82,20 @@ get_bw_score <- function(studyid = NULL,
 
   }
 
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# Check if both BWDY and VISITDY columns exist in the 'bw' data frame
+if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
+  stop("Both 'BWDY' and 'VISITDY' columns are absent in the 'bw' data frame.")
+} else if ("BWDY" %in% colnames(bw) && !("VISITDY" %in% colnames(bw))) {
+  # If BWDY is present and VISITDY is absent, create VISITDY with the values of BWDY
+  bw$VISITDY <- bw$BWDY
+} else if (!("BWDY" %in% colnames(bw)) && "VISITDY" %in% colnames(bw)) {
+  # If VISITDY is present and BWDY is absent, create BWDY with the values of VISITDY
+  bw$BWDY <- bw$VISITDY
+}
+# If both are present, do nothing
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
   # Ensuring "BWSTRESN", "VISITDY", "BWDY" columns are numeric
   bw$BWSTRESN <- as.numeric(bw$BWSTRESN)
   bw$VISITDY <- as.numeric(bw$VISITDY)
