@@ -103,24 +103,4 @@ for (subdir in subdirs) {
   })
 }
 
-###################################################
-rm(list = ls())
-devtools::load_all(".")
 
-# Set the main directory
-main_dir <- "C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/"
-
-# List all subdirectories
-subdirs <- list.dirs(main_dir, full.names = TRUE, recursive = FALSE)
-
-# Store all subdirectory paths in a new vector
-selected_studies <- subdirs
-
-get_all_individuals_scores <- get_liver_om_lb_mi_tox_score_list(selected_studies = selected_studies,
-                                               path_db = main_dir,
-                                               fake_study = TRUE,
-                                               use_xpt_file = TRUE,
-                                               multiple_xpt_folder = TRUE,
-                                               output_individual_scores = FALSE)
-
-#"C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/FAKE10663"

@@ -5,7 +5,7 @@ devtools::load_all(".")
 #path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/FAKE10663'
 path_db = "C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/FAKE42143"
 
-fake_bw_xpt <- get_bw_score(studyid = NULL,
+fake_mi_xpt <- get_mi_score(studyid = NULL,
                             path_db,
                             fake_study = TRUE,
                             use_xpt_file = TRUE,
@@ -13,10 +13,6 @@ fake_bw_xpt <- get_bw_score(studyid = NULL,
                             return_individual_scores = FALSE,
                             return_zscore_by_USUBJID = TRUE)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
-
 ########################for multiple folders#######################
 ###########################BW_testing_with_fake_liver_data---------
 rm(list = ls())
@@ -29,7 +25,7 @@ main_dir <- "C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAK
 subdirs <- list.dirs(main_dir, full.names = TRUE, recursive = FALSE)
 
 # Initialize an empty list to store results and an empty error data frame
-fake_xpt_results <- list()
+fake_mi_xpt_results <- list()
 master_error_df <- data.frame(STUDYID = character(),
                               Block = character(),
                               ErrorMessage = character(),
@@ -41,16 +37,16 @@ for (subdir in subdirs) {
 
   tryCatch({
     # Call the function with the current subdirectory
-    fake_bw_xpt <- get_bw_score(studyid = NULL,
+    fake_mi_xpt <- get_mi_score(studyid = NULL,
                                 path_db = subdir,
                                 fake_study = TRUE,
                                 use_xpt_file = TRUE,
                                 master_compiledata = NULL,
                                 return_individual_scores = FALSE,
-                                return_zscore_by_USUBJID = TRUE)
+                                return_zscore_by_USUBJID = FALSE)
 
     # Store the result in the list
-    fake_xpt_results <- append(fake_xpt_results, list(fake_bw_xpt))
+    fake_mi_xpt_results <- append(fake_mi_xpt_results, list(fake_mi_xpt))
 
   }, error = function(e) {
     # Handling errors
@@ -73,7 +69,7 @@ subdirs <- list.dirs(main_dir, full.names = TRUE, recursive = FALSE)
 #subdirs <- "C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_not_liver_/FAKE32670"
 
 # Initialize an empty list to store results and an empty error data frame
-fake_xpt_not_liver_results <- list()
+fake_mi_xpt_not_liver_results <- list()
 master_error_df <- data.frame(STUDYID = character(),
                               Block = character(),
                               ErrorMessage = character(),
@@ -85,16 +81,16 @@ for (subdir in subdirs) {
 
   tryCatch({
     # Call the function with the current subdirectory
-    fake_nl_bw_xpt <- get_bw_score(studyid = NULL,
+    fake_nl_mi_xpt <- get_mi_score(studyid = NULL,
                                 path_db = subdir,
                                 fake_study = TRUE,
                                 use_xpt_file = TRUE,
                                 master_compiledata = NULL,
                                 return_individual_scores = FALSE,
-                                return_zscore_by_USUBJID = TRUE)
+                                return_zscore_by_USUBJID = FALSE)
 
     # Store the result in the list
-    fake_xpt_not_liver_results <- append(fake_xpt_not_liver_results, list(fake_nl_bw_xpt))
+    fake_mi_xpt_not_liver_results <- append(fake_mi_xpt_not_liver_results, list(fake_nl_mi_xpt))
 
   }, error = function(e) {
     # Handling errors
@@ -103,24 +99,3 @@ for (subdir in subdirs) {
   })
 }
 
-###################################################
-rm(list = ls())
-devtools::load_all(".")
-
-# Set the main directory
-main_dir <- "C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/"
-
-# List all subdirectories
-subdirs <- list.dirs(main_dir, full.names = TRUE, recursive = FALSE)
-
-# Store all subdirectory paths in a new vector
-selected_studies <- subdirs
-
-get_all_individuals_scores <- get_liver_om_lb_mi_tox_score_list(selected_studies = selected_studies,
-                                               path_db = main_dir,
-                                               fake_study = TRUE,
-                                               use_xpt_file = TRUE,
-                                               multiple_xpt_folder = TRUE,
-                                               output_individual_scores = FALSE)
-
-#"C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/FAKE10663"
