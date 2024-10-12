@@ -380,10 +380,18 @@ get_bw_score <- function(studyid = NULL,
 
   } else if (return_zscore_by_USUBJID ) {
 
-    BW_zscore_by_USUBJID_HD <- bwzscore_BW
+    BW_zscore_by_USUBJID_HD <- bwzscore_BW %>%
+      dplyr::filter(ARMCD == "HD") %>%  # Step 1: Filter for HD
+      dplyr::group_by(STUDYID) %>%  # Step 2: Group by STUDYID
+      dplyr::mutate(BWZSCORE = replace(BWZSCORE,
+                                        is.infinite(BWZSCORE), NA)) %>%
+      dplyr::mutate(BWZSCORE = abs(BWZSCORE))  %>%
+      dplyr::select(STUDYID, USUBJID, SEX , BWZSCORE) %>%
+      dplyr::mutate(BWZSCORE = ifelse(BWZSCORE >= 3, 3,
+                                       ifelse(BWZSCORE >= 2, 2,
+                                              ifelse(BWZSCORE >= 1, 1, 0))))
 
   } else {
-
       # Handle case when (return_individual_scores == FALSE && return_zscore_by_USUBJID == FALSE)
       averaged_HD_BWzScore <- HD_BWzScore  %>%
       dplyr::select(STUDYID, BWZSCORE) %>%    # Select relevant columns

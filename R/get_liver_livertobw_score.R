@@ -34,7 +34,6 @@ get_liver_livertobw_score <- function (studyid = NULL,
                                        path_db,
                                        fake_study = FALSE,
                                        use_xpt_file = FALSE,
-                                       multiple_xpt_folder = FALSE,
                                        master_compiledata = NULL,
                                        bwzscore_BW = NULL,
                                        return_individual_scores = FALSE,
@@ -53,6 +52,7 @@ get_liver_livertobw_score <- function (studyid = NULL,
   # }
   # print(path_db)
   # path <- path_db
+
   # Helper function to fetch data from SQLite database
   fetch_domain_data <- function(db_connection, domain_name, studyid) {
     domain_name <- toupper(domain_name)
