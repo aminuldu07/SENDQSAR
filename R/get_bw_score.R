@@ -47,40 +47,57 @@ get_bw_score <- function(studyid = NULL,
     query_result
   }
 
-    if (fake_study == TRUE && use_xpt_file == FALSE) {
+  #   if (fake_study == TRUE && use_xpt_file == FALSE) {
+  #
+  #   # Establish a connection to the SQLite database
+  #   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+  #
+  #   # Fetch data for the 'dm' domain
+  #   bw <- fetch_domain_data(db_connection, 'bw', studyid)
+  #
+  #   # Close the database connection
+  #   DBI::dbDisconnect(db_connection)
+  #
+  # } else if (fake_study == TRUE && use_xpt_file == TRUE) {
+  #
+  #   # Reads from an .xpt file for the fake study.
+  #   bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
+  #
+  # } else if (fake_study == FALSE && use_xpt_file == FALSE) {
+  #
+  #   # Reads from an SQLite database for the real study
+  #   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+  #
+  #   # Fetch data for the 'dm' domain
+  #   bw <- fetch_domain_data(db_connection, 'bw', studyid)
+  #
+  #   # Close the database connection
+  #   DBI::dbDisconnect(db_connection)
+  #
+  #
+  # } else if (fake_study == FALSE && use_xpt_file == TRUE) {
+  #
+  #   # Reads from an .xpt file for the real study.
+  #   bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
+  #
+  # }
 
+  if (use_xpt_file) {
+    # Read data from .xpt files
+    bw <- haven::read_xpt(fs::path(path, 'bw.xpt'))
+  } else {
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
-    # Fetch data for the 'dm' domain
+    # Fetch data for required domains
     bw <- fetch_domain_data(db_connection, 'bw', studyid)
 
     # Close the database connection
     DBI::dbDisconnect(db_connection)
-
-  } else if (fake_study == TRUE && use_xpt_file == TRUE) {
-
-    # Reads from an .xpt file for the fake study.
-    bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
-
-  } else if (fake_study == FALSE && use_xpt_file == FALSE) {
-
-    # Reads from an SQLite database for the real study
-    db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
-
-    # Fetch data for the 'dm' domain
-    bw <- fetch_domain_data(db_connection, 'bw', studyid)
-
-    # Close the database connection
-    DBI::dbDisconnect(db_connection)
-
-
-  } else if (fake_study == FALSE && use_xpt_file == TRUE) {
-
-    # Reads from an .xpt file for the real study.
-    bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
-
   }
+
+
+
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Check if both BWDY and VISITDY columns exist in the 'bw' data frame
@@ -302,25 +319,33 @@ if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
 
     #<><><><><><><><><><><><><><><><>... Remove TK animals and Recovery animals......<><><><><><>.............
     #<><><><><><><><> master_compiledata is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
-
-    if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
-      # Call the master_compiledata function to generate the data frame for fake study
-      master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-
-    } else if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == TRUE) {
-      # Call the master_compiledata function to generate the data frame for fake study using xpt file
-      master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-
-    } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == FALSE) {
-
-      master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-
-    } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == TRUE) {
-
-      # Call the master_compiledata function for real study using xpt file
-      master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-
+#
+#     if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
+#       # Call the master_compiledata function to generate the data frame for fake study
+#       master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db, fake_study = TRUE, use_xpt_file = FALSE)
+#
+#     } else if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == TRUE) {
+#       # Call the master_compiledata function to generate the data frame for fake study using xpt file
+#       master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db, fake_study = TRUE, use_xpt_file = TRUE)
+#
+#     } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == FALSE) {
+#
+#       master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db, fake_study = FALSE, use_xpt_file = FALSE)
+#
+#     } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == TRUE) {
+#
+#       # Call the master_compiledata function for real study using xpt file
+#       master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db, fake_study = FALSE, use_xpt_file = TRUE)
+#
+#     }
+    if (is.null(master_compiledata)) {
+      studyid <- if (use_xpt_file) NULL else studyid
+      master_compiledata <- get_compile_data(studyid = studyid,
+                                             path_db = path_db,
+                                             fake_study = fake_study,
+                                             use_xpt_file = use_xpt_file)
     }
+
 
     #Substract TK animals from the "StudyInitialWeights" and StudyBodyWeights" data frame
     #tk_less_StudyBodyWeights <- StudyBodyWeights[!(StudyBodyWeights$USUBJID %in% tK_animals_df$USUBJID),]
@@ -406,14 +431,21 @@ if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
                                               ifelse(BWZSCORE >= 1, 1, 0))))
 
   } else {
+
       # Handle case when (return_individual_scores == FALSE && return_zscore_by_USUBJID == FALSE)
       averaged_HD_BWzScore <- HD_BWzScore  %>%
       dplyr::select(STUDYID, BWZSCORE) %>%    # Select relevant columns
       dplyr::group_by(STUDYID) %>%             # Group by STUDYID
-      dplyr::summarize(BWzScore_avg = mean(abs(BWZSCORE), na.rm = TRUE)) %>%  # Calculate average, ignoring NAs
-      dplyr::mutate(BWzScore_avg  = ifelse(BWzScore_avg  >= 3, 3,
-                                           ifelse(BWzScore_avg  >= 2, 2,
-                                                  ifelse(BWzScore_avg  >= 1, 1, 0))))
+      dplyr::summarize(BWZSCORE_avg = mean(abs(BWZSCORE), na.rm = TRUE)) %>%  # Calculate average, ignoring NAs
+      dplyr::mutate(BWZSCORE_avg  = ifelse(BWZSCORE_avg  >= 3, 3,
+                                           ifelse(BWZSCORE_avg  >= 2, 2,
+                                                  ifelse(BWZSCORE_avg  >= 1, 1, 0))))
+
+
+
+      BW_zscore_by_USUBJID_HD <- bwzscore_BW
+
+
   }
     # Return based on score_in_list_format
     if (return_individual_scores) {
@@ -428,6 +460,7 @@ if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
 
     # Handle case when (return_individual_scores == FALSE && return_zscore_by_USUBJID == FALSE
      return(averaged_HD_BWzScore)
+
     }
 
 }

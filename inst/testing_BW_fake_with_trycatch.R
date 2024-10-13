@@ -11,7 +11,7 @@ fake_bw_xpt <- get_bw_score(studyid = NULL,
                             use_xpt_file = TRUE,
                             master_compiledata = NULL,
                             return_individual_scores = FALSE,
-                            return_zscore_by_USUBJID = TRUE)
+                            return_zscore_by_USUBJID = FALSE)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
@@ -47,7 +47,7 @@ for (subdir in subdirs) {
                                 use_xpt_file = TRUE,
                                 master_compiledata = NULL,
                                 return_individual_scores = FALSE,
-                                return_zscore_by_USUBJID = TRUE)
+                                return_zscore_by_USUBJID = FALSE)
 
     # Store the result in the list
     fake_xpt_results <- append(fake_xpt_results, list(fake_bw_xpt))

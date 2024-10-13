@@ -64,13 +64,17 @@ if(output_individual_scores ) {
 
 } else if (output_zscore_by_USUBJID){
 
-
+print("_________________________________")
 
 
 
   } else {
   # Create FOUR SCORE DATA FRAME for "LiverToBodyweight" , "LB" & "MI" Score
-  FOUR_Liver_Score_avg <-  data.frame(STUDYID = NA, BWzScore_avg = NA, liverToBW_avg = NA, LB_score_avg = NA, MI_score_avg = NA)
+  FOUR_Liver_Score_avg <-  data.frame(STUDYID = character(),
+                                      BWZSCORE_avg = numeric(),
+                                      liverToBW_avg = numeric(),
+                                      LB_score_avg = numeric()
+                                      , MI_score_avg = numeric())
 
   # Initialize an empty data frame to store the names of studies with errors
   Error_studies <- list()
@@ -188,7 +192,7 @@ print(path_db)
 
       } else {
       new_row_in_four_liver_scr_avg <- data.frame(STUDYID = unique(master_compiledata$STUDYID),
-                                              BWzScore_avg = NA,
+                                                  BWZSCORE_avg = NA,
                                               liverToBW_avg = NA,
                                               LB_score_avg = NA,
                                               MI_score_avg = NA)
@@ -235,7 +239,6 @@ print(path_db)
                                  path_db = path_db,
                                  fake_study = fake_study,
                                  use_xpt_file = use_xpt_file,
-                                 multiple_xpt_folder = multiple_xpt_folder,
                                  master_compiledata = master_compiledata,
                                  return_individual_scores = TRUE,
                                  return_zscore_by_USUBJID = FALSE)
@@ -245,11 +248,9 @@ print(path_db)
                                              path_db = path_db,
                                              fake_study = fake_study,
                                              use_xpt_file = use_xpt_file,
-                                             multiple_xpt_folder = multiple_xpt_folder,
                                              master_compiledata = master_compiledata,
                                              return_individual_scores = FALSE,
                                              return_zscore_by_USUBJID = TRUE)
-
 
     } else {
 
@@ -259,32 +260,31 @@ print(path_db)
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       # need to think more and make acccordingly~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      bwzscore_BW <- get_bw_score (studyid = studyid,
-                                   path_db = path_db,
-                                   fake_study = fake_study,
-                                   use_xpt_file = use_xpt_file,
-                                   multiple_xpt_folder = multiple_xpt_folder,
-                                   master_compiledata = master_compiledata ,
-                                   return_individual_scores = FALSE,
-                                   return_zscore_by_USUBJID = FALSE)
+      # bwzscore_BW <- get_bw_score (studyid = studyid,
+      #                              path_db = path_db,
+      #                              fake_study = fake_study,
+      #                              use_xpt_file = use_xpt_file,
+      #                              multiple_xpt_folder = multiple_xpt_folder,
+      #                              master_compiledata = master_compiledata ,
+      #                              return_individual_scores = FALSE,
+      #                              return_zscore_by_USUBJID = FALSE)
 
       averaged_HD_BWzScore <- get_bw_score (studyid = studyid,
                                             path_db = path_db,
                                             fake_study = fake_study,
                                             use_xpt_file = use_xpt_file,
-                                            multiple_xpt_folder = multiple_xpt_folder,
                                             master_compiledata = master_compiledata ,
                                             return_individual_scores = FALSE,
                                             return_zscore_by_USUBJID = FALSE)
-
-      # # Add the liverToBW_zscore to "FOUR_Liver_Score" data frame................
+   print(averaged_HD_BWzScore)
+      # # Add the liverToBW_zscore to "FOUR_Liver_Score" data frame............
 
       # Extract the liverToBW value for the current STUDYID from liverToBW_df
-      calculated_BWzScore_value <-  averaged_HD_BWzScore$BWzScore_avg[averaged_HD_BWzScore$STUDYID == unique(master_compiledata$STUDYID)]
+      calculated_BWzScore_value <-  averaged_HD_BWzScore$BWZSCORE_avg[averaged_HD_BWzScore$STUDYID == unique(master_compiledata$STUDYID)]
       #calculated_liverToBW_value <- liverToBW_df$liverToBW_avg
 
       # Update the liverToBW value in FOUR_Liver_Score_avg for the current STUDYID
-      FOUR_Liver_Score_avg$BWzScore_avg[FOUR_Liver_Score_avg$STUDYID == unique(master_compiledata$STUDYID)] <- calculated_BWzScore_value
+      FOUR_Liver_Score_avg$BWZSCORE_avg[FOUR_Liver_Score_avg$STUDYID == unique(master_compiledata$STUDYID)] <- calculated_BWzScore_value
 
     }
 
@@ -351,17 +351,15 @@ print(path_db)
                                    path_db = path_db,
                                    fake_study = fake_study,
                                    use_xpt_file = use_xpt_file,
-                                   multiple_xpt_folder = multiple_xpt_folder,
                                    master_compiledata = master_compiledata ,
-                                   return_individual_scores = TRUE,
-                                   return_individual_scores = FALSE)
+                                   return_individual_scores = FALSE,
+                                   return_zscore_by_USUBJID = FALSE)
       }
 
       averaged_liverToBW_df <- get_liver_livertobw_score (studyid = studyid,
                                                           path_db = path_db,
                                                        fake_study = fake_study,
                                                        use_xpt_file = use_xpt_file,
-                                                       multiple_xpt_folder = multiple_xpt_folder,
                                                        master_compiledata = master_compiledata,
                                                        bwzscore_BW = bwzscore_BW ,
                                                        return_individual_scores = FALSE)
@@ -507,6 +505,7 @@ print(path_db)
 
 
    } else{
+
      # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
      studyid <- if (use_xpt_file) NULL else studyid
 
@@ -579,6 +578,7 @@ print(path_db)
 #   #.........................................................................................................................
 # }
 ##########
+
    if (output_individual_scores) {
     return(list(master_liverToBW = master_liverToBW,
               master_lb_score_six = master_lb_score_six,

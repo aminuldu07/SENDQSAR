@@ -160,22 +160,30 @@ get_lb_score <- function(studyid = NULL,
     #<><><><><>... Remove TK animals and Recovery animals......<><><><><><>.
     #<><> master_compiledata is free of TK animals and Recovery animals<><><>
 
-    if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
-      # Call the master_compiledata function to generate the data frame for fake study
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+    # if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
+    #   # Call the master_compiledata function to generate the data frame for fake study
+    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+    #
+    # } else if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == TRUE) {
+    #   # Call the master_compiledata function to generate the data frame for fake study using xpt file
+    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+    #
+    # } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == FALSE) {
+    #
+    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+    #
+    # } else if (is.null(master_compiledata) && fake_study == fake_study && use_xpt_file == TRUE) {
+    #
+    #   # Call the master_compiledata function for real study using xpt file
+    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+    # }
 
-    } else if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == TRUE) {
-      # Call the master_compiledata function to generate the data frame for fake study using xpt file
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-
-    } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == FALSE) {
-
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-
-    } else if (is.null(master_compiledata) && fake_study == fake_study && use_xpt_file == TRUE) {
-
-      # Call the master_compiledata function for real study using xpt file
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+    if (is.null(master_compiledata)) {
+      studyid <- if (use_xpt_file) NULL else studyid
+      master_compiledata <- get_compile_data(studyid = studyid,
+                                             path_db = path_db,
+                                             fake_study = fake_study,
+                                             use_xpt_file = use_xpt_file)
     }
 
 
