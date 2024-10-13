@@ -13,6 +13,8 @@
 #' whether use_xpt_file is used on not
 #' @param return_individual_scores optional, Boolean \cr
 #' whether use_xpt_file is used on not
+#' @param return_zscore_by_USUBJID optional, Boolean \cr
+#' whether use_xpt_file is used on not
 
 #' @return dataframe
 #'
@@ -103,13 +105,13 @@ get_livertobw_score <- function (studyid = NULL,
 
   if (use_xpt_file) {
     # Read data from .xpt files
-    bw <- haven::read_xpt(fs::path(path, 'bw.xpt'))
+    om <- haven::read_xpt(fs::path(path, 'om.xpt'))
   } else {
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
     # Fetch data for required domains
-    bw <- fetch_domain_data(db_connection, 'bw', studyid)
+    om <- fetch_domain_data(db_connection, 'om', studyid)
 
     # Close the database connection
     DBI::dbDisconnect(db_connection)
@@ -280,7 +282,7 @@ get_livertobw_score <- function (studyid = NULL,
 
   if (return_individual_scores) {
 
-browser()
+
 
     HD_liver_zscore_df <- HD_liver_zscore %>%
       dplyr::group_by(STUDYID) %>%
@@ -292,14 +294,13 @@ browser()
       dplyr::mutate(avg_liverToBW_zscore = ifelse(avg_liverToBW_zscore >= 3, 3,
                                                   ifelse(avg_liverToBW_zscore >= 2, 2,
                                                          ifelse(avg_liverToBW_zscore >= 1, 1, 0))))
-browser()
+
 
     return_zscore_by <- HD_liver_zscore_df
 
   } else if (return_zscore_by_USUBJID){
 
-
-
+    liverToBW_zscore_by_USUBJID_HD <- HD_liver_zscore
 
 
 
@@ -323,7 +324,7 @@ browser()
 
   } else if (return_zscore_by_USUBJID) {
 
-    return(return_zscore_by_USUBJID)
+    return(liverToBW_zscore_by_USUBJID_HD)
 
   } else {
     return(averaged_liverToBW_df)

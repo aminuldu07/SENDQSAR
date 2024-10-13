@@ -16,7 +16,7 @@ get_om_lb_mi_scores <- get_liver_om_lb_mi_tox_score_list(selected_studies = sele
                                                           use_xpt_file = TRUE,
                                                           multiple_xpt_folder = TRUE,
                                                           output_individual_scores = FALSE,
-                                                          output_zscore_by_USUBJID = FALSE)
+                                                          output_zscore_by_USUBJID = TRUE)
 
 
 

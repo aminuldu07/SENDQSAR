@@ -64,7 +64,22 @@ if(output_individual_scores ) {
 
 } else if (output_zscore_by_USUBJID){
 
-print("_________________________________")
+  master_liverToBW <- list()
+
+  master_lb_score <- list()
+
+  master_mi_score <- list()
+
+  # Initialize an empty data frame to store the names of studies with errors
+  Error_studies <- list()
+
+  # Initialize the master error data frame to have the details of the errors
+  #master_error_df <- data.frame(STUDYID = character() , Block = character(), ErrorMessage = character(), Time = POSIXct(), stringsAsFactors = FALSE)
+  master_error_df <- data.frame(STUDYID = character() ,
+                                Block = character(),
+                                ErrorMessage = character(),
+                                #Time = POSIXct(),
+                                stringsAsFactors = FALSE)
 
 
 
@@ -185,10 +200,13 @@ print(path_db)
 
     } else if (output_zscore_by_USUBJID) {
 
+      ew_row_in_four_liver_scr_avg <- data.frame(STUDYID = unique(master_compiledata$STUDYID),
+                                                 BWZSCORE_avg = NA,
+                                                 liverToBW_avg = NA,
+                                                 LB_score_avg = NA,
+                                                 MI_score_avg = NA)
 
-
-
-
+      FOUR_Liver_Score_avg <- rbind(FOUR_Liver_Score_avg, new_row_in_four_liver_scr_avg)
 
       } else {
       new_row_in_four_liver_scr_avg <- data.frame(STUDYID = unique(master_compiledata$STUDYID),
@@ -244,6 +262,10 @@ print(path_db)
                                  return_zscore_by_USUBJID = FALSE)
 
     } else if (output_zscore_by_USUBJID) {
+
+      # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
+      studyid <- if (use_xpt_file) NULL else studyid
+
       BW_zscore_by_USUBJID_HD <-get_bw_score(studyid = studyid,
                                              path_db = path_db,
                                              fake_study = fake_study,
@@ -314,55 +336,79 @@ print(path_db)
 #---------------------------"OM_DATA"-(Liver_Organ to Body Weight zScore)-------
   tryCatch({
 
+
     # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
     studyid <- if (use_xpt_file) NULL else studyid
 
     if(output_individual_scores){
-      HD_liver_zscore_df <- get_liver_livertobw_score (studyid = studyid,
+      HD_liver_zscore_df <- get_livertobw_score (studyid = studyid,
                                                        path_db = path_db,
                                                        fake_study = fake_study,
                                                        use_xpt_file = use_xpt_file,
-                                                       multiple_xpt_folder = FALSE,
                                                        master_compiledata = master_compiledata,
                                                        bwzscore_BW = bwzscore_BW,
-                                                       return_individual_scores = FALSE)
+                                                       return_individual_scores = TRUE,
+                                                       return_zscore_by_USUBJID = FALSE)
 
       master_liverToBW <- rbind(master_liverToBW, HD_liver_zscore_df )
 
     } else if (output_zscore_by_USUBJID) {
 
-      liverTOBW_zscore_by_USUBJID_HD <- get_liver_livertobw_score (studyid = studyid,
+      # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
+      studyid <- if (use_xpt_file) NULL else studyid
+
+      bwzscore_BW <- get_bw_score (studyid = studyid,
+                                   path_db = path_db,
+                                   fake_study = fake_study,
+                                   use_xpt_file = use_xpt_file,
+                                   master_compiledata = master_compiledata,
+                                   return_individual_scores = TRUE,
+                                   return_zscore_by_USUBJID = FALSE)
+
+
+      liverTOBW_zscore_by_USUBJID_HD <- get_livertobw_score (studyid = studyid,
                                           path_db = path_db ,
                                           fake_study = fake_study,
                                           use_xpt_file = use_xpt_file,
-                                          multiple_xpt_folder = FALSE,
                                           master_compiledata = master_compiledata,
                                           bwzscore_BW = bwzscore_BW,
                                           return_individual_scores = FALSE,
                                           return_zscore_by_USUBJID = TRUE)
 
+      liverTOBW_study_identifier <- unique(liverTOBW_zscore_by_USUBJID_HD$STUDYID)
+
+      # append to the master data frame list
+      # Use the study_identifier as the list index
+      master_liverToBW[[as.character(liverTOBW_study_identifier)]] <- liverTOBW_zscore_by_USUBJID_HD
 
       } else {
+
       # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
       studyid <- if (use_xpt_file) NULL else studyid
 
-      if (is.null(bwzscore_BW)) {
-      bwzscore_BW <- get_bw_score (studyid = studyid,
-                                   path_db = path_db,
-                                   fake_study = fake_study,
-                                   use_xpt_file = use_xpt_file,
-                                   master_compiledata = master_compiledata ,
-                                   return_individual_scores = FALSE,
-                                   return_zscore_by_USUBJID = FALSE)
-      }
+# if (is.null(bwzscore_BW)) {
+#   print("bwzscore_BW is null") }
+#
+#
+#       if (is.null(bwzscore_BW)) {
 
-      averaged_liverToBW_df <- get_liver_livertobw_score (studyid = studyid,
-                                                          path_db = path_db,
-                                                       fake_study = fake_study,
-                                                       use_xpt_file = use_xpt_file,
-                                                       master_compiledata = master_compiledata,
-                                                       bwzscore_BW = bwzscore_BW ,
-                                                       return_individual_scores = FALSE)
+        bwzscore_BW <- get_bw_score (studyid = studyid,
+                                     path_db = path_db,
+                                     fake_study = fake_study,
+                                     use_xpt_file = use_xpt_file,
+                                     master_compiledata = master_compiledata,
+                                     return_individual_scores = TRUE,
+                                     return_zscore_by_USUBJID = FALSE)
+
+
+      averaged_liverToBW_df <- get_livertobw_score (studyid = studyid,
+                                                    path_db = path_db,
+                                                    fake_study = fake_study,
+                                                    use_xpt_file = use_xpt_file,
+                                                    master_compiledata = master_compiledata,
+                                                    bwzscore_BW = bwzscore_BW ,
+                                                    return_individual_scores = FALSE,
+                                                    return_zscore_by_USUBJID = FALSE)
       # {{{{...... N.B. Here is special case, if we use bwzscore_BW in else
       # condition from the previous step, it will provide
       # the  "1x2" STUDYID & avg_bwscore df but we need
@@ -421,14 +467,30 @@ print(path_db)
                                      fake_study= fake_study,
                                      use_xpt_file = use_xpt_file,
                                      master_compiledata = master_compiledata,
-                                     return_individual_scores = TRUE)
+                                     return_individual_scores = TRUE,
+                                     return_zscore_by_USUBJID = FALSE)
 
 
     master_lb_score_six <- rbind(master_lb_score_six , master_lb_scores)
 
     } else if (output_zscore_by_USUBJID) {
 
+      # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
+      studyid <- if (use_xpt_file) NULL else studyid
 
+      LB_zscore_by_USUBJID_HD <- get_lb_score(studyid = studyid,
+                                              path_db = path_db,
+                                              fake_study= fake_study,
+                                              use_xpt_file = use_xpt_file,
+                                              master_compiledata = master_compiledata,
+                                              return_individual_scores = FALSE,
+                                              return_zscore_by_USUBJID = TRUE)
+
+      lb_study_identifier <- unique(LB_zscore_by_USUBJID_HD$STUDYID)
+
+      # append to the master data frame list
+      # Use the study_identifier as the list index
+      master_lb_score[[as.character(lb_study_identifier)]] <- LB_zscore_by_USUBJID_HD
 
       } else {
       # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
@@ -439,7 +501,8 @@ print(path_db)
                                         fake_study= fake_study,
                                         use_xpt_file = use_xpt_file ,
                                         master_compiledata = master_compiledata,
-                                        return_individual_scores = FALSE)
+                                        return_individual_scores = FALSE,
+                                        return_zscore_by_USUBJID = FALSE)
 
         # Append the LB_zscore to the "FOUR_Liver_Score_avg" data frame
         # Extract the LB_score value for the current STUDYID from LB_df
@@ -494,7 +557,8 @@ print(path_db)
                                             fake_study = fake_study,
                                             use_xpt_file = use_xpt_file,
                                             master_compiledata = master_compiledata ,
-                                            return_individual_scores = TRUE)
+                                            return_individual_scores = TRUE,
+                                            return_zscore_by_USUBJID = FALSE)
 
      master_mi_df <- dplyr::bind_rows(master_mi_df, mi_score_final_list_df)
 
@@ -502,6 +566,24 @@ print(path_db)
 
    } else if (output_zscore_by_USUBJID) {
 
+
+     # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
+     studyid <- if (use_xpt_file) NULL else studyid
+
+     MI_score_by_USUBJID_HD <-get_mi_score(studyid = studyid,
+                                           path_db = path_db,
+                                           fake_study = fake_study,
+                                           use_xpt_file = use_xpt_file,
+                                           master_compiledata = master_compiledata ,
+                                           return_individual_scores = FALSE,
+                                           return_zscore_by_USUBJID = TRUE)
+
+
+     mi_study_identifier <- unique(MI_score_by_USUBJID_HD$STUDYID)
+
+     # append to the master data frame list
+     # Use the study_identifier as the list index
+     master_mi_score[[as.character(mi_study_identifier)]] <- MI_score_by_USUBJID_HD
 
 
    } else{
@@ -514,7 +596,8 @@ print(path_db)
                                        fake_study = fake_study,
                                        use_xpt_file = use_xpt_file,
                                        master_compiledata = master_compiledata ,
-                                       return_individual_scores = FALSE)
+                                       return_individual_scores = FALSE,
+                                       return_zscore_by_USUBJID = FALSE)
 
      # Append the "MI_zscore"MI_score_avg" to the "FOUR_Liver_Score_avg" data frame
      # Extract the "LB_score"MI_score_avg" value for the current STUDYID from
@@ -587,6 +670,12 @@ print(path_db)
               master_error_df = master_error_df))
    } else if(output_zscore_by_USUBJID) {
 
+     return(list(liverTOBW_zscore_by_USUBJID_HD = master_liverToBW,
+                 LB_zscore_by_USUBJID_HD = master_lb_score,
+                 MI_score_by_USUBJID_HD  = master_mi_score,
+                 Error_studies =  Error_studies,
+                 master_error_df = master_error_df))
+
    } else {
 
    return(FOUR_Liver_Score_avg)
@@ -595,5 +684,4 @@ print(path_db)
 
 
 }
-
 

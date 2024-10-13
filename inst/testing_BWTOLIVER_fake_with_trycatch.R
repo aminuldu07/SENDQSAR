@@ -3,7 +3,7 @@ rm(list = ls())
 devtools::load_all(".")
 
 #path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/FAKE10663'
-path_db = "C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/FAKE42143"
+path_db = "C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/all_fakedata_liver_/FAKE10663"
 
 fake_LIVERtoBW_xpt <- get_livertobw_score(studyid = NULL,
                             path_db,
@@ -11,9 +11,21 @@ fake_LIVERtoBW_xpt <- get_livertobw_score(studyid = NULL,
                             use_xpt_file = TRUE,
                             master_compiledata = NULL,
                             bwzscore_BW = NULL,
-                            return_individual_scores = TRUE,
+                            return_individual_scores = FALSE,
                             return_zscore_by_USUBJID = FALSE)
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+averaged_liverToBW_df <- get_livertobw_score (studyid = studyid,
+                                              path_db = path_db,
+                                              fake_study = fake_study,
+                                              use_xpt_file = use_xpt_file,
+                                              master_compiledata = master_compiledata,
+                                              bwzscore_BW = bwzscore_BW ,
+                                              return_individual_scores = FALSE,
+                                              return_zscore_by_USUBJID = FALSE)
+
+
+
 
 
 

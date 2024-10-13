@@ -408,7 +408,7 @@ get_lb_score <- function(studyid = NULL,
     }
 
     if (return_individual_scores) {
-
+browser()
       # Master LB list
       master_LB_list <- data.frame(STUDYID = NA, avg_alb_zscore = NA, avg_ast_zscore = NA, avg_alp_zscore = NA,
                                    avg_alt_zscore = NA, avg_bili_zscore = NA, avg_ggt_zscore = NA)
@@ -421,33 +421,37 @@ get_lb_score <- function(studyid = NULL,
 
 
     } else if (return_zscore_by_USUBJID) {
+
+
        # calculate the zscore for all the uSUBJID
-      # 1. Sub-setting for 'SERUM | ALT' data frame for "LBzScore Calculation" for...'SERUM | ALT'...........
+      # 1. Sub-setting for 'SERUM | ALT' data frame for "LBzScore Calculation"
       df_lb_for_zscore <- LB_tk_recovery_filtered_ARMCD
 
-      # calculate the zscore of 'SERUM | ALT'
+      # calculate the zscore
       zscore_lb <- df_lb_for_zscore %>%
         dplyr::group_by(STUDYID) %>%
         dplyr::mutate(
           mean_vehicle = mean(LBSTRESN[ARMCD == "vehicle"], na.rm = TRUE),
-          sd_vehicle = stats::sd(LBSTRESN[ARMCD == "vehicle"], na.rm = TRUE)
-        ) %>%
+          sd_vehicle = stats::sd(LBSTRESN[ARMCD == "vehicle"], na.rm = TRUE)) %>%
         dplyr::ungroup() %>%
         dplyr::mutate(
           LB_zscore = (LBSTRESN - mean_vehicle) / sd_vehicle) #%>%
        # dplyr::mutate(LB_zscore = abs(LB_zscore))
-      #browser()
-        # work on zscore_lb
+
         LB_zscore_by_USUBJID_HD <- zscore_lb %>%
         dplyr::filter(ARMCD == "HD") %>%  # Step 1: Filter for HD
-        dplyr::group_by(STUDYID) %>%  # Step 2: Group by STUDYID
+        #dplyr::group_by(STUDYID) %>%  # Step 2: Group by STUDYID
         dplyr::mutate(LB_zscore = replace(LB_zscore,
-                                                 is.infinite(LB_zscore), NA)) %>%
+                                        is.infinite(LB_zscore), NA)) %>%
+        #dplyr::ungroup() %>%
         dplyr::mutate(LB_zscore = abs(LB_zscore))  %>%
         dplyr::select(STUDYID, USUBJID, LB_zscore) %>%
         dplyr::mutate(LB_zscore = ifelse(LB_zscore >= 3, 3,
                                                 ifelse(LB_zscore >= 2, 2,
                                                        ifelse(LB_zscore >= 1, 1, 0))))
+
+        # Finally, convert to a regular data frame to ensure no grouping attributes remain
+        LB_zscore_by_USUBJID_HD <- as.data.frame(LB_zscore_by_USUBJID_HD)
 
     } else  {
 
@@ -464,7 +468,7 @@ get_lb_score <- function(studyid = NULL,
       # Create "LB_df" for FOUR_Liver_Score
       averaged_LB_score <- LB_final_score %>% dplyr::rename(LB_score_avg = avg_all_LB_zscores)
 
-
+      averaged_LB_score <- as.data.frame(averaged_LB_score)
     }
 
 
@@ -473,6 +477,7 @@ get_lb_score <- function(studyid = NULL,
   return(master_lb_scores)
 
   } else if(return_zscore_by_USUBJID) {
+
      return (LB_zscore_by_USUBJID_HD )
 
  } else  {
