@@ -42,8 +42,13 @@ fetch_domain_data <- function(db_connection, domain_name, studyid) {
 }
 
 # GET THE REQUIRED DOMAIN DATA
-if (fake_study == TRUE && use_xpt_file == FALSE){
+if (use_xpt_file) {
+  # Read data from .xpt files
+  mi <- haven::read_xpt(fs::path(path, 'mi.xpt'))
 
+  dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
+
+} else {
   # Establish a connection to the SQLite database
   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
@@ -54,33 +59,50 @@ if (fake_study == TRUE && use_xpt_file == FALSE){
 
   # Close the database connection
   DBI::dbDisconnect(db_connection)
-
-} else if (fake_study == TRUE && use_xpt_file == TRUE){
-
-  # Read data from .xpt files
-  mi <- haven::read_xpt(fs::path(path,'mi.xpt'))
-
-  dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
-
-} else if (fake_study == FALSE && use_xpt_file == FALSE) {
-
-  # Establish a connection to the SQLite database
-  db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
-
-  # Fetch data for required domains
-  mi <- fetch_domain_data(db_connection, 'mi', studyid)
-
-  dm <- fetch_domain_data(db_connection, 'dm', studyid)
-
-  # Close the database connection
-  DBI::dbDisconnect(db_connection)
-
-}else if (fake_study == FALSE && use_xpt_file == TRUE) {
-
-  # Read data from .xpt files
-  mi <- haven::read_xpt(fs::path(path,'mi.xpt'))
-  dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
 }
+
+
+
+# # GET THE REQUIRED DOMAIN DATA
+# if (fake_study == TRUE && use_xpt_file == FALSE){
+#
+#   # Establish a connection to the SQLite database
+#   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+#
+#   # Fetch data for required domains
+#   mi <- fetch_domain_data(db_connection, 'mi', studyid)
+#
+#   dm <- fetch_domain_data(db_connection, 'dm', studyid)
+#
+#   # Close the database connection
+#   DBI::dbDisconnect(db_connection)
+#
+# } else if (fake_study == TRUE && use_xpt_file == TRUE){
+#
+#   # Read data from .xpt files
+#   mi <- haven::read_xpt(fs::path(path,'mi.xpt'))
+#
+#   dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
+#
+# } else if (fake_study == FALSE && use_xpt_file == FALSE) {
+#
+#   # Establish a connection to the SQLite database
+#   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+#
+#   # Fetch data for required domains
+#   mi <- fetch_domain_data(db_connection, 'mi', studyid)
+#
+#   dm <- fetch_domain_data(db_connection, 'dm', studyid)
+#
+#   # Close the database connection
+#   DBI::dbDisconnect(db_connection)
+#
+# }else if (fake_study == FALSE && use_xpt_file == TRUE) {
+#
+#   # Read data from .xpt files
+#   mi <- haven::read_xpt(fs::path(path,'mi.xpt'))
+#   dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
+# }
 
 cat("The dimension of 'dm' domain is:", dim(dm), "\n")
 

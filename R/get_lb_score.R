@@ -42,8 +42,10 @@ get_lb_score <- function(studyid = NULL,
   }
 
   # GET THE REQUIRED DOMAIN DATA
-  if (fake_study == TRUE && use_xpt_file == FALSE){
-
+  if (use_xpt_file) {
+    # Read data from .xpt files
+    lb <- haven::read_xpt(fs::path(path, 'lb.xpt'))
+  } else {
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
@@ -52,29 +54,45 @@ get_lb_score <- function(studyid = NULL,
 
     # Close the database connection
     DBI::dbDisconnect(db_connection)
-
-  } else if (fake_study == TRUE && use_xpt_file == TRUE){
-
-    # Read data from .xpt files
-    lb <- haven::read_xpt(fs::path(path,'lb.xpt'))
-
-  } else if (fake_study == FALSE && use_xpt_file == FALSE) {
-
-    # Establish a connection to the SQLite database
-    db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
-
-    # Fetch data for required domains
-    lb <- fetch_domain_data(db_connection, 'lb', studyid)
-
-    # Close the database connection
-    DBI::dbDisconnect(db_connection)
-
-  }else if (fake_study == FALSE && use_xpt_file == TRUE) {
-
-    # Read data from .xpt files
-    lb <- haven::read_xpt(fs::path(path,'lb.xpt'))
-
   }
+
+
+
+
+  # # GET THE REQUIRED DOMAIN DATA
+  # if (fake_study == TRUE && use_xpt_file == FALSE){
+  #
+  #   # Establish a connection to the SQLite database
+  #   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+  #
+  #   # Fetch data for required domains
+  #   lb <- fetch_domain_data(db_connection, 'lb', studyid)
+  #
+  #   # Close the database connection
+  #   DBI::dbDisconnect(db_connection)
+  #
+  # } else if (fake_study == TRUE && use_xpt_file == TRUE){
+  #
+  #   # Read data from .xpt files
+  #   lb <- haven::read_xpt(fs::path(path,'lb.xpt'))
+  #
+  # } else if (fake_study == FALSE && use_xpt_file == FALSE) {
+  #
+  #   # Establish a connection to the SQLite database
+  #   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+  #
+  #   # Fetch data for required domains
+  #   lb <- fetch_domain_data(db_connection, 'lb', studyid)
+  #
+  #   # Close the database connection
+  #   DBI::dbDisconnect(db_connection)
+  #
+  # }else if (fake_study == FALSE && use_xpt_file == TRUE) {
+  #
+  #   # Read data from .xpt files
+  #   lb <- haven::read_xpt(fs::path(path,'lb.xpt'))
+  #
+  # }
 
     # check the lb data frame
     organTESTCDlist <- list('LIVER' = c('SERUM | ALT',

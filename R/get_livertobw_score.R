@@ -67,9 +67,48 @@ get_liver_livertobw_score <- function (studyid = NULL,
   # }
   #  #om <- read_xpt_data(path, 'om')
 
-  # GET THE REQUIRED DOMAIN DATA
-  if (fake_study == TRUE && use_xpt_file == FALSE){
+  # # GET THE REQUIRED DOMAIN DATA
+  # if (fake_study == TRUE && use_xpt_file == FALSE){
+  #
+  #   # Establish a connection to the SQLite database
+  #   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+  #
+  #   # Fetch data for required domains
+  #   om <- fetch_domain_data(db_connection, 'om', studyid)
+  #
+  #   # Close the database connection
+  #   DBI::dbDisconnect(db_connection)
+  #
+  # } else if (fake_study == TRUE && use_xpt_file == TRUE){
+  #
+  #   # Read data from .xpt files
+  #   om <- haven::read_xpt(fs::path(path,'om.xpt'))
+  #   #om <- read_xpt_data(path, 'om')
+  #
+  #
+  # } else if (fake_study == FALSE && use_xpt_file == FALSE) {
+  #   # Establish a connection to the SQLite database
+  #   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+  #
+  #   # Fetch data for required domains
+  #   om <- fetch_domain_data(db_connection, 'om', studyid)
+  #
+  #   # Close the database connection
+  #   DBI::dbDisconnect(db_connection)
+  #
+  # }else if (fake_study == FALSE && use_xpt_file == TRUE) {
+  #
+  #   # Read data from .xpt files
+  #   om <- haven::read_xpt(fs::path(path,'om.xpt'))
+  #
+  #
+  # }
 
+
+  if (use_xpt_file) {
+    # Read data from .xpt files
+    om <- haven::read_xpt(fs::path(path, 'om.xpt'))
+  } else {
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
@@ -78,31 +117,8 @@ get_liver_livertobw_score <- function (studyid = NULL,
 
     # Close the database connection
     DBI::dbDisconnect(db_connection)
-
-  } else if (fake_study == TRUE && use_xpt_file == TRUE){
-
-    # Read data from .xpt files
-    om <- haven::read_xpt(fs::path(path,'om.xpt'))
-    #om <- read_xpt_data(path, 'om')
-
-
-  } else if (fake_study == FALSE && use_xpt_file == FALSE) {
-    # Establish a connection to the SQLite database
-    db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
-
-    # Fetch data for required domains
-    om <- fetch_domain_data(db_connection, 'om', studyid)
-
-    # Close the database connection
-    DBI::dbDisconnect(db_connection)
-
-  }else if (fake_study == FALSE && use_xpt_file == TRUE) {
-
-    # Read data from .xpt files
-    om <- haven::read_xpt(fs::path(path,'om.xpt'))
-
-
   }
+
 
 
     #  ..............get THE COMPILE DATA IF NOT PRESENT...............
@@ -110,65 +126,87 @@ get_liver_livertobw_score <- function (studyid = NULL,
     #<><><><><<><><>... Remove TK animals and Recovery animals........
     #..................................................................
 
-
-  if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
-    # Call the master_compiledata function to generate the data frame for fake study
-    master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-
-  } else if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == TRUE) {
-    # Call the master_compiledata function to generate the data frame for fake study using xpt file
-    master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-
-  } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == FALSE) {
-
-    master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-
-  } else if (is.null(master_compiledata) && fake_study == fake_study && use_xpt_file == TRUE) {
-
-    # Call the master_compiledata function for real study using xpt file
-    master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+  if (is.null(master_compiledata)) {
+    studyid <- if (use_xpt_file) NULL else studyid
+    master_compiledata <- get_compile_data(studyid = studyid,
+                                           path_db = path_db,
+                                           fake_study = fake_study,
+                                           use_xpt_file = use_xpt_file)
   }
+
+
+  # if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
+  #   # Call the master_compiledata function to generate the data frame for fake study
+  #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+  #
+  # } else if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == TRUE) {
+  #   # Call the master_compiledata function to generate the data frame for fake study using xpt file
+  #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+  #
+  # } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == FALSE) {
+  #
+  #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+  #
+  # } else if (is.null(master_compiledata) && fake_study == fake_study && use_xpt_file == TRUE) {
+  #
+  #   # Call the master_compiledata function for real study using xpt file
+  #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+  # }
 
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
    # ~~~~~~~~~~~~~~~~~~~~~~~~~Check-if-bwzscore_BW-is-NUL~~~~~~~~~~~~~~~~~~~~
    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
   # Check if bwzscore_BW is NULL
-  if (is.null(bwzscore_BW) && fake_study == TRUE && use_xpt_file == FALSE) {
-      bwzscore_BW <-  get_bw_score (studyid,
-                                    path_db,
-                                    fake_study = fake_study,
-                                    use_xpt_file = use_xpt_file,
-                                    master_compiledata = master_compiledata,
-                                    return_individual_scores = TRUE)
+  if (is.null(bwzscore_BW)) {
 
 
-  } else if (is.null(bwzscore_BW) && fake_study == TRUE && use_xpt_file == TRUE) {
-
-      bwzscore_BW <-  get_bw_score (studyid = NULL,
-                                    path_db,
-                                    fake_study = fake_study,
-                                    use_xpt_file = use_xpt_file,
-                                    master_compiledata = master_compiledata,
-                                    return_individual_scores = TRUE)
-
-  } else if (is.null(bwzscore_BW) && fake_study == FALSE && use_xpt_file == FALSE) {
-
-      bwzscore_BW <-  get_bw_score (studyid,
-                                    path_db,
-                                    fake_study = fake_study ,
-                                    use_xpt_file = use_xpt_file,
-                                    master_compiledata = master_compiledata,
-                                    return_individual_scores = TRUE)
-
-  } else if (is.null(bwzscore_BW) && fake_study == FALSE && use_xpt_file == TRUE) {
-      bwzscore_BW <-  get_bw_score (studyid = NULL,
-                                    path_db,
-                                    fake_study = fake_study,
-                                    use_xpt_file = use_xpt_file,
-                                    master_compiledata= master_compiledata,
-                                    return_individual_scores = TRUE)
+    bwzscore_BW <-  get_bw_score (studyid = studyid ,
+                                  path_db = path_db,
+                                  fake_study = fake_study,
+                                  use_xpt_file = use_xpt_file,
+                                  master_compiledata = master_compiledata,
+                                  return_individual_scores = TRUE)
   }
+
+  # # Check if bwzscore_BW is NULL
+  # if (is.null(bwzscore_BW) && fake_study == TRUE && use_xpt_file == FALSE) {
+  #     bwzscore_BW <-  get_bw_score (studyid,
+  #                                   path_db,
+  #                                   fake_study = fake_study,
+  #                                   use_xpt_file = use_xpt_file,
+  #                                   master_compiledata = master_compiledata,
+  #                                   return_individual_scores = TRUE)
+  #
+  #
+  # } else if (is.null(bwzscore_BW) && fake_study == TRUE && use_xpt_file == TRUE) {
+  #
+  #     bwzscore_BW <-  get_bw_score (studyid = NULL,
+  #                                   path_db,
+  #                                   fake_study = fake_study,
+  #                                   use_xpt_file = use_xpt_file,
+  #                                   master_compiledata = master_compiledata,
+  #                                   return_individual_scores = TRUE)
+  #
+  # } else if (is.null(bwzscore_BW) && fake_study == FALSE && use_xpt_file == FALSE) {
+  #
+  #     bwzscore_BW <-  get_bw_score (studyid,
+  #                                   path_db,
+  #                                   fake_study = fake_study ,
+  #                                   use_xpt_file = use_xpt_file,
+  #                                   master_compiledata = master_compiledata,
+  #                                   return_individual_scores = TRUE)
+  #
+  # } else if (is.null(bwzscore_BW) && fake_study == FALSE && use_xpt_file == TRUE) {
+  #     bwzscore_BW <-  get_bw_score (studyid = NULL,
+  #                                   path_db,
+  #                                   fake_study = fake_study,
+  #                                   use_xpt_file = use_xpt_file,
+  #                                   master_compiledata= master_compiledata,
+  #                                   return_individual_scores = TRUE)
+  # }
+
+
+
 
 
   # Initialize data frames to store the OrganWeights_Liver data
