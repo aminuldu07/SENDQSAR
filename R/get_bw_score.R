@@ -47,41 +47,6 @@ get_bw_score <- function(studyid = NULL,
     query_result
   }
 
-  #   if (fake_study == TRUE && use_xpt_file == FALSE) {
-  #
-  #   # Establish a connection to the SQLite database
-  #   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
-  #
-  #   # Fetch data for the 'dm' domain
-  #   bw <- fetch_domain_data(db_connection, 'bw', studyid)
-  #
-  #   # Close the database connection
-  #   DBI::dbDisconnect(db_connection)
-  #
-  # } else if (fake_study == TRUE && use_xpt_file == TRUE) {
-  #
-  #   # Reads from an .xpt file for the fake study.
-  #   bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
-  #
-  # } else if (fake_study == FALSE && use_xpt_file == FALSE) {
-  #
-  #   # Reads from an SQLite database for the real study
-  #   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
-  #
-  #   # Fetch data for the 'dm' domain
-  #   bw <- fetch_domain_data(db_connection, 'bw', studyid)
-  #
-  #   # Close the database connection
-  #   DBI::dbDisconnect(db_connection)
-  #
-  #
-  # } else if (fake_study == FALSE && use_xpt_file == TRUE) {
-  #
-  #   # Reads from an .xpt file for the real study.
-  #   bw <- haven::read_xpt(fs::path(path,'bw.xpt'))
-  #
-  # }
-
   if (use_xpt_file) {
     # Read data from .xpt files
     bw <- haven::read_xpt(fs::path(path, 'bw.xpt'))
@@ -97,9 +62,6 @@ get_bw_score <- function(studyid = NULL,
   }
 
 
-
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # Check if both BWDY and VISITDY columns exist in the 'bw' data frame
 if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
   stop("Both 'BWDY' and 'VISITDY' columns are absent in the 'bw' data frame.")
@@ -111,23 +73,13 @@ if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
   bw$BWDY <- bw$VISITDY
 }
 # If both are present, do nothing
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
   # Ensuring "BWSTRESN", "VISITDY", "BWDY" columns are numeric
   bw$BWSTRESN <- as.numeric(bw$BWSTRESN)
   bw$VISITDY <- as.numeric(bw$VISITDY)
   bw$BWDY <- as.numeric(bw$BWDY)
 
-  #check for NAs introduced by the conversion
-  if (any(is.na(bw$BWSTRESN))) {
-    warning("Non-numeric values in BWSTRESN were coerced to NA")
-  }
-  if (any(is.na(bw$VISITDY))) {
-    warning("Non-numeric values in VISITDY were coerced to NA")
-  }
-  if (any(is.na(bw$BWDY))) {
-    warning("Non-numeric values in BWDY were coerced to NA")
-  }
 
   #.................. "BodyWeight_zScore" .....calculation........
   #................... Initial BW weight calculation..............
@@ -319,27 +271,11 @@ if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
 
     #<><><><><><><><><><><><><><><><>... Remove TK animals and Recovery animals......<><><><><><>.............
     #<><><><><><><><> master_compiledata is free of TK animals and Recovery animals<><><><><><><><><><><><><><>
-#
-#     if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
-#       # Call the master_compiledata function to generate the data frame for fake study
-#       master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db, fake_study = TRUE, use_xpt_file = FALSE)
-#
-#     } else if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == TRUE) {
-#       # Call the master_compiledata function to generate the data frame for fake study using xpt file
-#       master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db, fake_study = TRUE, use_xpt_file = TRUE)
-#
-#     } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == FALSE) {
-#
-#       master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db, fake_study = FALSE, use_xpt_file = FALSE)
-#
-#     } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == TRUE) {
-#
-#       # Call the master_compiledata function for real study using xpt file
-#       master_compiledata <- get_compile_data(studyid = studyid, path_db = path_db, fake_study = FALSE, use_xpt_file = TRUE)
-#
-#     }
+
     if (is.null(master_compiledata)) {
+
       studyid <- if (use_xpt_file) NULL else studyid
+
       master_compiledata <- get_compile_data(studyid = studyid,
                                              path_db = path_db,
                                              fake_study = fake_study,
@@ -441,9 +377,6 @@ if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
                                            ifelse(BWZSCORE_avg  >= 2, 2,
                                                   ifelse(BWZSCORE_avg  >= 1, 1, 0))))
 
-
-
-      BW_zscore_by_USUBJID_HD <- bwzscore_BW
 
 
   }

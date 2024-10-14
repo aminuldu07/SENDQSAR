@@ -62,48 +62,6 @@ if (use_xpt_file) {
 }
 
 
-
-# # GET THE REQUIRED DOMAIN DATA
-# if (fake_study == TRUE && use_xpt_file == FALSE){
-#
-#   # Establish a connection to the SQLite database
-#   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
-#
-#   # Fetch data for required domains
-#   mi <- fetch_domain_data(db_connection, 'mi', studyid)
-#
-#   dm <- fetch_domain_data(db_connection, 'dm', studyid)
-#
-#   # Close the database connection
-#   DBI::dbDisconnect(db_connection)
-#
-# } else if (fake_study == TRUE && use_xpt_file == TRUE){
-#
-#   # Read data from .xpt files
-#   mi <- haven::read_xpt(fs::path(path,'mi.xpt'))
-#
-#   dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
-#
-# } else if (fake_study == FALSE && use_xpt_file == FALSE) {
-#
-#   # Establish a connection to the SQLite database
-#   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
-#
-#   # Fetch data for required domains
-#   mi <- fetch_domain_data(db_connection, 'mi', studyid)
-#
-#   dm <- fetch_domain_data(db_connection, 'dm', studyid)
-#
-#   # Close the database connection
-#   DBI::dbDisconnect(db_connection)
-#
-# }else if (fake_study == FALSE && use_xpt_file == TRUE) {
-#
-#   # Read data from .xpt files
-#   mi <- haven::read_xpt(fs::path(path,'mi.xpt'))
-#   dm <- haven::read_xpt(fs::path(path,'dm.xpt'))
-# }
-
 cat("The dimension of 'dm' domain is:", dim(dm), "\n")
 
 cat("The dimension of 'mi' domain is:", dim(mi), "\n")
@@ -204,28 +162,10 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
     # Remove the "Recovery animals and tk animals from "MIData"
     #<><><> master_compiledata is free of TK animals and Recovery animals<><><>
 
-    # get-master-compile-data
-
-    # if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
-    #   # Call the master_compiledata function to generate the data frame for fake study
-    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-    #
-    # } else if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == TRUE) {
-    #   # Call the master_compiledata function to generate the data frame for fake study using xpt file
-    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-    #
-    # } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == FALSE) {
-    #
-    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-    #
-    # } else if (is.null(master_compiledata) && fake_study == fake_study && use_xpt_file == TRUE) {
-    #
-    #   # Call the master_compiledata function for real study using xpt file
-    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-    # }
-
     if (is.null(master_compiledata)) {
+
       studyid <- if (use_xpt_file) NULL else studyid
+
       master_compiledata <- get_compile_data(studyid = studyid,
                                              path_db = path_db,
                                              fake_study = fake_study,

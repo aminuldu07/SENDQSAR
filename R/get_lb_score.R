@@ -56,44 +56,6 @@ get_lb_score <- function(studyid = NULL,
     DBI::dbDisconnect(db_connection)
   }
 
-
-
-
-  # # GET THE REQUIRED DOMAIN DATA
-  # if (fake_study == TRUE && use_xpt_file == FALSE){
-  #
-  #   # Establish a connection to the SQLite database
-  #   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
-  #
-  #   # Fetch data for required domains
-  #   lb <- fetch_domain_data(db_connection, 'lb', studyid)
-  #
-  #   # Close the database connection
-  #   DBI::dbDisconnect(db_connection)
-  #
-  # } else if (fake_study == TRUE && use_xpt_file == TRUE){
-  #
-  #   # Read data from .xpt files
-  #   lb <- haven::read_xpt(fs::path(path,'lb.xpt'))
-  #
-  # } else if (fake_study == FALSE && use_xpt_file == FALSE) {
-  #
-  #   # Establish a connection to the SQLite database
-  #   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
-  #
-  #   # Fetch data for required domains
-  #   lb <- fetch_domain_data(db_connection, 'lb', studyid)
-  #
-  #   # Close the database connection
-  #   DBI::dbDisconnect(db_connection)
-  #
-  # }else if (fake_study == FALSE && use_xpt_file == TRUE) {
-  #
-  #   # Read data from .xpt files
-  #   lb <- haven::read_xpt(fs::path(path,'lb.xpt'))
-  #
-  # }
-
     # check the lb data frame
     organTESTCDlist <- list('LIVER' = c('SERUM | ALT',
                                         'SERUM | AST',
@@ -178,26 +140,11 @@ get_lb_score <- function(studyid = NULL,
     #<><><><><>... Remove TK animals and Recovery animals......<><><><><><>.
     #<><> master_compiledata is free of TK animals and Recovery animals<><><>
 
-    # if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
-    #   # Call the master_compiledata function to generate the data frame for fake study
-    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-    #
-    # } else if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == TRUE) {
-    #   # Call the master_compiledata function to generate the data frame for fake study using xpt file
-    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-    #
-    # } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == FALSE) {
-    #
-    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-    #
-    # } else if (is.null(master_compiledata) && fake_study == fake_study && use_xpt_file == TRUE) {
-    #
-    #   # Call the master_compiledata function for real study using xpt file
-    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-    # }
 
     if (is.null(master_compiledata)) {
+
       studyid <- if (use_xpt_file) NULL else studyid
+
       master_compiledata <- get_compile_data(studyid = studyid,
                                              path_db = path_db,
                                              fake_study = fake_study,
@@ -426,7 +373,7 @@ get_lb_score <- function(studyid = NULL,
     }
 
     if (return_individual_scores) {
-browser()
+
       # Master LB list
       master_LB_list <- data.frame(STUDYID = NA, avg_alb_zscore = NA, avg_ast_zscore = NA, avg_alp_zscore = NA,
                                    avg_alt_zscore = NA, avg_bili_zscore = NA, avg_ggt_zscore = NA)
