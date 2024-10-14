@@ -1,4 +1,15 @@
-
+#' @title predicted_random_forest_model
+#' @param dbPath_liver Mandatory, character \cr
+#'   Studyid number
+#' @param dbPath_not_liver Mandatory, character \cr
+#'   path of database
+#' @return random forst model
+#'
+#' @examples
+#' \dontrun{
+#' get_mi_score(studyid='1234123', path_db='path/to/database.db')
+#' }
+#' @export
 
 
 predicted_random_forest_model <- function(dbPath_liver, dbPath_not_liver) {
@@ -26,8 +37,7 @@ Liver_get_liver_om_lb_mi_tox_score_list <- get_liver_om_lb_mi_tox_score_list  (s
 # Print the result for debugging
 print("Liver Toxicology Scores:")
 print(head(Liver_get_liver_om_lb_mi_tox_score_list))  # Print the first few rows
-
-#' @~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~for-not-liver~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+#~~~~~~~for-not-liver~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 dbtoken_not_liver <- sendigR::initEnvironment(dbType = 'sqlite',
                                               dbPath = dbPath_not_liver,
@@ -63,7 +73,7 @@ str(Liver_get_liver_om_lb_mi_tox_score_list)
 str(not_Liver_get_liver_om_lb_mi_tox_score_list)
 
 
-#' @random-forest-model----------------------------
+# random-forest-model----------------------------
 #amin_get_random_forest_model <- get_random_forest_model(Liver_get_liver_om_lb_mi_tox_score_list , not_Liver_get_liver_om_lb_mi_tox_score_list )
 # Random Forest Model
 amin_get_random_forest_model <- get_random_forest_model(

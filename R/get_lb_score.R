@@ -343,12 +343,12 @@ get_lb_score <- function(studyid = NULL,
                                             ifelse(avg_alb_zscore >= 2, 2,
                                                    ifelse(avg_alb_zscore >= 1, 1, 0))))
 
-    print(serum_alb_final_zscore)
-    print(serum_ast_final_zscore)
-    print(serum_alp_final_zscore)
-    print(serum_alt_final_zscore)
-    print(serum_bili_final_zscore)
-    print(serum_ggt_final_zscore)
+    # print(serum_alb_final_zscore)
+    # print(serum_ast_final_zscore)
+    # print(serum_alp_final_zscore)
+    # print(serum_alt_final_zscore)
+    # print(serum_bili_final_zscore)
+    # print(serum_ggt_final_zscore)
 
 
     # Merging----------LB----zscores------------values-------------------

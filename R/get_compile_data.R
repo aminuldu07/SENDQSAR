@@ -123,7 +123,7 @@ get_compile_data <- function(studyid = NULL,
     data.table::setDF(dm)
     return(dm)
 
-    ## {{{ IN case of FAKE DATA, dm are exported as master_compileDAT
+    ## {{{ IN case of FAKE DATA, dm are exported as master_compileDATa
     ## THerfore, where is the tk_animals and recover animals data }}}
 
 
