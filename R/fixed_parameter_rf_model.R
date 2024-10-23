@@ -15,7 +15,7 @@
 
 
 
-get_random_forest_model <- function(Liver_get_liver_om_lb_mi_tox_score_list,
+get_fixed_parameter_rf_model <- function(Liver_get_liver_om_lb_mi_tox_score_list,
                                     not_Liver_get_liver_om_lb_mi_tox_score_list){
 
   `%ni%` <- Negate('%in%')
