@@ -329,6 +329,9 @@ get_random_forest_model <- function(Liver_get_liver_om_lb_mi_tox_score_list,
       best.m <- 4
 
       rf <- randomForest::randomForest(indst_TO ~ ., data=train, mytry = best.m, importance = F, ntree = 500, proximity = F)
+
+#####################################################################################################################################
+
       # rf <- tuneRF(train[,-1], train[,1], doBest = T, stepFactor = 1.5)
 ###------------Error-Handling-(Flip-or-Prune)from "model predictions"-----------
 ###------------Errored rows adjustment and final data set preparation-----------
@@ -504,75 +507,9 @@ get_random_forest_model <- function(Liver_get_liver_om_lb_mi_tox_score_list,
     }
   }
 
-  # Performance-and-Importance-Analysis~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #performance summary for the model and  dotchart of the top important
-  #variables based on their mean decrease in accuracy or Gini index
-  PerformanceMatrix <- cbind(Sensitivity,
-                             Specificity,
-                             PPV, NPV,
-                             Prevalence,
-                             Accuracy,
-                             nRemoved)
-  PerformanceSummary <- colMeans(PerformanceMatrix, na.rm = T)
-  print(PerformanceSummary)
-  print(sort(rowMeans(gini), decreasing = T))
+print(rf)
 
-  imp <- as.matrix(rowMeans(gini)[1:nTopImportance])
-  if (Type == 1) {
-    colnames(imp) <- 'MeanDecreaseAccuracy'
-  } else {
-    colnames(imp) <- 'MeanDecreaseGini'
-  }
-  ord <- order(imp[,1])
-  dotchart(imp[ord, 1], xlab = colnames(imp)[1], ylab = "",
-           main = paste0('Top ', nrow(imp), ' - Variable Importance'))#, xlim = c(xmin, max(imp[, i])))
-  # varImpPlot(rf,
-  #            sort = T,
-  #            n.var = 20,
-  #            main = "Top 20 - Variable Importance")
-###-----------------------@ROC-Curve-and-AUC------------------------------------
-  # @ROC-Curve-and-AUC~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-  pred1= stats::predict(rfAll,type = "prob")
-  perf = ROCR::prediction(pred1[,1], levels(rfData[,1])[rfData[,1]])
-  # 1. Area under curve
-  auc = ROCR::performance(perf, "auc")
-  AUC <- auc@y.values[[1]]
-  print(AUC)
-  # 2. True Positive and Negative Rate
-  pred3 = ROCR::performance(perf, "tpr","fpr") # check the ROCR packge assignment here
-  # 3. Plot the ROC curve
-  plot(pred3,main=paste0("ROC Curve for Random Forest (AUC = ", round(AUC, digits = 3), ")"),col=2,lwd=2)
-  abline(a=0,b=1,lwd=2,lty=2,col="gray")
-
-  #}
-
-
-  # MDSplot(rf, train$indst_TO, k = 3, palette = rep(1, 3), pch = as.numeric(levels(train$indst_TO)))
-
-###-----------------------Visualization-and-Saving-Results----------------------
-  # @Visualization-and-Saving-Results~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  #reprtree:::plot.reprtree(reprtree::ReprTree(rfAll, train, metric='d2'))
-
-  ReprTree <- ReprTree(rfAll, train, metric='d2')
-
-  plot.reprtree(ReprTree(rfAll, train, metric='d2'))
-
-  # saveRDS(rfData, paste0('rfData_', as.integer(reps), '_', threshold, '_', holdback, '_', ErrorMethod, '.rds'))
-
-  histoData <- as.data.frame(cbind(rowMeans(rfTestData, na.rm = T), rfData[,1]))
-  histoData[which(histoData[,2] == 1), 2] <- 'Y'
-  histoData[which(histoData[,2] == 2), 2] <- 'N'
-  colnames(histoData) <- c('Probability', 'LIVER')
-
-  H <- p <- histoData %>%
-    ggplot2::ggplot( ggplot2::aes(x=Probability, fill=LIVER)) +
-    ggplot2::geom_histogram( color="#e9ecef", alpha=0.6, position = 'identity') +
-    ggplot2::scale_fill_manual(values=c("#69b3a2", "#404080")) +
-    # theme_ipsum() +
-    ggplot2::labs(fill = "LIVER", x = "Model Prediction P(LIVER)", y = "Count")
-  print(H)
-  return(list(rf = rf, train_data_two = train_data_two))
+  return(rf)
 }
 
 
