@@ -667,12 +667,12 @@ for (studyid in selected_studies){
 
 
    if (output_individual_scores) {
-    # return(list(master_liverToBW = master_liverToBW,
-    #           master_lb_score_six = master_lb_score_six,
-    #           master_mi_df  = master_mi_df,
-    #           Error_studies =  Error_studies,
-    #           master_error_df = master_error_df))
-     return(combined_output_individual_scores)
+    return(list(master_liverToBW = master_liverToBW,
+              master_lb_score_six = master_lb_score_six,
+              master_mi_df  = master_mi_df,
+              Error_studies =  Error_studies,
+              master_error_df = master_error_df))
+     #return(combined_output_individual_scores)
 
    } else if(output_zscore_by_USUBJID) {
 
