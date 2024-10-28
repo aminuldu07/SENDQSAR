@@ -1,5 +1,7 @@
 
 #' @title get_random_forest_model
+#' @param data_frame Mandatory, character \cr
+#'   Studyid number
 #' @param Liver_get_liver_om_lb_mi_tox_score_list Mandatory, character \cr
 #'   Studyid number
 #' @param not_Liver_get_liver_om_lb_mi_tox_score_list Mandatory, character \cr
