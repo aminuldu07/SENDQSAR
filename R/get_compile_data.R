@@ -166,7 +166,7 @@ get_compile_data <- function(studyid = NULL,
 
     #Pull all of the relevant DM Data
     Species <- ts$TSVAL[which(ts$TSPARMCD == "SPECIES")]
-    TRTName <- ts$TSVAL[which(ts$TSPARMCD == "TRT")]
+    TRTName <- ts$TSVAL[which(ts$TSPARMCD == "TRT")] # work on this line
     Duration <-ts$TSVAL[which(ts$TSPARMCD == "DOSDUR")]
 
     # Convert duration to days
