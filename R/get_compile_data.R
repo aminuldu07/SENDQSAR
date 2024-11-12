@@ -223,7 +223,6 @@ get_compile_data <- function(studyid = NULL,
 
     # Step-3 :: # REMOVE THE TK ANIMALS IF SPECIES IS RAT from the~~~~~~~~~~~
    # "recovery_cleaned_CompileData"
-
     # Initialize an empty data frame to store the results
     tK_animals_df <- data.frame(PP_PoolID = character(), STUDYID = character(),
                                 USUBJID = character(), POOLID = character(),
