@@ -1,14 +1,15 @@
-pandoc: 3.1.1
+pandoc: '3.2'
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   BW_score_calculation_documentation: BW_score_calculation_documentation.html
   BwTOLiver_score_calculation_documentation: BwTOLiver_score_calculation_documentation.html
+  Compile_Data_calculation_documentation: Compile_Data_calculation_documentation.html
   Introduction: Introduction.html
   LB_score_calculation_documentation: LB_score_calculation_documentation.html
   MI_score_calculation_documentation: MI_score_calculation_documentation.html
   vignettes: vignettes.html
-last_built: 2024-10-07T17:44Z
+last_built: 2024-11-13T16:40Z
 urls:
   reference: https://aminuldu07.github.io/SENDQSAR/reference
   article: https://aminuldu07.github.io/SENDQSAR/articles

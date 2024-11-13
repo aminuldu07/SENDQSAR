@@ -38,10 +38,10 @@ The function returns a cleaned and compiled data frame with filtered study data,
 4. **Species Detection and Handling**: Extracts species information from the `ts` domain to customize the filtering logic for different species.
 
 ### Example Usage
-```{r}
+#```{r}
 # Example call to get_compile_data
 # Note: Replace 'path/to/database.db' with the actual path to your database
-get_compile_data(studyid = '1234123', path_db = 'path/to/database.db')
+#get_compile_data(studyid = '1234123', path_db = 'path/to/database.db')
 
 
 
