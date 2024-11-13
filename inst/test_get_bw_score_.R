@@ -1,4 +1,4 @@
-rm(list = ls())
+m(list = ls())
 
 ##### Aminul islam prodhan
 
@@ -11,11 +11,24 @@ devtools::load_all(".")
 #                                        fake_study = FALSE,
 #                                        use_xpt_file = FALSE)
 
+fake_T_xpt_T_compile_data = get_bw_score(studyid=NULL,
+                                         path_db="C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/2023-2024_projects/FAKE_DATABASES/single_fake_xpt_folder/FAKE28738",
+                                         fake_study=TRUE,
+                                         use_xpt_file=TRUE,
+                                         master_compiledata=NULL,
+                                         return_individual_scores=FALSE,
+                                         return_zscore_by_USUBJID=FALSE)
 
-R_XPT_compile_data <- get_compile_data(studyid= NULL,
-                                       path_db='C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/2023-2024_projects/FAKE_DATABASES/real_xpt_dir/IND051292_1017-3581',
+
+
+
+R_XPT_compile_data <- get_compile_data(studyid = NULL,
+                                       path_db,
                                        fake_study = FALSE,
-                                       use_xpt_file = TRUE)
+                                       use_xpt_file = FALSE,
+                                       master_compiledata = NULL,
+                                       return_individual_scores = FALSE,
+                                       return_zscore_by_USUBJID = FALSE)
 
 
 fake_SQL_compile_data <- get_compile_data(studyid = '10663',

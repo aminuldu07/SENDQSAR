@@ -27,6 +27,8 @@ navbar:
       menu:
       - text: Introduction
         href: articles/Introduction.html
+      - text: Compile_Data_calculation_documentation
+        href: articles/Compile_Data_calculation_documentation.html
       - text: BW score Calculation
         href: articles/BW_score_calculation_documentation.html
       - text: BwTOLiver score Calculation
