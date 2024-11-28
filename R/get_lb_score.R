@@ -89,7 +89,7 @@ get_lb_score <- function(studyid = NULL,
       LBD <- study_data_LB %>%
         dplyr::filter(LBDY >= 1) %>%
         dplyr::select(STUDYID,USUBJID, LBSPEC, LBTESTCD, LBSTRESN, LBDY)
-
+      # renaming the column
       colnames(LBD) <- c("STUDYID", "USUBJID", "LBSPEC", "LBTESTCD", "LBSTRESN", "VISITDY")
 
       # Convert LBCAT to LBSPEC if LBSPEC is NA

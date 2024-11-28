@@ -84,8 +84,10 @@ if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
   #.................. "BodyWeight_zScore" .....calculation........
   #................... Initial BW weight calculation..............
 
-    StudyInitialWeights <- data.frame("STUDYID" = NA, "USUBJID" = NA,
-                                      "BWSTRESN" = NA, "VISITDY" = NA)
+    StudyInitialWeights <- data.frame("STUDYID" = NA,
+                                      "USUBJID" = NA,
+                                      "BWSTRESN" = NA,
+                                      "VISITDY" = NA)
 
     # Initialize dataframe for unmatched USUBJIDs
     UnmatchedUSUBJIDs <- data.frame("USUBJID" = character(), stringsAsFactors = FALSE)
@@ -144,6 +146,7 @@ if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
             SubjectInitialWeight <- null_visitdy_large_bw[closest_row_null_visitdy, c("STUDYID", "USUBJID", "BWSTRESN", "VISITDY")]
           }
         }
+
         # If SubjectInitialWeight is still empty, add currentUSUBJID to UnmatchedUSUBJIDs
         if (nrow(SubjectInitialWeight) == 0) {
           UnmatchedUSUBJIDs <- rbind(UnmatchedUSUBJIDs, data.frame(USUBJID = currentUSUBJID, stringsAsFactors = FALSE))
@@ -175,7 +178,6 @@ if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
     }
 
     # Duplicate rows handling
-
     # Removing duplicates based on specific column(s)
     # only the first occurrence of each unique USUBJID will be kept, and subsequent duplicates will be removed
     StudyInitialWeights <- StudyInitialWeights[!duplicated(StudyInitialWeights$USUBJID), ]
@@ -187,8 +189,11 @@ if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
     #......(StudyBodyWeights)-(TERMBW)-(BoDY Weigt) calculation...............
 
     # Initialize "StudyBodyWeights" empty data frame
-    StudyBodyWeights <- data.frame("STUDYID" = NA, "USUBJID" = NA, "BWTESTCD" = NA,
-                                   "BWSTRESN" = NA, "VISITDY" = NA)
+    StudyBodyWeights <- data.frame("STUDYID" = NA,
+                                   "USUBJID" = NA,
+                                   "BWTESTCD" = NA,
+                                   "BWSTRESN" = NA,
+                                   "VISITDY" = NA)
 
     # Initialize dataframe for unmatched USUBJIDs
     BodyWeights_UnmatchedUSUBJIDs <- data.frame("USUBJID" = character(),
@@ -380,6 +385,7 @@ if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
 
 
   }
+
     # Return based on score_in_list_format
     if (return_individual_scores) {
 

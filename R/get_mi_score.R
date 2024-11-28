@@ -198,7 +198,25 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
 
     MIData_cleaned_SColmn <- MIData_cleaned %>% dplyr::select(USUBJID,MISTRESC,MISEV)
 
-    MIData_cleaned_SColmn <- reshape2::dcast(MIData_cleaned, USUBJID ~ MISTRESC, value.var = "MISEV")
+    MIData_cleaned_SColmn_fDecasting <- MIData_cleaned_SColmn
+
+
+    # Remove duplicates using base R
+    MIData_cleaned_SColmn_fDecasting <- MIData_cleaned_SColmn_fDecasting[!duplicated(MIData_cleaned_SColmn_fDecasting), ]
+    #MIData_cleaned_SColmn_copy <- MIData_cleaned_SColmn
+
+    # check for duplicates
+    #dupliates_present <- any(duplicated(MIData_cleaned[, c("USUBJID")]))
+
+    # Identify duplicate rows based on USUBJID and MISTRESC
+    #duplicate_rows <- MIData_cleaned[duplicated(MIData_cleaned[, c("USUBJID", "MISTRESC")]), ]
+
+
+
+    # # Reshape the data (pivot the dataframe)
+    MIData_cleaned_SColmn <- reshape2::dcast(MIData_cleaned_SColmn_fDecasting, USUBJID ~ MISTRESC, value.var = "MISEV")
+    ##MIData_cleaned_SColmn_data_t <- data.table::dcast(MIData_cleaned_SColmn_fDecasting, USUBJID ~ MISTRESC, value.var = "MISEV")
+    #MIData_cleaned_SColmn_tidyr <- tidyr::pivot_wider(MIData_cleaned_SColmn_fDecasting, names_from = MISTRESC, values_from = MISEV)
 
     MIData_cleaned_SColmn[is.na(MIData_cleaned_SColmn)] <- "0" #Fill NAs with Zero
 
@@ -251,7 +269,10 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
 
       test_MIIncidence  <- MIIncidence
 
-      GroupIncid <- data.frame(Treatment = NA,Sex = NA,Finding = NA,Count = NA)
+      GroupIncid <- data.frame(Treatment = NA,
+                               Sex = NA,
+                               Finding = NA,
+                               Count = NA)
 
       # Iterate over each unique study
       #for (Study in unique(MIIncidence$STUDYID)){
@@ -259,10 +280,23 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
         # Iterate over sex categories
         for (sex in c('M','F')) {
           # Filter data for the current study
-          StudyMI <- MIIncidence[which(MIIncidence$STUDYID==unique(MIIncidence$STUDYID)),]
+          #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+          # This line has logical error
+          #StudyMI <- MIIncidence[which(MIIncidence$STUDYID==unique(MIIncidence$STUDYID)),] # This line has logical error
+
+          #StudyMI <- MIIncidence[MIIncidence$STUDYID %in% unique(MIIncidence$STUDYID), ]
+
+          StudyMI <- MIIncidence
+
+          # This line has logical error
+          #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
           #StudyMI <- MIIncidence
 
-          StudyGroupIncid <- data.frame(Treatment = NA,Sex = NA,Finding = NA,Count = NA)
+          # " StudyGroupIncid" data frame createion
+          StudyGroupIncid <- data.frame(Treatment = NA,
+                                        Sex = NA,
+                                        Finding = NA,
+                                        Count = NA)
 
           # Filter data for the current sex
           sexSubjects <- mi_CompileData$USUBJID[which(mi_CompileData$SEX == sex)]
@@ -282,6 +316,7 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
             Incid$Sex <- sex
 
             StudyGroupIncid <- rbind(StudyGroupIncid,Incid)
+
           }
 
           #Removing of Vehicle Baseline
@@ -293,6 +328,7 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
               StudyGroupIncid$Count[findingIndex] <- StudyGroupIncid$Count[findingIndex] - baseline
             }
           }
+          # Remove negative values
           negativeIndex <- which(StudyGroupIncid$Count < 0) # when findings in HD group less than the vehicle group
           if (length(negativeIndex) > 0) {
             StudyGroupIncid$Count[negativeIndex] <- 0
@@ -302,6 +338,7 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
         }
       #}
 
+      # Remove rows with NA in Treatment
       removeIndex <- which(is.na(GroupIncid$Treatment))
       if (length(removeIndex) > 0) {
         GroupIncid <- GroupIncid[-removeIndex,]
@@ -324,26 +361,45 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
       # Initialize a counter for incidence overrides
       IncidenceOverideCount <- 0
 
-      # Define column range for MI Data (from the 6th to the last column of mi_CompileData2)
-      colIndex <- seq(7, ncol(mi_CompileData2))
+      # Define column range for MI Data (from the 7th to the last column of mi_CompileData2)
+      #colIndex <- seq(7, ncol(mi_CompileData2))
+
+      # Extract column names starting from the 7th column
+      colNames <- colnames(mi_CompileData2)[7:ncol(mi_CompileData2)]
+
+      #colNames <- "INFILTRATION"
 
       # Iterate over each column for scoring and adjustments
-      for (i in colIndex){
-        colName <- colnames(mi_CompileData2)[i]
+      # Iterate over each column by name
+      for (colName in colNames) {
+      #for (i in colIndex){
+        #colName <- colnames(mi_CompileData2)[i]
+
+        # Initialize the column in ScoredData
         ScoredData[[colName]] <- NA
 
         #Score Severity # changing the current severity value in MISEV column
         # Score Severity based on mi_CompileData2 #
 
-        x <- ifelse(mi_CompileData2[,i] == 5, 5,
-                    ifelse(mi_CompileData2[,i] > 3, 3,
-                           ifelse(mi_CompileData2[,i] == 3, 2,
-                                  ifelse(mi_CompileData2[,i] > 0, 1, 0))))
+        # x <- ifelse(mi_CompileData2[,i] == 5, 5,
+        #             ifelse(mi_CompileData2[,i] > 3, 3,
+        #                    ifelse(mi_CompileData2[,i] == 3, 2,
+        #                           ifelse(mi_CompileData2[,i] > 0, 1, 0))))
 
-        ScoredData[,colName] <-x
+        # Score Severity based on mi_CompileData2
+        x <- ifelse(mi_CompileData2[[colName]] == 5, 5,
+                    ifelse(mi_CompileData2[[colName]] > 3, 3,
+                           ifelse(mi_CompileData2[[colName]] == 3, 2,
+                                  ifelse(mi_CompileData2[[colName]] > 0, 1, 0))))
+
+        #ScoredData[,colName] <-x
 
         # Update mi_CompileData2 with the values from ScoredData for the current column
-        mi_CompileData2[,colName] <- x
+        #mi_CompileData2[,colName] <- x
+
+        # Update ScoredData and mi_CompileData2 for the current column
+        ScoredData[[colName]] <- x
+        mi_CompileData2[[colName]] <- x
 
         #Check the Incidence percentage for each group
           for (sex in c('M','F')) {
@@ -363,6 +419,7 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
               DoseSevIndex <- which(StudyData$ARMCD == Dose2)
               DoseSev <- StudyData[DoseSevIndex,]
               DoseIncid <- MIIncidStudy[which(stringr::word(MIIncidStudy$Treatment, -1) == Dose2),]
+
               if (colName %in% DoseIncid$Finding) {
                 findingIndex <- which(DoseIncid$Finding == colName)
 
@@ -411,6 +468,7 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
         ScoredData_subset_HD$highest_score <- matrixStats::rowMaxs(as.matrix(ScoredData_subset_HD[, 7:ncol(ScoredData_subset_HD)]),
                                                                    na.rm = TRUE)
       }
+
       # Move the highest_score column to be the third column
       ScoredData_subset_HD <- ScoredData_subset_HD[, c(1:2, ncol(ScoredData_subset_HD), 3:(ncol(ScoredData_subset_HD)-1))]
 
