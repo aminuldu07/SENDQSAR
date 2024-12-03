@@ -161,8 +161,12 @@ get_compile_data <- function(studyid = NULL,
  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #..Creation of compilation data...(Compilation of DM Data).........
     # Step-1 :: # CompileData is basically the compilation of DM data
-    CompileData <- data.frame(STUDYID = NA, Species = NA,
-                              USUBJID = NA, SEX = NA, ARMCD = NA, SETCD = NA)
+    CompileData <- data.frame(STUDYID = NA,
+                              Species = NA,
+                              USUBJID = NA,
+                                  SEX = NA,
+                                ARMCD = NA,
+                                SETCD = NA)
 
     #Pull all of the relevant DM Data
     Species <- ts$TSVAL[which(ts$TSPARMCD == "SPECIES")]
