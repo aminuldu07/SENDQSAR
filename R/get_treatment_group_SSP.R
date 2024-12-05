@@ -19,7 +19,7 @@
 
 
 
-get_treatment_group <- function(studies=NULL, db_path) {
+get_treatment_group______fgfg <- function(studies=NULL, db_path) {
   list_return <- list()
   four <- c()
   con <- DBI::dbConnect(DBI::dbDriver('SQLite'), dbname = db_path)
@@ -74,6 +74,7 @@ get_treatment_group <- function(studies=NULL, db_path) {
     list_return[[study]][['setcd']] <- number_of_setcd
     recv_group <- c()
     trtm_group <- c()
+
     if(length(st_species)!= 0) {
       if(st_species =="RAT") {
         # see if tkdesc in txparmcd

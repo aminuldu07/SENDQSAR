@@ -228,8 +228,10 @@ get_compile_data <- function(studyid = NULL,
     # Step-3 :: # REMOVE THE TK ANIMALS IF SPECIES IS RAT from the~~~~~~~~~~~
    # "recovery_cleaned_CompileData"
     # Initialize an empty data frame to store the results
-    tK_animals_df <- data.frame(PP_PoolID = character(), STUDYID = character(),
-                                USUBJID = character(), POOLID = character(),
+    tK_animals_df <- data.frame(PP_PoolID = character(),
+                                STUDYID = character(),
+                                USUBJID = character(),
+                                POOLID = character(),
                                 stringsAsFactors = FALSE)
 
     # Initialize a data frame to keep track of studies with no POOLID
@@ -242,15 +244,16 @@ get_compile_data <- function(studyid = NULL,
     Species_lower <- tolower(Species)
 
     if ("rat" %in% Species_lower) {
-      # Create TK individuals for "Rat" studies [# Retrieve unique
-      # pool IDs (TKPools) from pp table]
-      TKPools <- unique(pp$POOLID)
+      # Create TK individuals for "Rat" studies
+      # [Retrieve unique pool IDs (TKPools) from pp table]
+      TKPools <- unique(pp$POOLID) # why not pooldef poold,
 
       # Check if TKPools is not empty
       if (length(TKPools) > 0) {
       # For each pool ID in TKPools, retrieve corresponding rows from pooldef table
         for (pool_id in TKPools) {
-          pooldef_data <- pooldef[pooldef$POOLID == pool_id, ]
+          # pooldef_data == unique pp$POOLID
+          pooldef_data <- pooldef[pooldef$POOLID == pool_id, ] # maching unique POOLID of pooldef and pp
 
           # Create a temporary data frame if pooldef_data is not empty
           if (nrow(pooldef_data) > 0) {
@@ -273,7 +276,11 @@ get_compile_data <- function(studyid = NULL,
                                    data.frame(STUDYID = current_study_id,
                                               stringsAsFactors = FALSE))
       }
-
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      # tk animals is basically where, pp$POOLID == pooldef$POOLID
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     } else {
       # Create a empty data frame named "tK_animals_df"
       tK_animals_df <- data.frame(PP_PoolID = character(),
