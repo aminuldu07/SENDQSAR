@@ -37,6 +37,21 @@ real_sqlite_treatment_group = get_treatment_group(studyid="876", #5003635",
                                     return_individual_scores=FALSE,
                                     return_zscore_by_USUBJID=FALSE)
 
+# Call the function for SEND SQLite database
+rm(list = ls())
+devtools::load_all(".")
+db_path = "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/TestDB.db"
+real_sqlite_treatment_group = get_treatment_group_amin(studyid="876", #5003635",
+                                                  path_db=db_path,
+                                                  fake_study=FALSE,
+                                                  use_xpt_file=FALSE,
+                                                  master_compiledata=NULL,
+                                                  return_individual_scores=FALSE,
+                                                  return_zscore_by_USUBJID=FALSE)
+
+
+
+
 get# Call the function for SEND XPT data
 db_path = "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/2023-2024_projects/FAKE_DATABASES/real_xpt_dir/IND051292_1017-3581"
 real_XPT_bw_score = get_bw_score(studyid=NULL,

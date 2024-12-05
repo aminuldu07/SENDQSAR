@@ -40,13 +40,15 @@ get_treatment_group_amin <- function(studyid = NULL,
     ds <- fetch_domain_data(db_connection, 'ds', studyid)
     dm <- fetch_domain_data(db_connection, 'dm', studyid)
     pc <- fetch_domain_data(db_connection, 'pc', studyid)
+    pp <- fetch_domain_data(db_connection, 'pp', studyid)
     pooldef <- fetch_domain_data(db_connection, 'pooldef', studyid)
 
     # Close the database connection
     DBI::dbDisconnect(db_connection)
   }
 
-  # Identify unique treatment groups (SETCD) and study species
+  # Identify unique treatment groups (SETCD) from DM
+  # and study species from ts
   number_of_setcd <- unique(dm[['SETCD']])
   print(number_of_setcd)
 
@@ -54,10 +56,10 @@ get_treatment_group_amin <- function(studyid = NULL,
   #st_species <- ts[TSPARMCD=='SPECIES'][, TSVAL]
   st_species <- ts[ts$TSPARMCD=='SPECIES',"TSVAL"]
 
-  # Add species and treatment groups to the results
-  list_return[[study]][['species']] <- st_species
-
-  list_return[[study]][['setcd']] <- number_of_setcd
+  # # Add species and treatment groups to the results
+  # list_return[[study]][['species']] <- st_species
+  #
+  # list_return[[study]][['setcd']] <- number_of_setcd
 
   #recovery_group <- c()
   recovery_group <- c() # Recovery groups
@@ -76,6 +78,14 @@ get_treatment_group_amin <- function(studyid = NULL,
     # Identify recovery and treatment groups in non-TK groups
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     if(st_species =="RAT") {
+
+      # Initialize an empty data frame to store the results
+      tK_animals_df <- data.frame(PP_PoolID = character(),
+                                  STUDYID = character(),
+                                  USUBJID = character(),
+                                  POOLID = character(),
+                                  stringsAsFactors = FALSE)
+
       # Create TK individuals for "Rat" studies
       # [Retrieve unique pool IDs (TKPools) from pp table]
       TKPools <- unique(pp$POOLID) # why not pooldef poold,
@@ -97,31 +107,44 @@ get_treatment_group_amin <- function(studyid = NULL,
 
             # Append the temporary data frame to the results data frame
             tK_animals_df <- rbind(tK_animals_df, temp_df)
-            tk_group <- tK_animals_df
-            not_tk <- number_of_setcd[which(!number_of_setcd %in% tk_group)]
           }
         }
 
       }
+
+
+      # filter dm sujid by the temp_df for getting the setcd
+      setcd_dm_tk_less <- dm[dm$USUBJID %in% tK_animals_df$USUBJID, c ("STUDYID", "USUBJID", "SETCD")]
+
+      tk_group <- unique(setcd_dm_tk_less$SETCD)
+      not_tk_group <- number_of_setcd[which(!number_of_setcd %in% tk_group)]
+
+
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       # Identify recovery and treatment groups in non-TK groups
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      if(length(not_tk) > 0) {
-        for (i in 1:length(not_tk)){
-          set_cd <- not_tk[i]
-          subjid <- unique(dm[SETCD==set_cd, USUBJID])
-          dsdecod <- tolower(unique(ds[USUBJID %in% subjid, DSDECOD]))
+      if(length(not_tk_group) > 0) {
+
+        for (setcd in 1:length(not_tk_group)){
+          set_cd <- not_tk_group[setcd]
+          #subjid <- unique(dm[SETCD==set_cd, USUBJID])
+          subjid <- unique(dm[dm$SETCD==set_cd, c("USUBJID")])
+          #dsdecod <- tolower(unique(ds[USUBJID %in% subjid, DSDECOD]))
+          dsdecod <- tolower(unique(ds[ds$USUBJID %in% subjid, "DSDECOD"]))
           if(tolower("RECOVERY SACRIFICE") %in% dsdecod) {
             recovery_group <- c(recovery_group, set_cd)
-          } else if (tolower(  dsdecod %in% any(c("TERMINAL SACRIFICE",
-                                                  'MORIBUND SACRIFICE',
-                                                  'REMOVED FROM STUDY ALIVE',
-                                                  'NON-MORIBUND SACRIFICE')))){
-            treatment_group<- c(treatment_group, set_cd)
+          } else if (any(tolower(dsdecod) %in% c( "terminal sacrifice",
+                                          "moribund sacrifice",
+                                          "removed from study alive",
+                                          "non-moribund sacrifice" ))) {
+            treatment_group <- c(treatment_group, set_cd)
           }
-        }
-      }
 
+
+        }
+
+
+      }
     } else {
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       # if species not RAT , get the tk and non tk group
@@ -141,25 +164,28 @@ get_treatment_group_amin <- function(studyid = NULL,
           ## print(paste0(set_cd, ' : in recovery'))
           # get the recovery group
           recovery_group <- c(recovery_group, set_cd)
-        } else if (tolower(  dsdecod %in% any(c("TERMINAL SACRIFICE",
+        } else if (any(tolower(dsdecod) %in% c("TERMINAL SACRIFICE",
                                                 'MORIBUND SACRIFICE',
                                                 'REMOVED FROM STUDY ALIVE',
-                                                'NON-MORIBUND SACRIFICE')))){
+                                                'NON-MORIBUND SACRIFICE'))){
           # get the treatment group
           treatment_group<- c(treatment_group, set_cd)
         }
       }
 
-
-
     }
 
-
-    } else {
+  } else {
       # If species is = zero
       # create an empty data frame
 
-    }
+    recovery_group <- c()
+    treatment_group <- c()
+
+  }
+
+  return(list(recovery_group_setcd = recovery_group,
+                   treatment_group_setcd =treatment_group))
 
   }
 
