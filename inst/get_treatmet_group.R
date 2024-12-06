@@ -41,7 +41,7 @@ real_sqlite_treatment_group = get_treatment_group(studyid="876", #5003635",
 rm(list = ls())
 devtools::load_all(".")
 db_path = "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/TestDB.db"
-real_sqlite_treatment_group = get_treatment_group_amin(studyid="876", #5003635",
+real_sqlite_treatment_group = get_treatment_group_amin(studyid="876", #5003635","876"
                                                   path_db=db_path,
                                                   fake_study=FALSE,
                                                   use_xpt_file=FALSE,

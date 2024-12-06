@@ -67,6 +67,12 @@ get_treatment_group_amin <- function(studyid = NULL,
   #treatment_group<- c()
   treatment_group <- c() # Treatment groups
 
+  Dose_Level_df <- data.frame(STUDYID = character(),
+                              Dose_Level = character(),
+                              Dose_Units = character(),
+                              Treatment_SETCD = character())#,
+  #stringsAsFactors = FALSE))
+
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   if(length(st_species)!= 0) {
@@ -117,6 +123,7 @@ get_treatment_group_amin <- function(studyid = NULL,
       setcd_dm_tk_less <- dm[dm$USUBJID %in% tK_animals_df$USUBJID, c ("STUDYID", "USUBJID", "SETCD")]
 
       tk_group <- unique(setcd_dm_tk_less$SETCD)
+
       not_tk_group <- number_of_setcd[which(!number_of_setcd %in% tk_group)]
 
 
@@ -138,14 +145,47 @@ get_treatment_group_amin <- function(studyid = NULL,
                                           "removed from study alive",
                                           "non-moribund sacrifice" ))) {
             treatment_group <- c(treatment_group, set_cd)
-          }
+             }
 
 
-        }
-
+           }
 
       }
-    } else {
+
+      print(recovery_group)
+      print(treatment_group)
+       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      # get dose information for the treatment group
+      # Iterate over each treatment group to extract dose information
+      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      for (trtm_setcd in treatment_group) {
+
+        # Filter `tx` table for the current SETCD
+        tx_trtm_setcd <- tx [tx$SETCD == trtm_setcd, ]
+
+        # Extract dose level and dose units
+        dose_level <- tx_trtm_setcd[tx_trtm_setcd$TXPARMCD == "TRTDOS", "TXVAL"]
+        dose_units <- tx_trtm_setcd[tx_trtm_setcd$TXPARMCD == "TRTDOSU", "TXVAL"]
+
+        # Get the unique treatment SETCD for the current group
+        treatment_setcd <- unique(tx_trtm_setcd$SETCD)
+
+        # Create a data frame for the current treatment group
+        dose_level_df <- data.frame(STUDYID = unique(tx$STUDYID),
+                                    Dose_Level = dose_level,
+                                    Dose_Units =  dose_units ,
+                                    Treatment_SETCD = treatment_setcd) #,
+        #stringsAsFactors = FALSE)
+
+        # Append the current data to the main data frame
+        Dose_Level_df <- rbind(Dose_Level_df, dose_level_df)
+
+      }
+
+
+       } else {
+         browser()
+         print(st_species)
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       # if species not RAT , get the tk and non tk group
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -174,6 +214,8 @@ get_treatment_group_amin <- function(studyid = NULL,
       }
 
     }
+
+
 
   } else {
       # If species is = zero
