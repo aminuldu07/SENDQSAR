@@ -64,8 +64,12 @@ get_treatment_group_amin <- function(studyid = NULL,
   #recovery_group <- c()
   recovery_group <- c() # Recovery groups
 
+  not_RAT_recovery_group <- c()
+
   #treatment_group<- c()
   treatment_group <- c() # Treatment groups
+
+  not_RAT_treatment_group <- c()
 
   Dose_Level_df <- data.frame(STUDYID = character(),
                               Dose_Level = character(),
@@ -83,7 +87,7 @@ get_treatment_group_amin <- function(studyid = NULL,
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Identify recovery and treatment groups in non-TK groups
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if(st_species =="RAT") {
+    if(st_species =="RAT" && "MOUSE") {
 
       # Initialize an empty data frame to store the results
       tK_animals_df <- data.frame(PP_PoolID = character(),
@@ -128,18 +132,23 @@ get_treatment_group_amin <- function(studyid = NULL,
 
 
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      # Identify recovery and treatment groups in non-TK groups
+      # Identify recovery and treatment groups in "non-TK groups"
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       if(length(not_tk_group) > 0) {
 
         for (setcd in 1:length(not_tk_group)){
+
           set_cd <- not_tk_group[setcd]
           #subjid <- unique(dm[SETCD==set_cd, USUBJID])
           subjid <- unique(dm[dm$SETCD==set_cd, c("USUBJID")])
           #dsdecod <- tolower(unique(ds[USUBJID %in% subjid, DSDECOD]))
-          dsdecod <- tolower(unique(ds[ds$USUBJID %in% subjid, "DSDECOD"]))
+          dsdecod <- tolower(unique(ds[ds$USUBJID %in% subjid, "DSDECOD"])) # "ds" does not have SETCT, do had to use USUBJID matching from "dm"
+
+          # Group assignments
           if(tolower("RECOVERY SACRIFICE") %in% dsdecod) {
+
             recovery_group <- c(recovery_group, set_cd)
+
           } else if (any(tolower(dsdecod) %in% c( "terminal sacrifice",
                                           "moribund sacrifice",
                                           "removed from study alive",
@@ -186,93 +195,72 @@ get_treatment_group_amin <- function(studyid = NULL,
 
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       # if species not RAT , get the tk and non tk group
+      # Non-RAT species does not have tk animals ?????????????????????????????
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       # Identify recovery and treatment groups in non-TK groups
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-      print(st_species)
-         not_tk <- number_of_setcd
-         for (i in 1:length(not_tk)){
-           set_cd <- not_tk[i]
-           #subjid <- unique(dm[SETCD==set_cd, USUBJID])
+      not_RAT_not_tk <- number_of_setcd
 
-           subjid <- unique(dm[dm$SETCD==set_cd, "USUBJID"], drop = FALSE)
-           #dsdecod <- tolower(unique(ds[USUBJID %in% subjid, DSDECOD]))
-           dsdecod <- tolower(unique(ds[ds$USUBJID %in% subjid, "DSDECOD"], drop = FALSE))
-           if(tolower("RECOVERY SACRIFICE") %in% dsdecod) {
-             ## print(paste0(set_cd, ' : in recovery'))
-             # get the recovery group
-             recovery_group <- c(recovery_group, set_cd)
-           } else if (any(tolower(dsdecod) %in% c( "terminal sacrifice",
-                                                   "moribund sacrifice",
-                                                   "removed from study alive",
-                                                   "non-moribund sacrifice" ))) {
-             # get the treatment group
-             treatment_group<- c(treatment_group, set_cd)
-           }
-         }
+      for (i in 1:length(not_RAT_not_tk)){
+        not_RAT_set_cd <- not_RAT_not_tk[i]
 
-    #   not_RAT_not_tk <- number_of_setcd
-    #
-    #   for (i in 1:length(not_RAT_not_tk)){
-    #     not_RAT_set_cd <- not_RAT_not_tk[i]
-    #     #subjid <- unique(dm[SETCD==set_cd, USUBJID])
-    #
-    #     # Extract unique subjects and DSDECOD values
-    #     not_RAT_subjid <- unique(dm[dm$SETCD==not_RAT_set_cd, "USUBJID"])
-    #     #dsdecod <- tolower(unique(ds[USUBJID %in% subjid, DSDECOD]))
-    #     not_RAT_dsdecod <- tolower(unique(ds[ds$USUBJID %in% not_RAT_subjid, "DSDECOD"], drop = FALSE))
-    #
-    #     # Group assignments
-    #     if(tolower("RECOVERY SACRIFICE") %in% not_RAT_dsdecod) {
-    #       ## print(paste0(set_cd, ' : in recovery'))
-    #       # get the recovery group
-    #       browser()
-    #       recovery_group <- c(recovery_group, not_RAT_set_cd)
-    #       print(recovery_group)
-    #
-    #     }
-    #
-    #     else if (any(tolower(not_RAT_dsdecod) %in% c("TERMINAL SACRIFICE",
-    #                                             'MORIBUND SACRIFICE',
-    #                                             'REMOVED FROM STUDY ALIVE',
-    #                                             'NON-MORIBUND SACRIFICE'))){
-    #       # get the treatment group
-    #       treatment_group <- c(treatment_group, not_RAT_set_cd)
-    #     }
-    #
+        #subjid <- unique(dm[SETCD==set_cd, USUBJID])
+        #not_RAT_subjid <- unique(dm[dm$SETCD==set_cd, "USUBJID"])
+
+        # Extract unique subjects and DSDECOD values
+        not_RAT_subjid <- unique(dm[dm$SETCD==not_RAT_set_cd, "USUBJID"])
+        #dsdecod <- tolower(unique(ds[USUBJID %in% subjid, DSDECOD]))
+        not_RAT_dsdecod <- tolower(unique(ds[ds$USUBJID %in% not_RAT_subjid, "DSDECOD"]))
+
+        # Group assignments
+        if(tolower("RECOVERY SACRIFICE") %in% not_RAT_dsdecod) {
+          ## print(paste0(set_cd, ' : in recovery'))
+          # get the recovery group
+
+          not_RAT_recovery_group <- c(not_RAT_recovery_group, not_RAT_set_cd)
+          print(recovery_group)
+
+        } else if (any(tolower(not_RAT_dsdecod) %in% c("terminal sacrifice",
+                                                'moribund sacrifice',
+                                                'removed from study alive',
+                                                'removed from study alive'))){
+          # get the treatment group
+          not_RAT_treatment_group <- c(not_RAT_treatment_group, not_RAT_set_cd)
+        }
+      }
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
-      print(recovery_group)
-      print(treatment_group)
+      print( not_RAT_recovery_group)
+      print( not_RAT_treatment_group)
 
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       # get dose information for the treatment group
       # Iterate over each treatment group to extract dose information
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      for (trtm_setcd in treatment_group) {
+      for (not_RAT_trtm_setcd in not_RAT_treatment_group) {
 
         # Filter `tx` table for the current SETCD
-        tx_trtm_setcd <- tx [tx$SETCD == trtm_setcd, ]
+        not_RAT_tx_trtm_setcd <- tx [tx$SETCD == not_RAT_trtm_setcd, ]
 
         # Extract dose level and dose units
-        dose_level <- tx_trtm_setcd[tx_trtm_setcd$TXPARMCD == "TRTDOS", "TXVAL"]
-        dose_units <- tx_trtm_setcd[tx_trtm_setcd$TXPARMCD == "TRTDOSU", "TXVAL"]
+        not_RAT_dose_level <- not_RAT_tx_trtm_setcd[not_RAT_tx_trtm_setcd$TXPARMCD == "TRTDOS", "TXVAL"]
+        not_RAT_dose_units <- not_RAT_tx_trtm_setcd[not_RAT_tx_trtm_setcd$TXPARMCD == "TRTDOSU", "TXVAL"]
 
         # Get the unique treatment SETCD for the current group
-        treatment_setcd <- unique(tx_trtm_setcd$SETCD)
+        not_RAT_treatment_setcd <- unique(not_RAT_tx_trtm_setcd$SETCD)
 
         # Create a data frame for the current treatment group
-        dose_level_df <- data.frame(STUDYID = unique(tx$STUDYID),
-                                    Dose_Level = dose_level,
-                                    Dose_Units =  dose_units ,
-                                    Treatment_SETCD = treatment_setcd) #,
+        not_RAT_dose_level_df <- data.frame(STUDYID = unique(tx$STUDYID),
+                                    Dose_Level = not_RAT_dose_level,
+                                    Dose_Units =  not_RAT_dose_units ,
+                                    Treatment_SETCD = not_RAT_treatment_setcd) #,
         #stringsAsFactors = FALSE)
 
         # Append the current data to the main data frame
-        Dose_Level_df <- rbind(Dose_Level_df, dose_level_df)
+        Dose_Level_df <- rbind(Dose_Level_df, not_RAT_dose_level_df)
 
       }
 
@@ -289,12 +277,19 @@ get_treatment_group_amin <- function(studyid = NULL,
 
   }
 
-  return(list(recovery_group_setcd = recovery_group,
-                   treatment_group_setcd =treatment_group))
+  if (st_species == "RAT") {
+  # return(list(Dose_Level_df = Dose_Level_df,
+  #             recovery_group_setcd = recovery_group,
+  #             treatment_group_setcd =treatment_group))
+    return(Dose_Level_df)
+  } else {
+    # return(list(Dose_Level_df = Dose_Level_df,
+    #             recovery_group_setcd = not_RAT_recovery_group,
+    #             treatment_group_setcd = not_RAT_treatment_group))
+    return(Dose_Level_df)
 
+  }
 }
-
-
 
 
 

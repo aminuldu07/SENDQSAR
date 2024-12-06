@@ -21,11 +21,11 @@
 #' @export
 
 get_all_lb_TESTCD_zscore <- function(studyid = NULL,
-                         path_db,
-                         fake_study= FALSE,
-                         use_xpt_file = FALSE,
-                         master_compiledata = NULL,
-                         return_individual_scores = FALSE) {
+                                     path_db,
+                                     fake_study= FALSE,
+                                     use_xpt_file = FALSE,
+                                     master_compiledata = NULL,
+                                     return_individual_scores = FALSE) {
 
   studyid <- as.character(studyid)
   path <- path_db
@@ -39,8 +39,54 @@ get_all_lb_TESTCD_zscore <- function(studyid = NULL,
   }
 
   # GET THE REQUIRED DOMAIN DATA
-  if (fake_study == TRUE && use_xpt_file == FALSE){
+  # if (fake_study == TRUE && use_xpt_file == FALSE){
+  #
+  #   # Establish a connection to the SQLite database
+  #   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+  #
+  #   # Fetch data for required domains
+  #   lb <- fetch_domain_data(db_connection, 'lb', studyid)
+  #
+  #   # Close the database connection
+  #   DBI::dbDisconnect(db_connection)
+  #
+  # } else if (fake_study == TRUE && use_xpt_file == TRUE){
+  #
+  #   # Read data from .xpt files
+  #   lb <- haven::read_xpt(fs::path(path,'lb.xpt'))
+  #
+  # } else if (fake_study == FALSE && use_xpt_file == FALSE) {
+  #
+  #   # Establish a connection to the SQLite database
+  #   db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
+  #
+  #   # Fetch data for required domains
+  #   lb <- fetch_domain_data(db_connection, 'lb', studyid)
+  #
+  #   # Close the database connection
+  #   DBI::dbDisconnect(db_connection)
+  #
+  # }else if (fake_study == FALSE && use_xpt_file == TRUE) {
+  #
+  #   # Read data from .xpt files
+  #   lb <- haven::read_xpt(fs::path(path,'lb.xpt'))
+  #
+  # }
 
+   #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # # Helper function to fetch data from SQLite database
+  # fetch_domain_data <- function(db_connection, domain_name, studyid) {
+  #   domain_name <- toupper(domain_name)
+  #   query_statement <- paste0('SELECT * FROM ', domain_name, " WHERE STUDYID = :x")
+  #   query_result <- DBI::dbGetQuery(db_connection, statement = query_statement, params = list(x = studyid))
+  #   query_result
+  # }
+
+  # GET THE REQUIRED DOMAIN DATA
+  if (use_xpt_file) {
+    # Read data from .xpt files
+    lb <- haven::read_xpt(fs::path(path, 'lb.xpt'))
+  } else {
     # Establish a connection to the SQLite database
     db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
 
@@ -49,31 +95,11 @@ get_all_lb_TESTCD_zscore <- function(studyid = NULL,
 
     # Close the database connection
     DBI::dbDisconnect(db_connection)
-
-  } else if (fake_study == TRUE && use_xpt_file == TRUE){
-
-    # Read data from .xpt files
-    lb <- haven::read_xpt(fs::path(path,'lb.xpt'))
-
-  } else if (fake_study == FALSE && use_xpt_file == FALSE) {
-
-    # Establish a connection to the SQLite database
-    db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path)
-
-    # Fetch data for required domains
-    lb <- fetch_domain_data(db_connection, 'lb', studyid)
-
-    # Close the database connection
-    DBI::dbDisconnect(db_connection)
-
-  }else if (fake_study == FALSE && use_xpt_file == TRUE) {
-
-    # Read data from .xpt files
-    lb <- haven::read_xpt(fs::path(path,'lb.xpt'))
-
   }
 
-    LB_selected_columns <-  lb[ , c("STUDYID", "DOMAIN", "USUBJID", "LBTESTCD",
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # Work on the LB domain
+  LB_selected_columns <-  lb[ , c("STUDYID", "DOMAIN", "USUBJID", "LBTESTCD",
                                   "LBTEST", "LBCAT", "LBORRES", "LBORRESU", "LBSTRESC", "LBSTRESN", "LBSTRESU", "LBSPEC", "VISITDY", "LBDY")]
 
     # convert the "LBSTRESN" column to numeric
@@ -152,24 +178,32 @@ get_all_lb_TESTCD_zscore <- function(studyid = NULL,
     #<><><><><>... Remove TK animals and Recovery animals......<><><><><><>.
     #<><> master_compiledata is free of TK animals and Recovery animals<><><>
 
-    if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
-      # Call the master_compiledata function to generate the data frame for fake study
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+    # if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == FALSE) {
+    #   # Call the master_compiledata function to generate the data frame for fake study
+    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+    #
+    # } else if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == TRUE) {
+    #   # Call the master_compiledata function to generate the data frame for fake study using xpt file
+    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+    #
+    # } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == FALSE) {
+    #
+    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+    #
+    # } else if (is.null(master_compiledata) && fake_study == fake_study && use_xpt_file == TRUE) {
+    #
+    #   # Call the master_compiledata function for real study using xpt file
+    #   master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+    # }
+    if (is.null(master_compiledata)) {
 
-    } else if (is.null(master_compiledata) && fake_study == TRUE && use_xpt_file == TRUE) {
-      # Call the master_compiledata function to generate the data frame for fake study using xpt file
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+      studyid <- if (use_xpt_file) NULL else studyid
 
-    } else if (is.null(master_compiledata) && fake_study == FALSE && use_xpt_file == FALSE) {
-
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
-
-    } else if (is.null(master_compiledata) && fake_study == fake_study && use_xpt_file == TRUE) {
-
-      # Call the master_compiledata function for real study using xpt file
-      master_compiledata <- get_compile_data(studyid, path_db, fake_study = fake_study, use_xpt_file = use_xpt_file)
+      master_compiledata <- get_compile_data(studyid = studyid,
+                                             path_db = path_db,
+                                             fake_study = fake_study,
+                                             use_xpt_file = use_xpt_file)
     }
-
 
     # Filtering the tk animals and the recovery animals
     # Remove the TK animals and Recovery animals

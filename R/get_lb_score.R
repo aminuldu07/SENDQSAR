@@ -152,10 +152,10 @@ get_lb_score <- function(studyid = NULL,
     }
 
 
-    # Filtering the tk animals and the recovery animals
-    # Remove the TK animals and Recovery animals
-    LB_tk_recovery_filtered <- max_visitdy_df %>%
-      dplyr::filter(USUBJID %in% master_compiledata$USUBJID)
+    # # Filtering the tk animals and the recovery animals
+    # # Remove the TK animals and Recovery animals
+    # LB_tk_recovery_filtered <- max_visitdy_df %>%
+    #   dplyr::filter(USUBJID %in% master_compiledata$USUBJID)
 
     # Perform a left join to match USUBJID and get ARMCD ## 020924
     #-inner_join() used instead of left_join()#199
