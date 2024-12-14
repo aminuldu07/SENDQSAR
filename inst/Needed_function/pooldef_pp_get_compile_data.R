@@ -138,9 +138,8 @@ get_compile_data <- function(studyid = NULL,
     ds <- fetch_domain_data(db_connection, 'ds', studyid)
     ts <- fetch_domain_data(db_connection, 'ts', studyid)
     tx <- fetch_domain_data(db_connection, 'tx', studyid)
-    pc <- fetch_domain_data(db_connection, 'pc', studyid)
-    # pp <- fetch_domain_data(db_connection, 'pp', studyid)
-    # pooldef <- fetch_domain_data(db_connection, 'pooldef', studyid)
+    pp <- fetch_domain_data(db_connection, 'pp', studyid)
+    pooldef <- fetch_domain_data(db_connection, 'pooldef', studyid)
 
     # Close the database connection
     DBI::dbDisconnect(db_connection)
@@ -154,9 +153,8 @@ get_compile_data <- function(studyid = NULL,
     ds <- haven::read_xpt(fs::path(path,'ds.xpt'))
     ts <- haven::read_xpt(fs::path(path,'ts.xpt'))
     tx <- haven::read_xpt(fs::path(path,'tx.xpt'))
-    pc <- fetch_domain_data(db_connection, 'pc', studyid)
-    # pp <- haven::read_xpt(fs::path(path,'pp.xpt'))
-    # pooldef <- haven::read_xpt(fs::path(path,'pooldef.xpt'))
+    pp <- haven::read_xpt(fs::path(path,'pp.xpt'))
+    pooldef <- haven::read_xpt(fs::path(path,'pooldef.xpt'))
 
  }
 
@@ -230,26 +228,14 @@ get_compile_data <- function(studyid = NULL,
     # Step-3 :: # REMOVE THE TK ANIMALS IF SPECIES IS RAT from the~~~~~~~~~~~
    # "recovery_cleaned_CompileData"
     # Initialize an empty data frame to store the results
-
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #~~~~~~~~~~~~~~pc animal is tk animal~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    # tK_animals_df <- data.frame(PP_PoolID = character(),
-    #                             STUDYID = character(),
-    #                             USUBJID = character(),
-    #                             POOLID = character(),
-    #                             stringsAsFactors = FALSE)
-
-    tK_animals_df <- data.frame(STUDYID = character(),
+    tK_animals_df <- data.frame(PP_PoolID = character(),
+                                STUDYID = character(),
                                 USUBJID = character(),
-                                DOMAIN = character(),
-                                stringsAsFactors = FALSE)   #????????????????????????????????
+                                POOLID = character(),
+                                stringsAsFactors = FALSE)
 
     # Initialize a data frame to keep track of studies with no POOLID
-    # no_poolid_studies <- data.frame(STUDYID = character(),
-    #                                 stringsAsFactors = FALSE)
-
-    no_pc_studies <- data.frame(STUDYID = character(),
+    no_poolid_studies <- data.frame(STUDYID = character(),
                                     stringsAsFactors = FALSE)
 
     # check for the species [# Check if the current study is a rat]
@@ -257,42 +243,36 @@ get_compile_data <- function(studyid = NULL,
 
     Species_lower <- tolower(Species)
 
-    if (Species_lower %in% c("rat", "mouse")) {
-      # # Create TK individuals for "Rat" studies
-      # # [Retrieve unique pool IDs (TKPools) from pp table]
-      # TKPools <- unique(pp$POOLID) # why not pooldef poold,
-
-      tk_animals_usubjid <- pc[ ,c("STUDYID", "USUBJID", "DOMAIN")]
+    if ("rat" %in% Species_lower) {
+      # Create TK individuals for "Rat" studies
+      # [Retrieve unique pool IDs (TKPools) from pp table]
+      TKPools <- unique(pp$POOLID) # why not pooldef poold,
 
       # Check if TKPools is not empty
-      #if (length(TKPools) > 0) {
-      if (length(tk_animals_usubjid) > 0) {
+      if (length(TKPools) > 0) {
       # For each pool ID in TKPools, retrieve corresponding rows from pooldef table
-        # for (pool_id in TKPools) {
-        #   # pooldef_data == unique pp$POOLID
-        #   pooldef_data <- pooldef[pooldef$POOLID == pool_id, ] # maching unique POOLID of pooldef and pp
-        #
-        #   # Create a temporary data frame if pooldef_data is not empty
-        #   if (nrow(pooldef_data) > 0) {
-        #     temp_df <- data.frame(PP_PoolID = pool_id,
-        #                           STUDYID = pooldef_data$STUDYID,
-        #                           USUBJID = pooldef_data$USUBJID,
-        #                           POOLID = pooldef_data$POOLID,
-        #                           stringsAsFactors = FALSE)
-        #
-        #     # Append the temporary data frame to the results data frame
-        #     tK_animals_df <- rbind(tK_animals_df, temp_df)
-        #   }
-        # }
+        for (pool_id in TKPools) {
+          # pooldef_data == unique pp$POOLID
+          pooldef_data <- pooldef[pooldef$POOLID == pool_id, ] # maching unique POOLID of pooldef and pp
 
-        tK_animals_df <- rbind(tK_animals_df, tk_animals_usubjid)
+          # Create a temporary data frame if pooldef_data is not empty
+          if (nrow(pooldef_data) > 0) {
+            temp_df <- data.frame(PP_PoolID = pool_id,
+                                  STUDYID = pooldef_data$STUDYID,
+                                  USUBJID = pooldef_data$USUBJID,
+                                  POOLID = pooldef_data$POOLID,
+                                  stringsAsFactors = FALSE)
 
+            # Append the temporary data frame to the results data frame
+            tK_animals_df <- rbind(tK_animals_df, temp_df)
+          }
+        }
       } else {
         # Retrieve STUDYID for the current study
         current_study_id <- bw$STUDYID[1]
 
         # Add study to no_poolid_studies dataframe
-        no_pc_studies <- rbind(no_pc_studies,
+        no_poolid_studies <- rbind(no_poolid_studies,
                                    data.frame(STUDYID = current_study_id,
                                               stringsAsFactors = FALSE))
       }
@@ -303,9 +283,10 @@ get_compile_data <- function(studyid = NULL,
       #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     } else {
       # Create a empty data frame named "tK_animals_df"
-      tK_animals_df <- data.frame(STUDYID = character(),
+      tK_animals_df <- data.frame(PP_PoolID = character(),
+                                  STUDYID = character(),
                                   USUBJID = character(),
-                                  DOMAIN = character(),
+                                  POOLID = character(),
                                   stringsAsFactors = FALSE)
     }
 

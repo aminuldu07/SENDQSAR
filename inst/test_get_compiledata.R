@@ -6,10 +6,10 @@ rm(list = ls())
 devtools::load_all(".")
 
 ##### compile_data_----------------------------
-# R_SQL_compile_data <- get_compile_data(studyid='5003635',
-#                                        path_db='C:\\Users\\MdAminulIsla.Prodhan\\OneDrive - FDA\\Documents\\TestDB.db',
-#                                        fake_study = FALSE,
-#                                        use_xpt_file = FALSE)
+R_SQL_compile_data <- get_compile_data(studyid='5003635',
+                                       path_db='C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/TestDB.db',
+                                       fake_study = FALSE,
+                                       use_xpt_file = FALSE)
 
 
 R_XPT_compile_data <- get_compile_data(studyid= NULL,
