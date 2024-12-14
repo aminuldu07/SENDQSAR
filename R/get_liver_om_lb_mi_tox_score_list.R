@@ -1,3 +1,5 @@
+
+
 #' @title get_liver_om_lb_mi_tox_score_list
 #' @param selected_studies Mandatory, character \cr
 #'   Studyid number
@@ -107,6 +109,9 @@ if(output_individual_scores ) {
                                 stringsAsFactors = FALSE)
 }
 
+  #---------------------------------------------------------------------------
+  #---------------------------------------------------------------------------
+
   # iterate over studyid or each xpt folder
 for (studyid in selected_studies){
 
@@ -114,7 +119,7 @@ for (studyid in selected_studies){
 
   if( multiple_xpt_folder == TRUE) {
 
-    path_db <- studyid
+    path_db <- studyid # giving the path of the xpt folder
 
     print(path_db)
    }
@@ -629,6 +634,9 @@ for (studyid in selected_studies){
   })
 
 }
+
+  #---------------------------------------------------------------------------
+  #---------------------------------------------------------------------------
 
   if (output_individual_scores) {
 
