@@ -154,7 +154,7 @@ get_compile_data <- function(studyid = NULL,
     ds <- haven::read_xpt(fs::path(path,'ds.xpt'))
     ts <- haven::read_xpt(fs::path(path,'ts.xpt'))
     tx <- haven::read_xpt(fs::path(path,'tx.xpt'))
-    pc <- fetch_domain_data(db_connection, 'pc', studyid)
+    pc <- haven::read_xpt(fs::path(path,'pc.xpt'))
     # pp <- haven::read_xpt(fs::path(path,'pp.xpt'))
     # pooldef <- haven::read_xpt(fs::path(path,'pooldef.xpt'))
 
@@ -234,20 +234,11 @@ get_compile_data <- function(studyid = NULL,
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #~~~~~~~~~~~~~~pc animal is tk animal~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-    # tK_animals_df <- data.frame(PP_PoolID = character(),
-    #                             STUDYID = character(),
-    #                             USUBJID = character(),
-    #                             POOLID = character(),
-    #                             stringsAsFactors = FALSE)
-
     tK_animals_df <- data.frame(STUDYID = character(),
                                 USUBJID = character(),
                                 DOMAIN = character(),
-                                stringsAsFactors = FALSE)   #????????????????????????????????
+                                stringsAsFactors = FALSE)
 
-    # Initialize a data frame to keep track of studies with no POOLID
-    # no_poolid_studies <- data.frame(STUDYID = character(),
-    #                                 stringsAsFactors = FALSE)
 
     no_pc_studies <- data.frame(STUDYID = character(),
                                     stringsAsFactors = FALSE)
@@ -258,32 +249,12 @@ get_compile_data <- function(studyid = NULL,
     Species_lower <- tolower(Species)
 
     if (Species_lower %in% c("rat", "mouse")) {
-      # # Create TK individuals for "Rat" studies
-      # # [Retrieve unique pool IDs (TKPools) from pp table]
-      # TKPools <- unique(pp$POOLID) # why not pooldef poold,
+      # # Create TK individuals for "Rat"/"mouse" studies
 
       tk_animals_usubjid <- pc[ ,c("STUDYID", "USUBJID", "DOMAIN")]
 
-      # Check if TKPools is not empty
-      #if (length(TKPools) > 0) {
+      # Check if tk_animals_usubjid  is not empty
       if (length(tk_animals_usubjid) > 0) {
-      # For each pool ID in TKPools, retrieve corresponding rows from pooldef table
-        # for (pool_id in TKPools) {
-        #   # pooldef_data == unique pp$POOLID
-        #   pooldef_data <- pooldef[pooldef$POOLID == pool_id, ] # maching unique POOLID of pooldef and pp
-        #
-        #   # Create a temporary data frame if pooldef_data is not empty
-        #   if (nrow(pooldef_data) > 0) {
-        #     temp_df <- data.frame(PP_PoolID = pool_id,
-        #                           STUDYID = pooldef_data$STUDYID,
-        #                           USUBJID = pooldef_data$USUBJID,
-        #                           POOLID = pooldef_data$POOLID,
-        #                           stringsAsFactors = FALSE)
-        #
-        #     # Append the temporary data frame to the results data frame
-        #     tK_animals_df <- rbind(tK_animals_df, temp_df)
-        #   }
-        # }
 
         tK_animals_df <- rbind(tK_animals_df, tk_animals_usubjid)
 
@@ -296,11 +267,7 @@ get_compile_data <- function(studyid = NULL,
                                    data.frame(STUDYID = current_study_id,
                                               stringsAsFactors = FALSE))
       }
-      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      # tk animals is basically where, pp$POOLID == pooldef$POOLID
-      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-      #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
     } else {
       # Create a empty data frame named "tK_animals_df"
       tK_animals_df <- data.frame(STUDYID = character(),
