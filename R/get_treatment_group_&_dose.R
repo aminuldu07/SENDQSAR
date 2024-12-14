@@ -87,45 +87,46 @@ get_treatment_group_amin <- function(studyid = NULL,
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Identify recovery and treatment groups in non-TK groups
     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    if(st_species =="RAT" && "MOUSE") {
+    if(st_species %in% c("RAT","MOUSE")) {
+    #if(st_species =="RAT") {
 
-      # Initialize an empty data frame to store the results
-      tK_animals_df <- data.frame(PP_PoolID = character(),
-                                  STUDYID = character(),
-                                  USUBJID = character(),
-                                  POOLID = character(),
-                                  stringsAsFactors = FALSE)
+      # # Initialize an empty data frame to store the results
+      # tK_animals_df <- data.frame(PP_PoolID = character(),
+      #                             STUDYID = character(),
+      #                             USUBJID = character(),
+      #                             POOLID = character(),
+      #                             stringsAsFactors = FALSE)
 
       # Create TK individuals for "Rat" studies
       # [Retrieve unique pool IDs (TKPools) from pp table]
-      TKPools <- unique(pp$POOLID) # why not pooldef poold,
+      # TKPools <- unique(pp$POOLID) # why not pooldef poold,
 
-      # Check if TKPools is not empty
-      if (length(TKPools) > 0) {
-        # For each pool ID in TKPools, retrieve corresponding rows from pooldef table
-        for (pool_id in TKPools) {
-          # pooldef_data == unique pp$POOLID
-          pooldef_data <- pooldef[pooldef$POOLID == pool_id, ] # maching unique POOLID of pooldef and pp
+      # # Check if TKPools is not empty
+      # if (length(TKPools) > 0) {
+      #   # For each pool ID in TKPools, retrieve corresponding rows from pooldef table
+      #   for (pool_id in TKPools) {
+      #     # pooldef_data == unique pp$POOLID
+      #     pooldef_data <- pooldef[pooldef$POOLID == pool_id, ] # maching unique POOLID of pooldef and pp
+      #     # need to incorporate pc group~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      #
+      #     # Create a temporary data frame if pooldef_data is not empty
+      #     if (nrow(pooldef_data) > 0) {
+      #       temp_df <- data.frame(PP_PoolID = pool_id,
+      #                             STUDYID = pooldef_data$STUDYID,
+      #                             USUBJID = pooldef_data$USUBJID,
+      #                             POOLID = pooldef_data$POOLID,
+      #                             stringsAsFactors = FALSE)
+      #
+      #       # Append the temporary data frame to the results data frame
+      #       tK_animals_df <- rbind(tK_animals_df, temp_df)
+      #     }
+      #   }
+      #
+      # }
 
-          # Create a temporary data frame if pooldef_data is not empty
-          if (nrow(pooldef_data) > 0) {
-            temp_df <- data.frame(PP_PoolID = pool_id,
-                                  STUDYID = pooldef_data$STUDYID,
-                                  USUBJID = pooldef_data$USUBJID,
-                                  POOLID = pooldef_data$POOLID,
-                                  stringsAsFactors = FALSE)
-
-            # Append the temporary data frame to the results data frame
-            tK_animals_df <- rbind(tK_animals_df, temp_df)
-          }
-        }
-
-      }
-
-
-      # filter dm sujid by the temp_df for getting the setcd
-      setcd_dm_tk_less <- dm[dm$USUBJID %in% tK_animals_df$USUBJID, c ("STUDYID", "USUBJID", "SETCD")]
-
+      ## filter dm sujid by the temp_df for getting the setcd
+      #setcd_dm_tk_less <- dm[dm$USUBJID %in% tK_animals_df$USUBJID, c ("STUDYID", "USUBJID", "SETCD")]
+      setcd_dm_tk_less <- dm[dm$USUBJID %in% pc$USUBJID, c ("STUDYID", "USUBJID", "SETCD")]
       tk_group <- unique(setcd_dm_tk_less$SETCD)
 
       not_tk_group <- number_of_setcd[which(!number_of_setcd %in% tk_group)]
@@ -261,6 +262,12 @@ get_treatment_group_amin <- function(studyid = NULL,
 
         # Append the current data to the main data frame
         Dose_Level_df <- rbind(Dose_Level_df, not_RAT_dose_level_df)
+
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        # Convert the unit into a harmonized unit
+        #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 
       }
 

@@ -1,7 +1,7 @@
 
 
 
-get_treatment_group <- function(studyid = NULL,
+get_treatment_group_myl <- function(studyid = NULL,
                          path_db,
                          fake_study=FALSE,
                          use_xpt_file = FALSE,
@@ -70,7 +70,8 @@ get_treatment_group <- function(studyid = NULL,
   if(length(st_species)!= 0) {
     # processing RAT species~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     # Handle "RAT" species specifically
-    if(st_species =="RAT") {
+    #if(st_species =="RAT") {
+    if(st_species %in% c("RAT","MOUSE")) {
       # see if tkdesc in txparmcd
       parmcd <- unique(tx[['TXPARMCD']])
       if('TKDESC' %in% parmcd){
@@ -109,12 +110,15 @@ get_treatment_group <- function(studyid = NULL,
         #~~~~~~~~~using "PC" domain data ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
         #when tkdes is not in parmcd at tx
         #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+browser()
         tk_group <- c()
+
+        number_of_setcd <- c("1TK")
 
         for(i in 1:length(number_of_setcd)){
           set_cd  <- number_of_setcd[i]
-          subjid <- unique(dm[SETCD==set_cd, USUBJID])
+          #subjid <- unique(dm[SETCD==set_cd, USUBJID])
+          subjid <- unique(dm[dm$SETCD == set_cd, "USUBJID"])
 
           if(pc$USUBJID[1]!='') {
             uniq_pc_subj <- unique(pc$USUBJID)
@@ -139,6 +143,7 @@ get_treatment_group <- function(studyid = NULL,
           }
 
         }
+        browser()
         not_tk <- number_of_setcd[which(!number_of_setcd %in% tk_group)]
       }
       ## number_of_setcd
@@ -192,7 +197,59 @@ browser()
     ## print(four)
   }
 
-  # print(trtm_group)
+
+
+
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# print(trtm_group)
   # list_return[[study]][['treatment_group']] <- trtm_group
   # list_return[[study]][['recovery_group']] <- recv_group
 #}
