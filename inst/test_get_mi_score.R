@@ -22,8 +22,8 @@ fake_T_xpt_T_mi_score = get_mi_score(studyid=NULL,
 
 
 
-real_sqlite_mi_score <- get_mi_score(studyid="5003635",
-                                     path_db="C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/TestDB.db",
+real_sqlite_mi_score <- get_mi_score(studyid="876",
+                                     path_db="C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/TestDB.db",
                                      fake_study=FALSE,
                                      use_xpt_file=FALSE,
                                      master_compiledata=NULL,

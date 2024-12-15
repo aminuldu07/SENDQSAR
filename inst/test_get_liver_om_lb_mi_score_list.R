@@ -9,27 +9,27 @@ devtools::load_all(".")
 
 path_db='C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/TestDB.db'
 
-#selected_studies <- c("2170016")
+studyid_or_studyids  <- c("2170016", "876")
 
-
-
-R_SQL_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list  (selected_studies = selected_studies,
-                                               path_db = path_db,
-                                               fake_study = FALSE,
-                                               use_xpt_file = FALSE,
-                                               multiple_xpt_folder = FALSE,
-                                               output_individual_scores = FALSE,
-                                               output_zscore_by_USUBJID = FALSE)
+R_SQL_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = studyid_or_studyids,
+                                                       path_db = path_db,
+                                                       fake_study = FALSE,
+                                                       use_xpt_file = FALSE,
+                                                       multiple_xpt_folder = FALSE,
+                                                       output_individual_scores = FALSE,
+                                                       output_zscore_by_USUBJID = FALSE)
 
 # For multiple xpt folder
+rm(list = ls())
+devtools::load_all(".")
+path_db='C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/real_xpt_dir'
+studyid_or_studyids <- list.dirs(path_db , full.names = TRUE, recursive = FALSE)
 
-selected_studies <- list.dirs(path_db , full.names = TRUE, recursive = FALSE)
-
-R_XPT_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list  (selected_studies = selected_studies,
-                                                         path_db = 'C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/FAKE_DATABASES/real_xpt_dir/IND051292_1017-3581',
+R_XPT_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list  (studyid_or_studyids = studyid_or_studyids,
+                                                         path_db = path_db,
                                                          fake_study = FALSE,
-                                                         use_xpt_file = FALSE,
-                                                         multiple_xpt_folder = FALSE,
+                                                         use_xpt_file = TRUE,
+                                                         multiple_xpt_folder = TRUE,
                                                          output_individual_scores = FALSE,
                                                          output_zscore_by_USUBJID = FALSE)
 

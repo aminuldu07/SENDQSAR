@@ -1,7 +1,7 @@
 
 
 #' @title get_liver_om_lb_mi_tox_score_list
-#' @param selected_studies Mandatory, character \cr
+#' @param studyid_or_studyids  Mandatory, character \cr
 #'   Studyid number
 #' @param path_db Mandatory, character \cr
 #'   path of database
@@ -25,7 +25,7 @@
 
 
 
-get_liver_om_lb_mi_tox_score_list <- function (selected_studies,
+get_liver_om_lb_mi_tox_score_list <- function (studyid_or_studyids = FALSE,
                                                path_db,
                                                fake_study = FALSE,
                                                use_xpt_file = FALSE,
@@ -113,8 +113,8 @@ if(output_individual_scores ) {
   #---------------------------------------------------------------------------
 
   # iterate over studyid or each xpt folder
-for (studyid in selected_studies){
-
+#for (studyid in selected_studies){
+for (studyid in studyid_or_studyids ){
   print(studyid)
 
   if( multiple_xpt_folder == TRUE) {
