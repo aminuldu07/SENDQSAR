@@ -29,9 +29,26 @@ R_XPT_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list  (studyid_or_studyids = s
                                                          path_db = path_db,
                                                          fake_study = FALSE,
                                                          use_xpt_file = TRUE,
-                                                         multiple_xpt_folder = TRUE,
+                                                         #multiple_xpt_folder = TRUE,
                                                          output_individual_scores = FALSE,
                                                          output_zscore_by_USUBJID = FALSE)
+
+# For multiple xpt folder
+rm(list = ls())
+devtools::load_all(".")
+path_db='C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/pfda_challenge_data'
+studyid_or_studyids <- list.dirs(path_db , full.names = TRUE, recursive = FALSE)
+
+fake_XPT_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list  (studyid_or_studyids = studyid_or_studyids,
+                                                         path_db = path_db,
+                                                         fake_study = TRUE,
+                                                         use_xpt_file = TRUE,
+                                                         #multiple_xpt_folder = TRUE,
+                                                         output_individual_scores = FALSE,
+                                                         output_zscore_by_USUBJID = FALSE)
+
+
+
 
 
 selected_studies <- c("10663")
