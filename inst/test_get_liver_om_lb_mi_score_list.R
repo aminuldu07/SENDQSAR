@@ -9,17 +9,17 @@ devtools::load_all(".")
 
 path_db='C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/TestDB.db'
 
-studyid_or_studyids  <- c("2170016", "876")
+studyid_or_studyids  <- c("2170016")
 
 R_SQL_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = studyid_or_studyids,
                                                        path_db = path_db,
                                                        fake_study = FALSE,
                                                        use_xpt_file = FALSE,
-                                                       multiple_xpt_folder = FALSE,
+                                                       #multiple_xpt_folder = FALSE,
                                                        output_individual_scores = FALSE,
-                                                       output_zscore_by_USUBJID = FALSE)
+                                                       output_zscore_by_USUBJID = TRUE)
 
-# For multiple xpt folder
+# For multiple xpt folder with real data
 rm(list = ls())
 devtools::load_all(".")
 path_db='C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/real_xpt_dir'
@@ -33,7 +33,7 @@ R_XPT_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list  (studyid_or_studyids = s
                                                          output_individual_scores = FALSE,
                                                          output_zscore_by_USUBJID = FALSE)
 
-# For multiple xpt folder
+# For multiple xpt folder with fake data
 rm(list = ls())
 devtools::load_all(".")
 path_db='C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/pfda_challenge_data'
