@@ -65,35 +65,35 @@ get_random_forest_model_amin2 <- function(Data=NULL){
   #}
 browser()
 #########--------------####### Random Forest Modeling ########################
-###-----------------------rfData preparation------------------------------------
-  rfData <- Data[, -1]
-  rfData[which(rfData$Target_Organ == 'Liver'), 1] <- 1
-  rfData[which(rfData$Target_Organ == 'not_Liver'), 1] <- 0
-  # rfData[,1] <- as.numeric(rfData[,1])
-  rfData[,1] <- factor(rfData[,1], levels = c(1, 0))
-
-  # removeIndex <- which(colnames(rfData) %in% c('INFILTRATE'))
-  # rfData <- rfData[, -removeIndex]
-
-#######-----------------------missing values imputation---------------------------
-   ##missing values imputation
-  if (Impute == T) {
-    rfData <- randomForest::rfImpute(indst_TO ~ ., rfData)
-
-    if (Round == T) {
-      zscoreIndex <- c(grep('avg_', colnames(rfData)), grep('liver', colnames(rfData)))
-      for (i in zscoreIndex) {
-        rfData[, i] <- floor(rfData[, i])
-        maxIndex <- which(rfData[, i] > 5)
-        rfData[maxIndex, i] <- 5
-      }
-      histoIndex <- which(substr(colnames(rfData), 1, 1) %in% toupper(letters))
-      histoIndex <- histoIndex[-1]
-      for (i in histoIndex) {
-        rfData[, i] <- ceiling(rfData[, i])
-      }
-    }
-  }
+# ###-----------------------rfData preparation------------------------------------
+#   rfData <- Data[, -1]
+#   rfData[which(rfData$Target_Organ == 'Liver'), 1] <- 1
+#   rfData[which(rfData$Target_Organ == 'not_Liver'), 1] <- 0
+#   # rfData[,1] <- as.numeric(rfData[,1])
+#   rfData[,1] <- factor(rfData[,1], levels = c(1, 0))
+#
+#   # removeIndex <- which(colnames(rfData) %in% c('INFILTRATE'))
+#   # rfData <- rfData[, -removeIndex]
+#
+# #######-----------------------missing values imputation---------------------------
+#    ##missing values imputation
+#   if (Impute == T) {
+#     rfData <- randomForest::rfImpute(indst_TO ~ ., rfData)
+#
+#     if (Round == T) {
+#       zscoreIndex <- c(grep('avg_', colnames(rfData)), grep('liver', colnames(rfData)))
+#       for (i in zscoreIndex) {
+#         rfData[, i] <- floor(rfData[, i])
+#         maxIndex <- which(rfData[, i] > 5)
+#         rfData[maxIndex, i] <- 5
+#       }
+#       histoIndex <- which(substr(colnames(rfData), 1, 1) %in% toupper(letters))
+#       histoIndex <- histoIndex[-1]
+#       for (i in histoIndex) {
+#         rfData[, i] <- ceiling(rfData[, i])
+#       }
+#     }
+#   }
 
 ##------------------------------------------------------------------------
 

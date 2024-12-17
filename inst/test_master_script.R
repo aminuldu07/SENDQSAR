@@ -35,9 +35,9 @@ column_harmonized_liverscr_df <- get_col_harmonized_scores_df(liver_score_data_f
 
 Data <- column_harmonized_liverscr_df
 
-histogram <- make_histogram(Data =Data,
-                           Round=TRUE,
-                           generateBarPlot= TRUE)
+# histogram <- make_histogram(Data =Data,
+#                            Round=TRUE,
+#                            generateBarPlot= TRUE)
 
 # add "studyid" description in Data data frame
 # Should be two column
@@ -47,9 +47,9 @@ histogram <- make_histogram(Data =Data,
 fake_80_MD <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_80_MD.csv",
                        header = TRUE, sep = ",", stringsAsFactors = FALSE)
 
-fake_80_MD $STUDYID <- as.character(fake_80_MD$STUDYID)
+data_for_modeling <- get_model_data(scores_df = Data,
+                           studyid_metadata = fake_80_MD,
+                           Impute = TRUE,
+                           Round = TRUE)
 
-# Join metadata with the data
-rf_Data <- dplyr::left_join(fake_80_MD,Data, by = "STUDYID"  )
-
-rf_model <- get_random_forest_model_amin2(Data=rf_Data)
+#rf_model <- get_random_forest_model_amin2(Data=rf_Data)
