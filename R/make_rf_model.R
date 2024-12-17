@@ -15,8 +15,10 @@
 
 
 
-get_random_forest_model <- function(Liver_get_liver_om_lb_mi_tox_score_list,
-                                    not_Liver_get_liver_om_lb_mi_tox_score_list){
+# get_random_forest_model <- function(Liver_get_liver_om_lb_mi_tox_score_list,
+#                                     not_Liver_get_liver_om_lb_mi_tox_score_list){
+get_random_forest_model_amin2 <- function(Data=NULL){
+
 
   `%ni%` <- Negate('%in%')
   Impute <- T
@@ -35,78 +37,38 @@ get_random_forest_model <- function(Liver_get_liver_om_lb_mi_tox_score_list,
   indeterminateLower <- .25
   Type = 1
   hyperparameter_tuning <- F
-  removeEndpoints <- c('Infiltrate', 'UNREMARKABLE', 'THIKENING', 'POSITIVE')
+  # removeEndpoints <- c('Infiltrate', 'UNREMARKABLE', 'THIKENING', 'POSITIVE')
+  #
+  #
+  # Data <- column_harmonized_liver_scores
+  #
+  # removeIndex <- which(colnames(Data) %in% removeEndpoints)
+  #
+  # Data <- Data[, -removeIndex]
 
 
-  Data <- column_harmonized_liver_scores
-
-  removeIndex <- which(colnames(Data) %in% removeEndpoints)
-
-  Data <- Data[, -removeIndex]
-
-
-
-  if (Round == T) {
-    zscoreIndex <- c(grep('avg_', colnames(Data)), grep('liver', colnames(Data)))
-    for (i in zscoreIndex) {
-      Data[, i] <- floor(Data[, i])
-      maxIndex <- which(Data[, i] > 5)
-      Data[maxIndex, i] <- 5
-    }
-    histoIndex <- which(substr(colnames(Data), 1, 1) %in% toupper(letters))
-    histoIndex <- histoIndex[-1]
-    for (i in histoIndex) {
-      Data[, i] <- ceiling(Data[, i])
-    }
+  # Generate data if not provided
+  if (is.null(Data)) {
+    #---------------------------------------------------------------------
+    data <- generate_data() # Replace with your data-generating function
+    #---------------------------------------------------------------------
   }
 
-  columnSums <- sort(colSums(Data[,3:ncol(Data)], na.rm = T), decreasing = T)
-  Data[,3:ncol(Data)] <- Data[, names(columnSums)]
-  colnames(Data)[3:ncol(Data)] <- names(columnSums)
-
-
-
-   #write.csv(Data, 'mergedData.csv', row.names = F)
-  ##---------------
-  if (generateBarPlot == T) {
-
-    Finding <- NULL
-    LIVER <- NULL
-    Value <- NULL
-    for (finding in colnames(Data)[3:ncol(Data)]) {
-
-      Finding <- c(Finding, finding)
-      LIVER <- c(LIVER, 'Y')
-      Value <- c(Value, mean(Data[which(Data$indst_TO == "Liver"), finding], na.rm = T))
-
-      Finding <- c(Finding, finding)
-      LIVER <- c(LIVER, 'N')
-      Value <- c(Value, mean(Data[which(Data$indst_TO != "Liver"), finding], na.rm = T))
-
-    }
-
-    plotData <- as.data.frame(cbind(Finding, LIVER, Value))
-    plotData$LIVER <- factor(plotData$LIVER)
-    plotData$Finding <- factor(plotData$Finding)
-    plotData$Value = as.numeric(plotData$Value)
-    # plotData$Value = log(as.numeric(plotData$Value), base = 10)
-
-    ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~check and double check
-    p <- ggplot2::ggplot(plotData, ggplot2::aes(x = Finding, y = Value, fill = LIVER)) +
-      ggplot2::geom_bar(stat="identity", position = 'dodge') +
-      ggplot2::theme(text = ggplot2::element_text(size = 20),
-            axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust=1)) +
-      ggplot2::ylab('Average Score')
-    print(p)
+  #---------------------------------------------------------------------------
+  # Check if data is a valid data frame
+  if (!is.data.frame(Data)) {
+    stop("The input data must be a data frame.")
   }
+  #---------------------------------------------------------------------------
+
 
   #}
-
+browser()
 #########--------------####### Random Forest Modeling ########################
 ###-----------------------rfData preparation------------------------------------
-  rfData <- Data[, -2]
-  rfData[which(rfData$indst_TO == 'Liver'), 1] <- 1
-  rfData[which(rfData$indst_TO == 'not_Liver'), 1] <- 0
+  rfData <- Data[, -1]
+  rfData[which(rfData$Target_Organ == 'Liver'), 1] <- 1
+  rfData[which(rfData$Target_Organ == 'not_Liver'), 1] <- 0
   # rfData[,1] <- as.numeric(rfData[,1])
   rfData[,1] <- factor(rfData[,1], levels = c(1, 0))
 

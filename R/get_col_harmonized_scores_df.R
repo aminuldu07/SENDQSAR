@@ -21,7 +21,7 @@ get_col_harmonized_scores_df <- function(liver_score_data_frame){
 #write.csv(Data, 'mergedData.csv', row.names = F)
 
   ###-----------column harmonization of "liver_scores"-------------
-
+  liver_scores <- liver_score_data_frame
   # Replace spaces and commas in column names with dots
   colnames(liver_scores) <- gsub(' ', '.', colnames(liver_scores))
   colnames(liver_scores) <- gsub(',', '.', colnames(liver_scores))
@@ -63,20 +63,18 @@ get_col_harmonized_scores_df <- function(liver_score_data_frame){
   liver_scores <- liver_scores[,-findings2replaceIndex]
 
  # rename the "liver_scores"
-  column_harmonized_liver_scores <- liver_scores
+  Data <- liver_scores
 
   removeEndpoints <- c('Infiltrate', 'UNREMARKABLE', 'THIKENING', 'POSITIVE')
 
 
-  Data <- column_harmonized_liver_scores
+  #Data <- column_harmonized_liver_scores
 
   removeIndex <- which(colnames(Data) %in% removeEndpoints)
 
   Data <- Data[, -removeIndex]
 
-print(dim(liver_scores))
-
-  return(column_harmonized_liver_scores)
+  return(as.data.frame(Data))
 }
 
 
