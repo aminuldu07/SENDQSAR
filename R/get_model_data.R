@@ -5,7 +5,8 @@ prepare_data_and_tune_hyperparameters <- function(scores_df,
                                                   Round =FALSE,
                                                   holdback,
                                                   Undersample = FALSE,
-                                                  hyperparameter_tuning = FALSE) {
+                                                  hyperparameter_tuning = FALSE,
+                                                  correction_method) {
 
 
 
@@ -166,7 +167,7 @@ prepare_data_and_tune_hyperparameters <- function(scores_df,
 
   }
 
-  if (flipped_or_prunned) {
+  if (c("flip","prune" %in% correction_method)) {
     rfData <- readRDS(rfDataRDS) # (if data were flipped or prunned)
   } else {
     return(rfData=rfData)

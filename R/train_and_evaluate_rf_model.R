@@ -1,9 +1,26 @@
-train_and_evaluate_rf_model <- function(rfData,
+train_and_evaluate_rf_model <- function(scores_df,
+                                        studyid_metadata,
+                                        Impute = FALSE,
+                                        Round =FALSE,
+                                        holdback,
+                                        Undersample = FALSE,
+                                        hyperparameter_tuning = FALSE,
+                                        correction_method,
                                         testReps,
                                         best.m,
                                         Undersample=FALSE) {
 
-    rfData <- rfData
+    list_rfData_best_m <- prepare_data_and_tune_hyperparameters(scores_df,
+                                                    studyid_metadata,
+                                                    Impute = FALSE,
+                                                    Round =FALSE,
+                                                    holdback,
+                                                    Undersample = FALSE,
+                                                    hyperparameter_tuning = FALSE,
+                                                    correction_method)
+
+    rfData <- "need to find"
+    best.m <- "need to find"
 
     # Initialize model performace metric trackers
     Sensitivity <- NULL
@@ -33,7 +50,12 @@ train_and_evaluate_rf_model <- function(rfData,
     #remove 'gini' from the previous iteration
     if (exists('gini')) {rm(gini)}
 
+
+    #-------------------------------------------------------------------
     # model building and testing----------------------------------------
+    #-------------------------------------------------------------------
+
+
     # Iterate through test repetitions----------------------------------
     for (i in seq(testReps)) {
       if (i == 1) {
@@ -52,7 +74,7 @@ train_and_evaluate_rf_model <- function(rfData,
       # ind <- sample(2, nrow(rfData), replace = T, prob = c((1- testHoldBack), testHoldBack))
       train <- rfData[trainIndex,]
 
-      train_data_two <- train
+      #train_data_two <- train
 
       test <- rfData[testIndex,]
 
@@ -60,9 +82,8 @@ train_and_evaluate_rf_model <- function(rfData,
       #                                     importance = F, ntree = 500, proximity = T)
 
 
-      # Perform undersampling if enabled
+      # Perform under sampling if enabled
       if (Undersample == T) {
-
         posIndex <- which(train[,1] == 1)
         nPos <- length(posIndex)
         # trainIndex <- c(posIndex, sample(which(train[,1] == 0), nPos, replace = F))
@@ -71,23 +92,25 @@ train_and_evaluate_rf_model <- function(rfData,
         test <- rbind(train[-trainIndex,], test)
       }
 
-      train_data_two <- train
+      #train_data_two <- train
 
 
-      #model building with current train data
+      #model building with current iteration train data
       # Train Random Forest model--------------------------------------------
       rf <- randomForest::randomForest(indst_TO ~ ., data=train, mytry = best.m,
                                        importance = T, ntree = 500, proximity = T)
 
       print(rf)
 
+      #----------------------------------------------------------------------
       #predictions with current model  with current test data
       # @___________________this_line_has_problems_______
       # Predict probabilities on test data
+      #----------------------------------------------------------------------
 
       p2r <- stats::predict(rf, test, type = 'prob')[,1]
 
-      #Store these predictions in a structured dataframe
+      #Store these predictions in a structured data frame
       rfTestData[names(p2r), i] <- as.numeric(p2r)
 
 
@@ -97,6 +120,9 @@ train_and_evaluate_rf_model <- function(rfData,
       #Identifying Indeterminate Predictions (Tracking Indeterminate Predictions)
       #Keeps track of the proportion of indeterminate predictions in each iteration
       #Proportion Tracking
+      #------------------------------------------------------------------------
+      #------------------------------------------------------------------------
+
       indeterminateIndex <- which((p2r < indeterminateUpper)&(p2r > indeterminateLower))
 
       #Calculating the Proportion of Indeterminate Predictions
@@ -164,15 +190,15 @@ train_and_evaluate_rf_model <- function(rfData,
     }
     ord <- order(imp[,1])
 
-    #------------------------------------------------------------------------
-    # Dotchart for top Variable Importance
-    #------------------------------------------------------------------------
-    dotchart(imp[ord, 1], xlab = colnames(imp)[1], ylab = "",
-             main = paste0('Top ', nrow(imp), ' - Variable Importance'))#, xlim = c(xmin, max(imp[, i])))
-    # varImpPlot(rf,
-    #            sort = T,
-    #            n.var = 20,
-    #            main = "Top 20 - Variable Importance")
+    # #------------------------------------------------------------------------
+    # # Dotchart for top Variable Importance
+    # #------------------------------------------------------------------------
+    # dotchart(imp[ord, 1], xlab = colnames(imp)[1], ylab = "",
+    #          main = paste0('Top ', nrow(imp), ' - Variable Importance'))#, xlim = c(xmin, max(imp[, i])))
+    # # varImpPlot(rf,
+    # #            sort = T,
+    # #            n.var = 20,
+    # #            main = "Top 20 - Variable Importance")
 
     return(list(metrics = metrics, rfData = rfData))
   }
