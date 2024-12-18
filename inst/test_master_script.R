@@ -34,7 +34,7 @@ fake80_liver_scores <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = s
 column_harmonized_liverscr_df <- get_col_harmonized_scores_df(liver_score_data_frame = fake80_liver_scores,
                                                               Round = TRUE)
 
-Data <- column_harmonized_liverscr_df
+#Data <- column_harmonized_liverscr_df
 
 # histogram <- make_histogram(Data =Data,
 #                            Round=TRUE,
@@ -45,8 +45,23 @@ Data <- column_harmonized_liverscr_df
 # First column "STUDYID"
 # Second column "indst_To"
 # Read the STUDYID metadata csv file
-fake_80_MD <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_80_MD.csv",
+fake_80_medata <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_80_MD.csv",
                        header = TRUE, sep = ",", stringsAsFactors = FALSE)
+
+
+rfData_and_best_m <- prepare_data_and_tune_hyperparameters( scores_df = column_harmonized_liverscr_df,
+                                                            studyid_metadata = fake_80_medata,
+                                                            Impute = TRUE,
+                                                            Round = TRUE,
+                                                            reps=1,
+                                                            holdback=0.75,
+                                                            Undersample = TRUE,
+                                                            hyperparameter_tuning = FALSE,
+                                                            error_correction_method = NULL)
+
+
+
+
 
 
 train_and_evaluate_rf_model <- train_and_evaluate_rf_model(scores_df = Data,

@@ -3,27 +3,28 @@ train_and_evaluate_rf_model <- function(scores_df,
                                         Impute = FALSE,
                                         Round =FALSE,
                                         reps, # from 0 to any numeric number
-                                        Undersample=FALSE,
-                                        holdback,
+                                        holdback, # either 1 or fraction value like 0.75 etc.
+                                        Undersample = FALSE,
                                         hyperparameter_tuning = FALSE,
-                                        error_correction_method, # Choose: "Flip" or "Prune" or "None"
+                                        error_correction_method = NULL,
                                         testReps,
                                         best.m) {
 
 
-  list_rfData_best_m <- prepare_data_and_tune_hyperparameters(scores_df = scores_df,
-                                                    studyid_metadata =studyid_metadata,
-                                                    Impute = FALSE,
-                                                    Round =FALSE,
-                                                    holdback,
-                                                    Undersample = FALSE,
-                                                    hyperparameter_tuning = FALSE,
-                                                    correction_method)
+  rfData_and_best_m <- prepare_data_and_tune_hyperparameters( scores_df = scores_df,
+                                                          studyid_metadata =studyid_metadata,
+                                                          Impute = Impute,
+                                                          Round =Round,
+                                                          reps=reps,
+                                                          holdback=holdback,
+                                                          Undersample = Undersampl,
+                                                          hyperparameter_tuning = hyperparameter_tuning,
+                                                          error_correction_method=error_correction_method)
 
-    rfData <- "need to find"
-    best.m <- "need to find"
+    rfData <- rfData_and_best_m[["rfData"]]
+    best.m <- rfData_and_best_m[["best.m"]]
 
-    # Initialize model performace metric trackers
+    # Initialize model performance metric trackers
     Sensitivity <- NULL
     Specificity <- NULL
     PPV <- NULL

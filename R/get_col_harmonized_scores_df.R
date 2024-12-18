@@ -106,7 +106,7 @@ get_col_harmonized_scores_df <- function(liver_score_data_frame,
       Data[, i] <- ceiling(Data[, i])
     }
   }
-browser()
+
   # Calculate the sum of values for each column in Data, starting from the 2nd column onwards
   # Exclude missing values (na.rm = TRUE) in the calculation
   columnSums <- sort(colSums(Data[,2:ncol(Data)], na.rm = T), decreasing = T) # This produced named attribute
