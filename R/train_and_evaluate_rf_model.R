@@ -2,16 +2,17 @@ train_and_evaluate_rf_model <- function(scores_df,
                                         studyid_metadata,
                                         Impute = FALSE,
                                         Round =FALSE,
+                                        reps, # from 0 to any numeric number
+                                        Undersample=FALSE,
                                         holdback,
-                                        Undersample = FALSE,
                                         hyperparameter_tuning = FALSE,
-                                        correction_method,
+                                        error_correction_method, # Choose: "Flip" or "Prune" or "None"
                                         testReps,
-                                        best.m,
-                                        Undersample=FALSE) {
+                                        best.m) {
 
-    list_rfData_best_m <- prepare_data_and_tune_hyperparameters(scores_df,
-                                                    studyid_metadata,
+
+  list_rfData_best_m <- prepare_data_and_tune_hyperparameters(scores_df = scores_df,
+                                                    studyid_metadata =studyid_metadata,
                                                     Impute = FALSE,
                                                     Round =FALSE,
                                                     holdback,

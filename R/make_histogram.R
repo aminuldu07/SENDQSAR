@@ -1,12 +1,15 @@
 
 make_histogram <- function(Data =NULL,
-                           Round=FALSE,
                            generateBarPlot= FALSE){
+
+
+
 
   # Generate data if not provided
   if (is.null(Data)) {
     #---------------------------------------------------------------------
-    data <- generate_data() # Replace with your data-generating function
+    Data <- get_col_harmonized_scores_df(liver_score_data_frame,
+                                                     Round = TRUE)
     #---------------------------------------------------------------------
   }
 
@@ -17,27 +20,6 @@ make_histogram <- function(Data =NULL,
   }
   #---------------------------------------------------------------------------
 
-   if (Round == T) {
-    zscoreIndex <- c(grep('avg_', colnames(Data)), grep('liver', colnames(Data)))
-    for (i in zscoreIndex) {
-      Data[, i] <- floor(Data[, i])
-      maxIndex <- which(Data[, i] > 5)
-      Data[maxIndex, i] <- 5
-    }
-    histoIndex <- which(substr(colnames(Data), 1, 1) %in% toupper(letters))
-    histoIndex <- histoIndex[-1]
-    for (i in histoIndex) {
-      Data[, i] <- ceiling(Data[, i])
-    }
-  }
-
-  columnSums <- sort(colSums(Data[,3:ncol(Data)], na.rm = T), decreasing = T)
-  Data[,3:ncol(Data)] <- Data[, names(columnSums)]
-  colnames(Data)[3:ncol(Data)] <- names(columnSums)
-
-
-
-  #write.csv(Data, 'mergedData.csv', row.names = F)
   ##---------------
   if (generateBarPlot == T) {
 

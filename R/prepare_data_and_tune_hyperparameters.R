@@ -3,6 +3,7 @@ prepare_data_and_tune_hyperparameters <- function(scores_df,
                                                   studyid_metadata,
                                                   Impute = FALSE,
                                                   Round =FALSE,
+                                                  reps, # from 0 to any numeric number
                                                   holdback,
                                                   Undersample = FALSE,
                                                   hyperparameter_tuning = FALSE,

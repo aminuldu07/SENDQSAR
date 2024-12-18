@@ -17,7 +17,8 @@
 
 
 
-get_col_harmonized_scores_df <- function(liver_score_data_frame){
+get_col_harmonized_scores_df <- function(liver_score_data_frame,
+                                         Round = FALSE){
 #write.csv(Data, 'mergedData.csv', row.names = F)
 
   ###-----------column harmonization of "liver_scores"-------------
@@ -73,6 +74,53 @@ get_col_harmonized_scores_df <- function(liver_score_data_frame){
   removeIndex <- which(colnames(Data) %in% removeEndpoints)
 
   Data <- Data[, -removeIndex]
+
+  # Check if the "Round" condition is TRUE
+  # zscoreIndex is basically rounding the livertobw and LB score columns
+  # histoindex is basically rounding the MI score columns----------------
+  if (Round == T) {
+    # Identify columns where the name contains "avg_" or "liver"
+    zscoreIndex <- c(grep('avg_', colnames(Data)), grep('liver', colnames(Data)))
+
+    # Loop through each column identified in zscoreIndex
+    for (i in zscoreIndex) {
+
+      # Floor the values in the column (round down to the nearest integer)
+      Data[, i] <- floor(Data[, i])
+
+      # Find indices of values greater than 5 in the column
+      maxIndex <- which(Data[, i] > 5)
+
+      # Cap values at 5 for these indices
+      Data[maxIndex, i] <- 5
+    }
+    # Identify columns where the first character of the name is an uppercase letter
+    histoIndex <- which(substr(colnames(Data), 1, 1) %in% toupper(letters))
+
+    # Exclude the first column from the selection
+    histoIndex <- histoIndex[-1]
+
+    # Loop through each column identified in histoIndex
+    for (i in histoIndex) {
+      # Ceiling the values in the column (round up to the nearest integer)
+      Data[, i] <- ceiling(Data[, i])
+    }
+  }
+browser()
+  # Calculate the sum of values for each column in Data, starting from the 2nd column onwards
+  # Exclude missing values (na.rm = TRUE) in the calculation
+  columnSums <- sort(colSums(Data[,2:ncol(Data)], na.rm = T), decreasing = T) # This produced named attribute
+
+  # Reorder the columns in Data (from the 2nd column onwards) based on the sorted column sums
+  # This aligns the columns with higher sums (more "important" columns) to the leftmost positions
+  Data[,2:ncol(Data)] <- Data[, names(columnSums)]
+
+  # Update the column names in Data (from the 2nd column onwards) to match the reordered columns
+  # This ensures that the column names are consistent with the new ordering
+  colnames(Data)[2:ncol(Data)] <- names(columnSums)
+
+
+
 
   return(as.data.frame(Data))
 }
