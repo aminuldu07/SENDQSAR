@@ -15,10 +15,8 @@
 
 
 
-# get_random_forest_model <- function(Liver_get_liver_om_lb_mi_tox_score_list,
-#                                     not_Liver_get_liver_om_lb_mi_tox_score_list){
-get_random_forest_model_amin2 <- function(Data=NULL){
-
+get_random_forest_model <- function(Liver_get_liver_om_lb_mi_tox_score_list,
+                                    not_Liver_get_liver_om_lb_mi_tox_score_list){
 
   `%ni%` <- Negate('%in%')
   Impute <- T
@@ -37,63 +35,231 @@ get_random_forest_model_amin2 <- function(Data=NULL){
   indeterminateLower <- .25
   Type = 1
   hyperparameter_tuning <- F
-  # removeEndpoints <- c('Infiltrate', 'UNREMARKABLE', 'THIKENING', 'POSITIVE')
-  #
-  #
-  # Data <- column_harmonized_liver_scores
-  #
-  # removeIndex <- which(colnames(Data) %in% removeEndpoints)
-  #
-  # Data <- Data[, -removeIndex]
+  removeEndpoints <- c('Infiltrate', 'UNREMARKABLE', 'THIKENING', 'POSITIVE')
+
+  ###-------------------------
+  # get lb score for Liver
+  Liver_master_LB_list <- Liver_get_liver_om_lb_mi_tox_score_list[['master_lb_score_six']]
+  Liver_master_LB_list$indst_TO <- "Liver"
+
+  # get LivertoBW score for Liver
+  Liver_master_liverToBW <- Liver_get_liver_om_lb_mi_tox_score_list[['master_liverToBW']]
+  Liver_master_liverToBW $indst_TO   <- "Liver"
+
+  # For mi score for Liver
+  Liver_master_MI_list <- Liver_get_liver_om_lb_mi_tox_score_list[['master_mi_df']]
+  Liver_master_MI_list$indst_TO <- "Liver"
+
+  # Reorder the columns to make `indst_TO` the first column
+  Liver_master_MI_list <- Liver_master_MI_list[, c("indst_TO", setdiff(names(Liver_master_MI_list), "indst_TO"))]
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  # get lb score for not_Liver
+  not_Liver_master_LB_list <- not_Liver_get_liver_om_lb_mi_tox_score_list[['master_lb_score_six']]
+  not_Liver_master_LB_list$indst_TO  <- "not_Liver"
+
+  # get LivertoBW score for not_Liver
+  not_Liver_master_liverToBW <- not_Liver_get_liver_om_lb_mi_tox_score_list[['master_liverToBW']]
+  not_Liver_master_liverToBW$indst_TO  <- "not_Liver"
+
+  # For mi score for not_Liver
+  not_Liver_master_MI_list <- not_Liver_get_liver_om_lb_mi_tox_score_list[['master_mi_df']]
+  not_Liver_master_MI_list$indst_TO <- "not_Liver"
+
+  # Reorder the columns to make `indst_TO` the first column
+  not_Liver_master_MI_list <- not_Liver_master_MI_list[, c("indst_TO", setdiff(names(not_Liver_master_MI_list), "indst_TO"))]
 
 
-  # Generate data if not provided
-  if (is.null(Data)) {
-    #---------------------------------------------------------------------
-    data <- generate_data() # Replace with your data-generating function
-    #---------------------------------------------------------------------
+  #--------------------------
+  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  LB <- rbind(Liver_master_LB_list, not_Liver_master_LB_list)
+
+  # Move the last column to the first position
+  LB <- LB[, c(ncol(LB), 1:(ncol(LB)-1))]
+
+
+  OM <- rbind(Liver_master_liverToBW, not_Liver_master_liverToBW)
+
+  # Move the last column to the first position
+  OM <- OM[, c(ncol(OM), 1:(ncol(OM)-1))]
+
+  ###------------------------
+  MIl <- Liver_master_MI_list
+  # Replace spaces and commas in column names with dots
+  colnames(MIl) <- gsub(' ', '.', colnames(MIl))
+  colnames(MIl) <- gsub(',', '.', colnames(MIl))
+  colnames(MIl) <- gsub('/', '.', colnames(MIl))
+
+
+  MIn <- not_Liver_master_MI_list
+  # Replace spaces and commas in column names with dots
+  colnames(MIn) <- gsub(' ', '.', colnames(MIn))
+  colnames(MIn) <- gsub(',', '.', colnames(MIn))
+  colnames(MIn) <- gsub('/', '.', colnames(MIn))
+
+
+
+  MIinter <- intersect(colnames(MIl), colnames(MIn))
+  MI <- rbind(MIl[, MIinter], MIn[, MIinter])
+
+  MIextraL <- setdiff(colnames(MIl), colnames(MIn))
+  MIextraN <- setdiff(colnames(MIn), colnames(MIl))
+  for (j in MIextraL) {
+    MI[, j] <- NA
+    MI[seq(nrow(MIl)), j] <- MIl[, j]
+  }
+  for (j in MIextraN) {
+    MI[, j] <- NA
+    MI[seq((nrow(MIl) + 1), nrow(MI)), j] <- MIn[, j]
   }
 
-  #---------------------------------------------------------------------------
-  # Check if data is a valid data frame
-  if (!is.data.frame(Data)) {
-    stop("The input data must be a data frame.")
-  }
-  #---------------------------------------------------------------------------
+  MI[is.na(MI)] <- 0
 
+  #Identify Columns with Periods
+  findings2replaceIndex <- grep('.', colnames(MI), fixed = T)
+
+  # Store Column Names with Periods
+  f2replace <- colnames(MI)[findings2replaceIndex]
+
+  #Identify Unique Column Names without Periods
+  fn2replace <- unique(toupper(colnames(MI)[-findings2replaceIndex]))
+
+  #Remove Specific Columns from Processing
+  removeIndex <- which(fn2replace %in% c('INDST_TO',
+                                         'STUDYID',
+                                         'UNREMARKABLE',
+                                         'THIKENING',
+                                         'POSITIVE'))
+  fn2replace <- fn2replace[-removeIndex]
+
+  #Harmonize Synonym Columns
+  for (finding in fn2replace) {
+    synonyms <- grep(finding, f2replace, ignore.case = T, value = T)
+    for (synonym in synonyms) {
+      index <- which(MI[[synonym]] > 0)
+      for (i in index) {
+        if (MI[[synonym]][i] > MI[[finding]][i]) {
+          MI[[finding]][i] <- MI[[synonym]][i]
+        }
+      }
+    }
+  }
+
+  #Remove Synonym Columns
+  MI <- MI[,-findings2replaceIndex]
+
+  #return(list(LB,OM,MI))
+
+  ###------------------------
+  commonStudies <- Reduce(intersect, list(LB$STUDYID, OM$STUDYID, MI$STUDYID))
+  extraDomains <- c('OM', 'MI')
+  count <- 0
+  for (study in commonStudies) {
+    count <- count + 1
+    newRow <- LB[which(LB$STUDYID == study),]
+    for (domain in extraDomains) {
+      domainData <- get(domain)
+      studyIndex <- which(domainData$STUDYID == study)
+      for (j in colnames(domainData)[3:ncol(domainData)]) {
+        newRow[[j]] <- domainData[studyIndex, j]
+      }
+    }
+    if (count == 1) {
+      Data <- newRow
+    } else {
+      Data <- rbind(Data, newRow)
+    }
+  }
+
+
+  removeIndex <- which(colnames(Data) %in% removeEndpoints)
+  Data <- Data[, -removeIndex]
+
+  if (Round == T) {
+    zscoreIndex <- c(grep('avg_', colnames(Data)), grep('liver', colnames(Data)))
+    for (i in zscoreIndex) {
+      Data[, i] <- floor(Data[, i])
+      maxIndex <- which(Data[, i] > 5)
+      Data[maxIndex, i] <- 5
+    }
+    histoIndex <- which(substr(colnames(Data), 1, 1) %in% toupper(letters))
+    histoIndex <- histoIndex[-1]
+    for (i in histoIndex) {
+      Data[, i] <- ceiling(Data[, i])
+    }
+  }
+
+  columnSums <- sort(colSums(Data[,3:ncol(Data)], na.rm = T), decreasing = T)
+  Data[,3:ncol(Data)] <- Data[, names(columnSums)]
+  colnames(Data)[3:ncol(Data)] <- names(columnSums)
+
+
+
+   #write.csv(Data, 'mergedData.csv', row.names = F)
+  ##---------------
+  if (generateBarPlot == T) {
+
+    Finding <- NULL
+    LIVER <- NULL
+    Value <- NULL
+    for (finding in colnames(Data)[3:ncol(Data)]) {
+
+      Finding <- c(Finding, finding)
+      LIVER <- c(LIVER, 'Y')
+      Value <- c(Value, mean(Data[which(Data$indst_TO == "Liver"), finding], na.rm = T))
+
+      Finding <- c(Finding, finding)
+      LIVER <- c(LIVER, 'N')
+      Value <- c(Value, mean(Data[which(Data$indst_TO != "Liver"), finding], na.rm = T))
+
+    }
+
+    plotData <- as.data.frame(cbind(Finding, LIVER, Value))
+    plotData$LIVER <- factor(plotData$LIVER)
+    plotData$Finding <- factor(plotData$Finding)
+    plotData$Value = as.numeric(plotData$Value)
+    # plotData$Value = log(as.numeric(plotData$Value), base = 10)
+
+    ###~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~check and double check
+    p <- ggplot2::ggplot(plotData, ggplot2::aes(x = Finding, y = Value, fill = LIVER)) +
+      ggplot2::geom_bar(stat="identity", position = 'dodge') +
+      ggplot2::theme(text = ggplot2::element_text(size = 20),
+            axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust=1)) +
+      ggplot2::ylab('Average Score')
+    print(p)
+  }
 
   #}
-browser()
+
 #########--------------####### Random Forest Modeling ########################
-# ###-----------------------rfData preparation------------------------------------
-#   rfData <- Data[, -1]
-#   rfData[which(rfData$Target_Organ == 'Liver'), 1] <- 1
-#   rfData[which(rfData$Target_Organ == 'not_Liver'), 1] <- 0
-#   # rfData[,1] <- as.numeric(rfData[,1])
-#   rfData[,1] <- factor(rfData[,1], levels = c(1, 0))
-#
-#   # removeIndex <- which(colnames(rfData) %in% c('INFILTRATE'))
-#   # rfData <- rfData[, -removeIndex]
-#
-# #######-----------------------missing values imputation---------------------------
-#    ##missing values imputation
-#   if (Impute == T) {
-#     rfData <- randomForest::rfImpute(indst_TO ~ ., rfData)
-#
-#     if (Round == T) {
-#       zscoreIndex <- c(grep('avg_', colnames(rfData)), grep('liver', colnames(rfData)))
-#       for (i in zscoreIndex) {
-#         rfData[, i] <- floor(rfData[, i])
-#         maxIndex <- which(rfData[, i] > 5)
-#         rfData[maxIndex, i] <- 5
-#       }
-#       histoIndex <- which(substr(colnames(rfData), 1, 1) %in% toupper(letters))
-#       histoIndex <- histoIndex[-1]
-#       for (i in histoIndex) {
-#         rfData[, i] <- ceiling(rfData[, i])
-#       }
-#     }
-#   }
+###-----------------------rfData preparation------------------------------------
+  rfData <- Data[, -2]
+  rfData[which(rfData$indst_TO == 'Liver'), 1] <- 1
+  rfData[which(rfData$indst_TO == 'not_Liver'), 1] <- 0
+  # rfData[,1] <- as.numeric(rfData[,1])
+  rfData[,1] <- factor(rfData[,1], levels = c(1, 0))
+
+  # removeIndex <- which(colnames(rfData) %in% c('INFILTRATE'))
+  # rfData <- rfData[, -removeIndex]
+
+#######-----------------------missing values imputation---------------------------
+   ##missing values imputation
+  if (Impute == T) {
+    rfData <- randomForest::rfImpute(indst_TO ~ ., rfData)
+
+    if (Round == T) {
+      zscoreIndex <- c(grep('avg_', colnames(rfData)), grep('liver', colnames(rfData)))
+      for (i in zscoreIndex) {
+        rfData[, i] <- floor(rfData[, i])
+        maxIndex <- which(rfData[, i] > 5)
+        rfData[maxIndex, i] <- 5
+      }
+      histoIndex <- which(substr(colnames(rfData), 1, 1) %in% toupper(letters))
+      histoIndex <- histoIndex[-1]
+      for (i in histoIndex) {
+        rfData[, i] <- ceiling(rfData[, i])
+      }
+    }
+  }
 
 ##------------------------------------------------------------------------
 
@@ -343,7 +509,8 @@ browser()
   #variables based on their mean decrease in accuracy or Gini index
   PerformanceMatrix <- cbind(Sensitivity,
                              Specificity,
-                             PPV, NPV,
+                             PPV,
+                             NPV,
                              Prevalence,
                              Accuracy,
                              nRemoved)
