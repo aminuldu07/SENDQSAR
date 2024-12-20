@@ -7,7 +7,7 @@ prepare_data_and_tune_hyperparameters <- function(scores_df,
                                                   holdback, # either 1 or fraction value like 0.75 etc.
                                                   Undersample = FALSE,
                                                   hyperparameter_tuning = FALSE,
-                                                  error_correction_method = NULL) {
+                                                  error_correction_method = NULL) { # # Choose: "Flip" or "Prune" or "None"
 
 
 
@@ -185,7 +185,8 @@ prepare_data_and_tune_hyperparameters <- function(scores_df,
   # train and test data correction/adjustment baed on method
 
   #---------------------------------------------------------------------------
-    if (!is.null(error_correction_method) && error_correction_method %in% c("Flip", "Prune")) {
+    #if (!is.null(error_correction_method) && error_correction_method %in% c("Flip", "Prune")) {
+    if (error_correction_method %in% c("Flip", "Prune")) {
 
     # Prediction on the test data for correction
     p <- stats::predict(rf_for_correction, test, type = 'prob')[,1]
@@ -233,14 +234,12 @@ prepare_data_and_tune_hyperparameters <- function(scores_df,
     }
     # read teh rfDataRDS
     #rfData <- readRDS(rfDataRDS) # (if data were flipped or pruned)
-
-    } else if (is.null(error_correction_method)) {
+    #} else if (is.null(error_correction_method)) {
+    } else if (error_correction_method == 'None') {
       #if "error_correction_method" = "NULL"
       # If no error correction method is provided, just print a message
       message("No error correction applied. Continuing with the remaining steps,
               \n returning unmodified -rfData- data.")
-
-
 
       rfData <-  rfData
 

@@ -1,4 +1,4 @@
-train_and_evaluate_rf_model <- function(scores_df,
+train_eval_rf_with_cv_imp <- function(scores_df,
                                         studyid_metadata,
                                         Impute = FALSE,
                                         Round =FALSE,
@@ -7,8 +7,15 @@ train_and_evaluate_rf_model <- function(scores_df,
                                         Undersample = FALSE,
                                         hyperparameter_tuning = FALSE,
                                         error_correction_method = NULL,
-                                        testReps,
-                                        best.m) {
+                                        best.m = NULL,
+                                        testReps, # testRps must be at least 2;
+                                        indeterminateUpper = .75,
+                                        indeterminateLower = .25,
+                                        Type,
+                                        nTopImportance) {
+
+  # custom function definition
+  `%ni%` <- Negate('%in%')
 
 
   rfData_and_best_m <- prepare_data_and_tune_hyperparameters( scores_df = scores_df,
@@ -17,7 +24,7 @@ train_and_evaluate_rf_model <- function(scores_df,
                                                           Round =Round,
                                                           reps=reps,
                                                           holdback=holdback,
-                                                          Undersample = Undersampl,
+                                                          Undersample = Undersample,
                                                           hyperparameter_tuning = hyperparameter_tuning,
                                                           error_correction_method=error_correction_method)
 
@@ -33,6 +40,10 @@ train_and_evaluate_rf_model <- function(scores_df,
     Accuracy <- NULL
     nRemoved <- NULL
 
+
+    #-----------------doing cross-validation--------------------------
+    #-----------------------------------------------------------------
+    #------------------------------------------------------------------
 
     #-----create and prepare "`rfTestData data` frame" for storing predictions----
     rfTestData <- rfData
@@ -80,7 +91,7 @@ train_and_evaluate_rf_model <- function(scores_df,
 
       test <- rfData[testIndex,]
 
-      # rfAll <- randomForest::randomForest(indst_TO ~ ., data=rfData, mytry = best.m,
+      # rfAll <- randomForest::randomForest(Target_Organ ~ ., data=rfData, mytry = best.m,
       #                                     importance = F, ntree = 500, proximity = T)
 
 
@@ -99,7 +110,7 @@ train_and_evaluate_rf_model <- function(scores_df,
 
       #model building with current iteration train data
       # Train Random Forest model--------------------------------------------
-      rf <- randomForest::randomForest(indst_TO ~ ., data=train, mytry = best.m,
+      rf <- randomForest::randomForest(Target_Organ ~ ., data=train, mytry = best.m,
                                        importance = T, ntree = 500, proximity = T)
 
       print(rf)
@@ -141,7 +152,7 @@ train_and_evaluate_rf_model <- function(scores_df,
 
       # Compute confusion matrix and extract metrics using "caret" package----
 
-      Results <- caret::confusionMatrix(factor(p2r, levels = c(1, 0)), factor(test$indst_TO, levels = c(1, 0)))
+      Results <- caret::confusionMatrix(factor(p2r, levels = c(1, 0)), factor(test$Target_Organ, levels = c(1, 0)))
       Sensitivity <- c(Sensitivity, Results$byClass[['Sensitivity']])
       Specificity <- c(Specificity, Results$byClass[['Specificity']])
       PPV <- c(PPV, Results$byClass[['Pos Pred Value']])
@@ -181,6 +192,7 @@ train_and_evaluate_rf_model <- function(scores_df,
     print("Feature Importance (Mean Decrease):")
     print(sort(rowMeans(gini), decreasing = T))
 
+
     #-------------------------------------------------------------------------
     # Top Important Features--------------------------------------------------
     #--------------------------------------------------------------------------
@@ -201,6 +213,18 @@ train_and_evaluate_rf_model <- function(scores_df,
     # #            sort = T,
     # #            n.var = 20,
     # #            main = "Top 20 - Variable Importance")
+print(".............................................................................")
+    print(PerformanceSummary)
 
-    return(list(metrics = metrics, rfData = rfData))
+    return(list(
+      performance_metrics = PerformanceSummary,  # Aggregated performance metrics
+      feature_importance = imp,                  # Top n features by importance
+      raw_results = list(                        # Raw data for debugging or extended analysis
+        sensitivity = Sensitivity,
+        specificity = Specificity,
+        accuracy = Accuracy,
+        gini_scores = gini
+      )
+    ))
+
   }

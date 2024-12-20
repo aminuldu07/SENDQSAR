@@ -57,24 +57,27 @@ rfData_and_best_m <- prepare_data_and_tune_hyperparameters( scores_df = column_h
                                                             holdback=0.75,
                                                             Undersample = TRUE,
                                                             hyperparameter_tuning = FALSE,
-                                                            error_correction_method = NULL)
+                                                            error_correction_method = 'None')
 
 
 
 
 
 
-train_and_evaluate_rf_model <- train_and_evaluate_rf_model(scores_df = Data,
-                                                           studyid_metadata = fake_80_MD,
+train_and_evaluate_rf_model <- train_eval_rf_with_cv_imp(scores_df = column_harmonized_liverscr_df,
+                                                           studyid_metadata = fake_80_medata,
                                                            Impute = TRUE,
                                                            Round = TRUE,
-                                                           scores_df,
-                                                           studyid_metadata,
-                                                           Impute = FALSE,
-                                                           Round =FALSE,
-                                                           holdback,
-                                                           Undersample = FALSE,
+                                                           reps=1,
+                                                           holdback = 0.75,
+                                                           Undersample = TRUE,
                                                            hyperparameter_tuning = FALSE,
-                                                           correction_method)
+                                                           error_correction_method = 'None',
+                                                           best.m = NULL,
+                                                           testReps = 5,
+                                                           indeterminateUpper = .75,
+                                                           indeterminateLower = .25,
+                                                           Type = 1,
+                                                           nTopImportance = 20)
 
 #rf_model <- get_random_forest_model_amin2(Data=rf_Data)

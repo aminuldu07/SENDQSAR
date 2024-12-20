@@ -10,7 +10,9 @@ SENDQSAR is an R package to generateQSAR model from SEND data…
 <!--[![R-CMD-check](https://github.com/aminuldu07/SENDQSAR/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/aminuldu07/SENDQS#AR/actions/workflows/R-CMD-check.yaml)-->
 <!-- badges: end -->
 
-The goal of SENDQSAR is to …
+The goal of SENDQSAR is to facilitates developing Quantitative Structure-Activity Relationship (QSAR) models using the SEND database.
+It streamlines data acquisition, preprocessing, descriptor calculation, and model evaluation, enabling researchers to efficiently
+explore molecular descriptors and create robust predictive models.
 
 ## Installation
 
@@ -24,7 +26,7 @@ devtools::install_github("aminuldu07/SENDQSAR")
 
 ## Example
 
-need to fill up the descriptons here :
+need to fill up the descriptions here :
 
 ``` r
 library(SENDQSAR)
@@ -37,9 +39,6 @@ What is special about using :
 #summary(cars)
 ```
 
-skjdkdfkd .
 
-You can also embed plots, for example:
 
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+
