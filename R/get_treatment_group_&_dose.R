@@ -298,7 +298,8 @@ get_treatment_group_amin <- function(studyid = NULL,
   }
 }
 
-
+# setcd <- c(1,2,3,4)
+# for each setcd, get the lb,mi, ltbw score
 
 
 

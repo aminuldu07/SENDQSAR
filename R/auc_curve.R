@@ -1,10 +1,10 @@
 
 
-get_auc_curve <- function(rfData,# Input data frame for training
+get_auc_curve <- function(rfData = NULL,# Input data frame for training
                           best.m  # The 'mtry' hyperparameter for Random Forest
                           ) {
 
-  # Check if rfData is NULL
+  # Check if rfData is NULL, calculate rfData
   if (is.null(rfData)) {
     # logic for generating rfData
 
