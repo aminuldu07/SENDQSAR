@@ -81,3 +81,17 @@ train_and_evaluate_rf_model <- train_eval_rf_with_cv_imp(scores_df = column_harm
                                                            nTopImportance = 20)
 
 #rf_model <- get_random_forest_model_amin2(Data=rf_Data)
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+rm(list = ls())
+devtools::load_all(".")
+path_db <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_merged_liver_not_liver.db"
+studyid_metadata_path <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_80_MD.csv"
+
+rfData_and_best_m <- get_rfData_and_best_m(
+  path_db = path_db,
+  studyid_metadata_path = studyid_metadata_path,
+  fake_study = TRUE,
+  Round = TRUE,
+  Undersample = TRUE
+)
