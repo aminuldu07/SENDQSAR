@@ -10,8 +10,6 @@ prepare_data_and_tune_hyperparameters <- function(scores_df,
                                                   error_correction_method = NULL) { # # Choose: "Flip" or "Prune" or "None"
 
 
-
-
   input_scores_df <- scores_df
   metadata_df <- studyid_metadata
 

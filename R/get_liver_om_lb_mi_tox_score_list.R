@@ -75,7 +75,7 @@ if(output_individual_scores ) {
 
   master_mi_score <- list()
 
-  # Initialize an empty data frame to store the names of studies with errors
+  # Initialize an empty list to store the names of studies with errors
   Error_studies <- list()
 
   # Initialize the master error data frame to have the details of the errors

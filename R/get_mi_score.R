@@ -205,6 +205,10 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
     MIData_cleaned_SColmn_fDecasting <- MIData_cleaned_SColmn_fDecasting[!duplicated(MIData_cleaned_SColmn_fDecasting), ]
     #MIData_cleaned_SColmn_copy <- MIData_cleaned_SColmn
 
+    # Remmove duplicates having identical ""USUBJID" and "MISTRESC" column
+    # Remove duplicate rows based on columns 'a' and 'b'
+    MIData_cleaned_SColmn_fDecasting <- MIData_cleaned_SColmn_fDecasting[!duplicated(MIData_cleaned_SColmn_fDecasting[, c("USUBJID", "MISTRESC")]), ]
+
     # check for duplicates
     #dupliates_present <- any(duplicated(MIData_cleaned[, c("USUBJID")]))
 
@@ -213,9 +217,9 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
 
 
 
-    # # Reshape the data (pivot the dataframe)
+    # # Reshape the data (pivot the dataframe) # "2170017" has perls prussiona blue ==0 but after decast 1.
     MIData_cleaned_SColmn <- reshape2::dcast(MIData_cleaned_SColmn_fDecasting, USUBJID ~ MISTRESC, value.var = "MISEV")
-    ##MIData_cleaned_SColmn_data_t <- data.table::dcast(MIData_cleaned_SColmn_fDecasting, USUBJID ~ MISTRESC, value.var = "MISEV")
+    #MIData_cleaned_SColmn_data_t <- data.table::dcast(MIData_cleaned_SColmn_fDecasting, USUBJID ~ MISTRESC, value.var = "MISEV")
     #MIData_cleaned_SColmn_tidyr <- tidyr::pivot_wider(MIData_cleaned_SColmn_fDecasting, names_from = MISTRESC, values_from = MISEV)
 
     MIData_cleaned_SColmn[is.na(MIData_cleaned_SColmn)] <- "0" #Fill NAs with Zero

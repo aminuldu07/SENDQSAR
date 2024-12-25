@@ -9,15 +9,16 @@ devtools::load_all(".")
 
 path_db='C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/TestDB.db'
 
-studyid_or_studyids  <- c("2170016")
+#studyid_or_studyids  <- c("2170016")
+studyid_or_studyids  <- c("5003635")
 
 R_SQL_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = studyid_or_studyids,
                                                        path_db = path_db,
                                                        fake_study = FALSE,
                                                        use_xpt_file = FALSE,
                                                        #multiple_xpt_folder = FALSE,
-                                                       output_individual_scores = FALSE,
-                                                       output_zscore_by_USUBJID = TRUE)
+                                                       output_individual_scores = TRUE,
+                                                       output_zscore_by_USUBJID = FALSE)
 
 # For multiple xpt folder with real data
 rm(list = ls())
