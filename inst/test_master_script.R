@@ -18,23 +18,6 @@ mi_score <- get_mi_score (studyid = studyid_or_studyids,
 
 
 
-# # Create a connection to the database
-# dbtoken <- DBI::dbConnect(RSQLite::SQLite(), dbname = path_db)
-#
-# # Retrieve the STUDYID column from the dm table
-# query <- "SELECT STUDYID FROM dm"
-# studyid_data <- DBI::dbGetQuery(dbtoken, query)
-#
-# # Extract unique STUDYID values
-# unique_studyids <- unique(studyid_data$STUDYID)
-#
-# # Disconnect from the database
-# DBI::dbDisconnect(dbtoken)
-#
-# studyid_or_studyids <- unique_studyids
-
-#studyid_or_studyids <- list.dirs(path_db , full.names = TRUE, recursive = FALSE)
-
 fake80_liver_scores <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = studyid_or_studyids,
                                                          path_db = path_db,
                                                          fake_study = FALSE,
@@ -95,6 +78,25 @@ train_and_evaluate_rf_model <- train_eval_rf_with_cv_imp(scores_df = column_harm
                                                            nTopImportance = 20)
 
 #rf_model <- get_random_forest_model_amin2(Data=rf_Data)
+
+
+
+# # Create a connection to the database
+# dbtoken <- DBI::dbConnect(RSQLite::SQLite(), dbname = path_db)
+#
+# # Retrieve the STUDYID column from the dm table
+# query <- "SELECT STUDYID FROM dm"
+# studyid_data <- DBI::dbGetQuery(dbtoken, query)
+#
+# # Extract unique STUDYID values
+# unique_studyids <- unique(studyid_data$STUDYID)
+#
+# # Disconnect from the database
+# DBI::dbDisconnect(dbtoken)
+#
+# studyid_or_studyids <- unique_studyids
+
+#studyid_or_studyids <- list.dirs(path_db , full.names = TRUE, recursive = FALSE)
 
 #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 rm(list = ls())

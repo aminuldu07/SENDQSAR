@@ -66,7 +66,7 @@ get_col_harmonized_scores_df <- function(liver_score_data_frame,
  # rename the "liver_scores"
   Data <- liver_scores
 
-  removeEndpoints <- c('Infiltrate', 'UNREMARKABLE', 'THIKENING', 'POSITIVE')
+  removeEndpoints <- c('INFILTRATE', 'UNREMARKABLE', 'THIKENING', 'POSITIVE')
 
 
   #Data <- column_harmonized_liver_scores
@@ -74,6 +74,8 @@ get_col_harmonized_scores_df <- function(liver_score_data_frame,
   removeIndex <- which(colnames(Data) %in% removeEndpoints)
 
   Data <- Data[, -removeIndex]
+
+  print(dim(Data))
 
   # Check if the "Round" condition is TRUE
   # zscoreIndex is basically rounding the livertobw and LB score columns
