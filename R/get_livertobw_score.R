@@ -185,6 +185,9 @@ get_livertobw_score <- function (studyid = NULL,
       dplyr::mutate(avg_liverToBW_zscore = ifelse(avg_liverToBW_zscore >= 3, 3,
                                                   ifelse(avg_liverToBW_zscore >= 2, 2,
                                                          ifelse(avg_liverToBW_zscore >= 1, 1, 0))))
+      # Rename the column name
+      colnames(HD_liver_zscore_df)[which(colnames(HD_liver_zscore_df) == "avg_liverToBW_zscore")] <- "avg_livToBW_zscore"
+
 
 
   } else if (return_zscore_by_USUBJID ) {
@@ -199,6 +202,8 @@ get_livertobw_score <- function (studyid = NULL,
       dplyr::mutate(liverToBW_zscore = ifelse(liverToBW_zscore >= 3, 3,
                                                   ifelse(liverToBW_zscore >= 2, 2,
                                                          ifelse(liverToBW_zscore >= 1, 1, 0))))
+      # Rename the column name
+      colnames(liverTOBW_zscore_by_USUBJID_HD)[which(colnames(liverTOBW_zscore_by_USUBJID_HD) == "liverToBW_zscore")] <- "livToBW_zscore"
 
   } else {
     # Create final_liverToBW_df for the current STUDYID by averaging.......................
@@ -212,6 +217,9 @@ get_livertobw_score <- function (studyid = NULL,
       dplyr::mutate(avg_liverToBW_zscore = ifelse(avg_liverToBW_zscore >= 3, 3,
                                                   ifelse(avg_liverToBW_zscore >= 2, 2,
                                                          ifelse(avg_liverToBW_zscore >= 1, 1, 0))))
+
+      # Rename the column name
+      colnames(averaged_liverToBW_df)[which(colnames(averaged_liverToBW_df ) == "avg_liverToBW_zscore")] <- "avg_livToBW_zscore"
   }
 
   # Return based on return_individual_scores
