@@ -16,8 +16,6 @@ get_repeat_dose_parallel_studyids <- function (path_db,
   # } else {
   #   stop("Failed to establish a database connection.")
   # }
-browser()
-
 #Database Load
 dbtoken <- sendigR::initEnvironment(dbType = 'sqlite',
                                     dbPath = path_db,
@@ -42,29 +40,22 @@ parallel_repeat_dose_intersec_df <- data.frame(STUDYID = parallel_repeat_dose_in
 # convert to a vector( selected_studies should be always vector)
 parallel_repeat_dose_studyid_or_studyids <- as.vector(parallel_repeat_dose_intersec_df$STUDYID)
 
+studyid_or_studyids <- parallel_repeat_dose_studyid_or_studyids
+
+# Filter for the rat studies
 if (rat_studies){
   # get the studies for the rat only species
   rat_STUDYID_ts_species <- sendigR::genericQuery(dbtoken, queryString = "SELECT STUDYID, TSPARMCD, TSVAL
                              FROM ts
                              WHERE TSPARMCD = 'SPECIES' AND UPPER(TSVAL) LIKE '%RAT%'", queryParams = NULL)
+  # Filter the "rat_STUDYID_ts_species" for the PARALLEL STUDYIDs and repeat_dose_STUDYIDs
+  rat_parallel_repeat_dose_df <- rat_STUDYID_ts_species[rat_STUDYID_ts_species$STUDYID %in% parallel_repeat_dose_intersec_df$STUDYID, ]
 
+  rat_parallel_repeat_dose_studyid_or_studyids <- as.vector(rat_parallel_repeat_dose_df$STUDYID)
+
+  studyid_or_studyids <- rat_parallel_repeat_dose_studyid_or_studyids
 }
 
-# filter the parallel repeat dose for rat study
-
-rat_parallel_repeat_dose_studyid_or_studyids <-
-selected_studies <- as.vector(rat_STUDYID_ts_species$STUDYID)
-
-
-path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db'
-start_time <- Sys.time()
-allscore <- get_liver_om_lb_mi_tox_score_list(selected_studies,
-                                              path_db,
-                                              fake_study = FALSE,
-                                              output_individual_scores = TRUE)
-end_time <- Sys.time()
-time_taken <- end_time - start_time
-print(time_taken)
-#####
+return(studyid_or_studyids)
 
 }

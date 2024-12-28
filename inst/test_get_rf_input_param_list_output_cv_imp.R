@@ -15,25 +15,20 @@ studyid_metadata <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Docum
 #                                                 use_xpt_file = FALSE)
 
 output_cv_imp <- get_rf_input_param_list_output_cv_imp( path_db=path_db,
-                                                      studyid_metadata=studyid_metadata,
-                                                      fake_study = TRUE,
-                                                      use_xpt_file = FALSE,
-                                                      Round = TRUE,
-                                                      Impute = TRUE,
-                                                      reps=1,
-                                                      holdback=0.25,
-                                                      Undersample = TRUE,
-                                                      hyperparameter_tuning = FALSE, # best.m == 4, if hyperparameter_tuning = FALSE
-                                                      error_correction_method = 'None',
-                                                      testReps = 5,
-                                                      indeterminateUpper = .75,
-                                                      indeterminateLower = .25,
-                                                      Type = 1,
-                                                      nTopImportance = 20)
-#-----------------------------------------
-rm(list = ls())
-devtools::load_all(".")
-rdpst <- get_repeat_dose_parallel_studyids (dbPath,
-                                               rat_studies = FALSE)
-# Initialize a connection to the SQLite database
-path_db <- "C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db"
+                                                        rat_studies=FALSE,
+                                                        studyid_metadata=studyid_metadata,
+                                                        fake_study = TRUE,
+                                                        use_xpt_file = FALSE,
+                                                        Round = TRUE,
+                                                        Impute = TRUE,
+                                                        reps=1,
+                                                        holdback=0.25,
+                                                        Undersample = TRUE,
+                                                        hyperparameter_tuning = FALSE, # best.m == 4, if hyperparameter_tuning = FALSE
+                                                        error_correction_method = 'None',
+                                                        testReps = 5,
+                                                        indeterminateUpper = .75,
+                                                        indeterminateLower = .25,
+                                                        Type = 1,
+                                                        nTopImportance = 20)
+

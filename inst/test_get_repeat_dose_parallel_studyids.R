@@ -5,7 +5,7 @@ path_db='C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/TestDB
 
 #studyid_or_studyids  <- c("2170016", "876")
 
-rdpsids <- get_repeat_dose_parallel_studyids(path_db=path_db,
+studyid_or_studyids <- get_repeat_dose_parallel_studyids(path_db=path_db,
                                                           rat_studies = TRUE)
 # rm(list = ls())
 # devtools::load_all(".")

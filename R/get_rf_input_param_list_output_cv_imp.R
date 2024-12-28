@@ -4,22 +4,23 @@
 
 
 get_rf_input_param_list_output_cv_imp <- function(path_db,
-                                                studyid_metadata,
-                                                fake_study = FALSE,
-                                                use_xpt_file = FALSE,
-                                                Round = FALSE,
-                                                Impute = FALSE,
-                                                reps,
-                                                holdback,
-                                                Undersample = FALSE,
-                                                hyperparameter_tuning = FALSE,
-                                                error_correction_method, # = must be 'Flip' or "Prune' or 'None'
-                                                testReps , # at least 2
-                                                indeterminateUpper,
-                                                indeterminateLower,
-                                                Type,
-                                                nTopImportance
-                                                ){
+                                                  rat_studies=FALSE,
+                                                  studyid_metadata,
+                                                  fake_study = FALSE,
+                                                  use_xpt_file = FALSE,
+                                                  Round = FALSE,
+                                                  Impute = FALSE,
+                                                  reps,
+                                                  holdback,
+                                                  Undersample = FALSE,
+                                                  hyperparameter_tuning = FALSE,
+                                                  error_correction_method, # = must be 'Flip' or "Prune' or 'None'
+                                                  testReps , # at least 2
+                                                  indeterminateUpper,
+                                                  indeterminateLower,
+                                                  Type,
+                                                  nTopImportance
+                                                  ){
 
 
     if(use_xpt_file){
@@ -27,6 +28,8 @@ get_rf_input_param_list_output_cv_imp <- function(path_db,
       studyid_or_studyids <- list.dirs(path_db , full.names = TRUE, recursive = FALSE)
 
     } else {
+
+      if (fake_study) {
       # Helper function to fetch data from SQLite database
       fetch_domain_data <- function(db_connection, domain_name) {
         # Convert domain name to uppercase
@@ -48,14 +51,26 @@ get_rf_input_param_list_output_cv_imp <- function(path_db,
       DBI::dbDisconnect(db_connection)
 
       # get the studyids from the dm table
+      studyid_or_studyids <- as.vector(unique(dm$STUDYID)) # unique STUDYIDS from DM table
 
-      if(!fake_study ){
-        # filer the dm to get the repeat does and parallel studyids
+      # Filter the fake data for the "rat_studies"
+      if(rat_studies){
 
-
+        studyid_or_studyids <- studyid_or_studyids
       }
 
-      studyid_or_studyids <- as.vector(unique(dm$STUDYID)) # unique STUDYIDS from DM table
+      #--------------------------------------------------------------------
+      #-----------we can set logic here for rat studies in "fake data"----
+      #--------------------------------------------------------------------
+
+      } else {
+        # For the real data in sqlite database
+        # filter for the repeat-dose and parallel studyids
+
+        studyid_or_studyids <- get_repeat_dose_parallel_studyids(path_db=path_db,
+                                                                 rat_studies = rat_studies)
+
+      }
     }
 
 
