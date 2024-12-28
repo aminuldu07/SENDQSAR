@@ -36,7 +36,7 @@
 #'   Undersample = TRUE
 #' )
 
-prepare_data_and_tune_hyperparameters <- function(scores_df,
+get_prepared_data_and_tuned_hyperparameters <- function(scores_df,
                                                   studyid_metadata,
                                                   Impute = FALSE,
                                                   Round =FALSE,

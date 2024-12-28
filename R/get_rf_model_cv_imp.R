@@ -1,13 +1,6 @@
 
-train_eval_rf_with_cv_imp <- function(#scores_df=NULL,
-                                      #studyid_metadata=NULL,
-                                      #Impute = FALSE,
-                                      #Round =FALSE,
-                                      #reps, # from 0 to any numeric number
-                                      #holdback, # either 1 or fraction value like 0.75 etc.
+get_rf_model_output_cv_imp <- function(scores_df=NULL,
                                       Undersample = FALSE,
-                                      #hyperparameter_tuning = FALSE,
-                                      #error_correction_method = NULL,
                                       best.m = NULL, # any numeric value or call function to get it
                                       testReps, # testRps must be at least 2;
                                       indeterminateUpper,
@@ -15,23 +8,7 @@ train_eval_rf_with_cv_imp <- function(#scores_df=NULL,
                                       Type,
                                       nTopImportance) {
 
-
-#
-#     rfData_and_best_m <- prepare_data_and_tune_hyperparameters( scores_df = column_harmonized_liverscr_df,
-#                                                                 studyid_metadata =studyid_metadata,
-#                                                                 Impute = Impute,
-#                                                                 Round =Round,
-#                                                                 reps=reps,
-#                                                                 holdback=holdback,
-#                                                                 Undersample = Undersample,
-#                                                                 hyperparameter_tuning = hyperparameter_tuning,
-#                                                                 error_correction_method=error_correction_method)
-#
-#     rfData <- rfData_and_best_m[["rfData"]]
-#     best.m <- rfData_and_best_m[["best.m"]]
-
-
-
+  rfData <- scores_df
     #---------------------------------------------------------------------
     # Initialize model performance metric trackers------------------------
     #---------------------------------------------------------------------

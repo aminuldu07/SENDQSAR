@@ -59,22 +59,61 @@ rfData_and_best_m <- prepare_data_and_tune_hyperparameters( scores_df = column_h
                                                             hyperparameter_tuning = FALSE,
                                                             error_correction_method = 'None')
 
+rfData <- rfData_and_best_m[["rfData"]]
+best.m <- rfData_and_best_m[["best.m"]]
 
-train_and_evaluate_rf_model <- train_eval_rf_with_cv_imp(scores_df = column_harmonized_liverscr_df,
-                                                           studyid_metadata = fake_80_medata,
-                                                           Impute = TRUE,
-                                                           Round = TRUE,
-                                                           reps=1,
-                                                           holdback = 0.25,
-                                                           Undersample = TRUE,
-                                                           hyperparameter_tuning = FALSE,
-                                                           error_correction_method = 'None',
-                                                           best.m = NULL,
-                                                           testReps = 5,
-                                                           indeterminateUpper = .75,
-                                                           indeterminateLower = .25,
-                                                           Type = 1,
-                                                           nTopImportance = 20)
+train_and_evaluate_rf_model <- train_eval_rf_with_cv_imp(scores_df = rfData,
+                                                         Undersample = TRUE,
+                                                         best.m = best.m ,
+                                                         testReps = 5,
+                                                         indeterminateUpper = .75,
+                                                         indeterminateLower = .25,
+                                                         Type = 1,
+                                                         nTopImportance = 20)
+
+
+
+
+
+
+rm(list = ls())
+devtools::load_all(".")
+
+# Initialize a connection to the SQLite database
+#path_db='C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_merged_liver_not_liver.db'
+
+path_db='C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_xpt'
+studyid_or_studyids <- list.dirs(path_db , full.names = TRUE, recursive = FALSE)
+# Read the STUDYID metadata csv file
+fake_80_medata <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_80_MD.csv",
+                           header = TRUE, sep = ",", stringsAsFactors = FALSE)
+
+perfor_eval <- get_random_forest_model_performance (path_db=path_db,
+                                                    studyid_or_studyids=studyid_or_studyids ,
+                                                    fake_80_medata=fake_80_medata)
+
+
+
+
+
+
+
+
+# train_and_evaluate_rf_model <- train_eval_rf_with_cv_imp(scores_df = column_harmonized_liverscr_df,
+#                                                            studyid_metadata = fake_80_medata,
+#                                                            Impute = TRUE,
+#                                                            Round = TRUE,
+#                                                            reps=1,
+#                                                            holdback = 0.25,
+#                                                            Undersample = TRUE,
+#                                                            hyperparameter_tuning = FALSE,
+#                                                            error_correction_method = 'None',
+#                                                            best.m = NULL,
+#                                                            testReps = 5,
+#                                                            indeterminateUpper = .75,
+#                                                            indeterminateLower = .25,
+#                                                            Type = 1,
+#                                                            nTopImportance = 20)
 
 #rf_model <- get_random_forest_model_amin2(Data=rf_Data)
 
