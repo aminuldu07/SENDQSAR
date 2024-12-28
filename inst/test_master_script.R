@@ -4,24 +4,27 @@ devtools::load_all(".")
 # Initialize a connection to the SQLite database
 #path_db='C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_merged_liver_not_liver.db'
 
-path_db = "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/TestDB.db"
+path_db='C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_xpt'
+studyid_or_studyids <- list.dirs(path_db , full.names = TRUE, recursive = FALSE)
 
-studyid_or_studyids = "2170017"
+#path_db = "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/TestDB.db"
 
-mi_score <- get_mi_score (studyid = studyid_or_studyids,
-                           path_db=path_db,
-                           fake_study=FALSE,
-                           use_xpt_file = FALSE,
-                           master_compiledata = NULL,
-                           return_individual_scores = TRUE,
-                           return_zscore_by_USUBJID = FALSE)
+#studyid_or_studyids = "2170017"
+
+# mi_score <- get_mi_score (studyid = studyid_or_studyids,
+#                            path_db=path_db,
+#                            fake_study=FALSE,
+#                            use_xpt_file = FALSE,
+#                            master_compiledata = NULL,
+#                            return_individual_scores = TRUE,
+#                            return_zscore_by_USUBJID = FALSE)
 
 
 
 fake80_liver_scores <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = studyid_or_studyids,
                                                          path_db = path_db,
-                                                         fake_study = FALSE,
-                                                         use_xpt_file = FALSE,
+                                                         fake_study = TRUE,
+                                                         use_xpt_file = TRUE,
                                                          #multiple_xpt_folder = TRUE,
                                                          output_individual_scores = TRUE,
                                                          output_zscore_by_USUBJID = FALSE)
@@ -51,14 +54,10 @@ rfData_and_best_m <- prepare_data_and_tune_hyperparameters( scores_df = column_h
                                                             Impute = TRUE,
                                                             Round = TRUE,
                                                             reps=1,
-                                                            holdback=0.75,
+                                                            holdback=0.25,
                                                             Undersample = TRUE,
                                                             hyperparameter_tuning = FALSE,
                                                             error_correction_method = 'None')
-
-
-
-
 
 
 train_and_evaluate_rf_model <- train_eval_rf_with_cv_imp(scores_df = column_harmonized_liverscr_df,
@@ -66,7 +65,7 @@ train_and_evaluate_rf_model <- train_eval_rf_with_cv_imp(scores_df = column_harm
                                                            Impute = TRUE,
                                                            Round = TRUE,
                                                            reps=1,
-                                                           holdback = 0.75,
+                                                           holdback = 0.25,
                                                            Undersample = TRUE,
                                                            hyperparameter_tuning = FALSE,
                                                            error_correction_method = 'None',
@@ -98,16 +97,16 @@ train_and_evaluate_rf_model <- train_eval_rf_with_cv_imp(scores_df = column_harm
 
 #studyid_or_studyids <- list.dirs(path_db , full.names = TRUE, recursive = FALSE)
 
-#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-rm(list = ls())
-devtools::load_all(".")
-path_db <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_merged_liver_not_liver.db"
-studyid_metadata_path <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_80_MD.csv"
-
-rfData_and_best_m <- get_rfData_and_best_m(
-  path_db = path_db,
-  studyid_metadata_path = studyid_metadata_path,
-  fake_study = TRUE,
-  Round = TRUE,
-  Undersample = TRUE
-)
+# #@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+# rm(list = ls())
+# devtools::load_all(".")
+# path_db <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_merged_liver_not_liver.db"
+# studyid_metadata_path <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_80_MD.csv"
+#
+# rfData_and_best_m <- get_rfData_and_best_m(
+#   path_db = path_db,
+#   studyid_metadata_path = studyid_metadata_path,
+#   fake_study = TRUE,
+#   Round = TRUE,
+#   Undersample = TRUE
+# )

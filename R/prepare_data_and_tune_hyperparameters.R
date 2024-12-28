@@ -1,3 +1,40 @@
+#' Get Random Forest Data and Best Model
+#'
+#' This function retrieves and processes data for random forest analysis from a SQLite database.
+#' It performs the following steps:
+#' 1. Connects to the SQLite database and retrieves unique `STUDYID` values from the `dm` table.
+#' 2. Generates liver toxicity scores for the given study IDs.
+#' 3. Harmonizes the columns in the scores data frame.
+#' 4. Reads metadata for study IDs.
+#' 5. Prepares the data and tunes hyperparameters for a random forest model.
+#'
+#' @param path_db Character. Path to the SQLite database.
+#' @param studyid_metadata_path Character. Path to the CSV file containing metadata for study IDs.
+#' @param fake_study Logical. Whether to use fake study IDs. Default is `TRUE`.
+#' @param use_xpt_file Logical. Whether to use XPT file format. Default is `FALSE`.
+#' @param output_individual_scores Logical. Whether to output individual scores. Default is `TRUE`.
+#' @param output_zscore_by_USUBJID Logical. Whether to output z-scores by `USUBJID`. Default is `FALSE`.
+#' @param Impute Logical. Whether to impute missing values in the data. Default is `TRUE`.
+#' @param Round Logical. Whether to round numerical values in the data. Default is `TRUE`.
+#' @param reps Integer. Number of repetitions for model evaluation. Default is `1`.
+#' @param holdback Numeric. Proportion of data to hold back for validation. Default is `0.75`.
+#' @param Undersample Logical. Whether to perform undersampling to balance the data. Default is `TRUE`.
+#' @param hyperparameter_tuning Logical. Whether to perform hyperparameter tuning. Default is `FALSE`.
+#' @param error_correction_method Character. Method for error correction. Default is `'None'`.
+#'
+#' @return A list containing the processed data and the best model parameters.
+#' @export
+#'
+#' @examples
+#' path_db <- "C:/path/to/database.db"
+#' studyid_metadata_path <- "C:/path/to/study_metadata.csv"
+#' rfData_and_best_m <- get_rfData_and_best_m(
+#'   path_db = path_db,
+#'   studyid_metadata_path = studyid_metadata_path,
+#'   fake_study = TRUE,
+#'   Round = TRUE,
+#'   Undersample = TRUE
+#' )
 
 prepare_data_and_tune_hyperparameters <- function(scores_df,
                                                   studyid_metadata,
@@ -8,7 +45,6 @@ prepare_data_and_tune_hyperparameters <- function(scores_df,
                                                   Undersample = FALSE,
                                                   hyperparameter_tuning = FALSE,
                                                   error_correction_method = NULL) { # # Choose: "Flip" or "Prune" or "None"
-
 
   input_scores_df <- scores_df
   metadata_df <- studyid_metadata
@@ -88,6 +124,7 @@ prepare_data_and_tune_hyperparameters <- function(scores_df,
       test <- rfData[ind, ]
       testIndex <- ind
       } else {
+
       ind <- sample(2, nrow(rfData), replace = TRUE, prob = c(1 - holdback, holdback))
       train <- rfData[ind == 1, ]
       test <- rfData[ind == 2, ]
@@ -249,6 +286,5 @@ prepare_data_and_tune_hyperparameters <- function(scores_df,
 
     return(list(rfData=rfData,
            best.m=best.m))
-
 
 }

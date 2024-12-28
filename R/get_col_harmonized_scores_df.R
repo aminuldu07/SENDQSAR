@@ -81,8 +81,10 @@ get_col_harmonized_scores_df <- function(liver_score_data_frame,
   # zscoreIndex is basically rounding the livertobw and LB score columns
   # histoindex is basically rounding the MI score columns----------------
   if (Round == T) {
+
+
     # Identify columns where the name contains "avg_" or "liver"
-    zscoreIndex <- c(grep('avg_', colnames(Data)), grep('liver', colnames(Data)))
+    zscoreIndex <- unique(c(grep('avg_', colnames(Data)), grep('liver', colnames(Data))))
     # "----one-column can contain both 'avg' and 'liver'..need to figure it out"
     #change_the_avg_llivertoBW_zscore to "avg_livtoBW_zscore"---------------
 

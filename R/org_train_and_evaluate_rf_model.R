@@ -1,35 +1,97 @@
 
-train_eval_rf_with_cv_imp <- function(#scores_df=NULL,
-                                      #studyid_metadata=NULL,
-                                      #Impute = FALSE,
-                                      #Round =FALSE,
-                                      #reps, # from 0 to any numeric number
-                                      #holdback, # either 1 or fraction value like 0.75 etc.
+org_train_eval_rf_with_cv_imp <- function(scores_df=NULL,
+                                      path_db = NULL, # need when scores_df is NULL and need to calculate it
+                                      studyid_metadata=NULL,
+                                      use_xpt_file = FALSE,
+                                      fake_study= FALSE,
+                                      Impute = FALSE,
+                                      Round =FALSE,
+                                      reps, # from 0 to any numeric number
+                                      holdback, # either 1 or fraction value like 0.75 etc.
                                       Undersample = FALSE,
-                                      #hyperparameter_tuning = FALSE,
-                                      #error_correction_method = NULL,
+                                      hyperparameter_tuning = FALSE,
+                                      error_correction_method = NULL,
                                       best.m = NULL, # any numeric value or call function to get it
                                       testReps, # testRps must be at least 2;
-                                      indeterminateUpper,
-                                      indeterminateLower,
+                                      indeterminateUpper = .75,
+                                      indeterminateLower = .25,
                                       Type,
                                       nTopImportance) {
 
+  # Read the STUDYID metadata csv file
+  # fake_80_medata <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_80_MD.csv",
+  #                            header = TRUE, sep = ",", stringsAsFactors = FALSE)
 
-#
-#     rfData_and_best_m <- prepare_data_and_tune_hyperparameters( scores_df = column_harmonized_liverscr_df,
-#                                                                 studyid_metadata =studyid_metadata,
-#                                                                 Impute = Impute,
-#                                                                 Round =Round,
-#                                                                 reps=reps,
-#                                                                 holdback=holdback,
-#                                                                 Undersample = Undersample,
-#                                                                 hyperparameter_tuning = hyperparameter_tuning,
-#                                                                 error_correction_method=error_correction_method)
-#
-#     rfData <- rfData_and_best_m[["rfData"]]
-#     best.m <- rfData_and_best_m[["best.m"]]
 
+  #'C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_xpt'
+  #path_db = path_db
+  # if scores_df is not provided, it must be calculated and need path_db
+  # Check if scores_df is NULL and calculate if necessary
+  if (is.null(scores_df)) {
+
+    if(use_xpt_file){
+
+      studyid_or_studyids <- list.dirs(path_db , full.names = TRUE, recursive = FALSE)
+
+    } else {
+      # Helper function to fetch data from SQLite database
+      fetch_domain_data <- function(db_connection, domain_name) {
+        # Convert domain name to uppercase
+        domain_name <- toupper(domain_name)
+        # Create SQL query statement
+        query_statement <- paste0('SELECT * FROM ', domain_name)
+        # Execute query and fetch the data
+        query_result <- DBI::dbGetQuery(db_connection, statement = query_statement)
+        # Return the result
+        query_result
+      }
+      # Establish a connection to the SQLite database
+      db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path_db)
+
+      # Fetch data for required domains
+      dm <- fetch_domain_data(db_connection, 'dm')
+
+      # Close the database connection
+      DBI::dbDisconnect(db_connection)
+
+      # get the studyids from the dm table
+
+      studyid_or_studyids <- as.vector(unique(dm$STUDYID)) # unique STUDYIDS from DM table
+    }
+
+
+    # Calculate the liver scores for lb, mi and oM domain
+    calculated_liver_scores <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = studyid_or_studyids,
+                                                             path_db = path_db,
+                                                             fake_study = fake_study,
+                                                             use_xpt_file = use_xpt_file,
+                                                             output_individual_scores = TRUE,
+                                                             output_zscore_by_USUBJID = FALSE)
+
+    # Harmonize the column for the calculated_liver_scores
+
+    column_harmonized_liverscr_df <- get_col_harmonized_scores_df(liver_score_data_frame = calculated_liver_scores,
+                                                                  Round = TRUE)
+  }
+
+
+  # get the rfData and best.m value------------------------------------------
+  if (is.null(best.m)){
+
+    rfData_and_best_m <- prepare_data_and_tune_hyperparameters( scores_df = column_harmonized_liverscr_df,
+                                                                studyid_metadata =studyid_metadata,
+                                                                Impute = Impute,
+                                                                Round =Round,
+                                                                reps=reps,
+                                                                holdback=holdback,
+                                                                Undersample = Undersample,
+                                                                hyperparameter_tuning = hyperparameter_tuning,
+                                                                error_correction_method=error_correction_method)
+
+    rfData <- rfData_and_best_m[["rfData"]]
+    best.m <- rfData_and_best_m[["best.m"]]
+
+  }
 
 
     #---------------------------------------------------------------------
@@ -121,7 +183,7 @@ train_eval_rf_with_cv_imp <- function(#scores_df=NULL,
                                        importance = T, ntree = 500, proximity = T)
 
       print(rf)
-
+browser()
       #----------------------------------------------------------------------
       #predictions with current model  with current test data
       # @___________________this_line_has_problems_______
