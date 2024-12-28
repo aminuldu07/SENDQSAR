@@ -1,12 +1,9 @@
 
-get_repeat_dose_parallel_studyids <- function (dbPath,
+get_repeat_dose_parallel_studyids <- function (path_db,
                                                rat_studies = FALSE) {
 
-  # Initialize a connection to the SQLite database
-  #dbPath <- "C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db"
-browser()
-  # Check if the database file exists
-  if (!file.exists(dbPath)) {
+   # Check if the database file exists
+  if (!file.exists(path_db)) {
     stop("Database file not found at the specified path!")
   }
 
@@ -19,12 +16,12 @@ browser()
   # } else {
   #   stop("Failed to establish a database connection.")
   # }
+browser()
 
-
-# #Database Load
-# dbtoken <- sendigR::initEnvironment(dbType = 'sqlite',
-#                                     dbPath = dbPath,
-#                                     dbCreate = FALSE)
+#Database Load
+dbtoken <- sendigR::initEnvironment(dbType = 'sqlite',
+                                    dbPath = path_db,
+                                    dbCreate = FALSE)
 
 parallel_StudyID <- sendigR::getStudiesSDESIGN(dbtoken, studyDesignFilter = "PARALLEL")
 
@@ -43,7 +40,7 @@ parallel_repeat_dose_intersect <- intersect(parallel_StudyID$STUDYID,repeat_dose
 parallel_repeat_dose_intersec_df <- data.frame(STUDYID = parallel_repeat_dose_intersect)
 
 # convert to a vector( selected_studies should be always vector)
-#selected_studies <- as.vector(parallel_repeat_dose_intersec_df$STUDYID)
+parallel_repeat_dose_studyid_or_studyids <- as.vector(parallel_repeat_dose_intersec_df$STUDYID)
 
 if (rat_studies){
   # get the studies for the rat only species
@@ -53,11 +50,11 @@ if (rat_studies){
 
 }
 
+# filter the parallel repeat dose for rat study
 
+rat_parallel_repeat_dose_studyid_or_studyids <-
 selected_studies <- as.vector(rat_STUDYID_ts_species$STUDYID)
-#selected_studies <- c("2170016", "1021-9743")
-#selected_studies <- c("2170016")
-#selected_studies  <- c("8514252")
+
 
 path_db='C:/Users/mdaminulisla.prodhan/OneDrive - FDA/TestDB.db'
 start_time <- Sys.time()

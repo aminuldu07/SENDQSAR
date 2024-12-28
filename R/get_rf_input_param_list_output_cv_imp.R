@@ -49,6 +49,12 @@ get_rf_input_param_list_output_cv_imp <- function(path_db,
 
       # get the studyids from the dm table
 
+      if(!fake_study ){
+        # filer the dm to get the repeat does and parallel studyids
+
+
+      }
+
       studyid_or_studyids <- as.vector(unique(dm$STUDYID)) # unique STUDYIDS from DM table
     }
 
@@ -66,7 +72,7 @@ column_harmonized_liverscr_df <- get_col_harmonized_scores_df(liver_score_data_f
 
 
 
-rfData_and_best_m <- get_prepared_data_and_tuned_hyperparameters( scores_df = column_harmonized_liverscr_df,
+rfData_and_best_m <- get_ml_data_and_tuned_hyperparameters( scores_df = column_harmonized_liverscr_df,
                                                             studyid_metadata = studyid_metadata,
                                                             Impute = Impute,
                                                             Round = Round,
