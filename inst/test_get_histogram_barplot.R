@@ -9,8 +9,8 @@ studyid_metadata <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Docum
 
 #studyid_or_studyids  <- c("2170016", "876")
 
-studyid_or_studyids <- get_histogram_barplot (Data =NULL,
-                                              generateBarPlot= FALSE,
+histogram_barplot <- get_histogram_barplot (Data =NULL,
+                                              generateBarPlot= TRUE,
                                               path_db=path_db,
                                               rat_studies=FALSE,
                                               studyid_metadata,

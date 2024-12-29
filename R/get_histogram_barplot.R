@@ -10,7 +10,7 @@ get_histogram_barplot <- function(Data =NULL,
                            output_individual_scores = TRUE,
                            output_zscore_by_USUBJID = FALSE){
 
-browser()
+
   # Generate data if not provided
   if (is.null(Data)) {
 
@@ -81,16 +81,6 @@ browser()
   }
 
 
-
-
-
-
-
-
-
-
-
-
   #---------------------------------------------------------------------------
   #Check if data is a valid data frame
   if (!is.data.frame(Data)) {
@@ -128,11 +118,16 @@ browser()
       ggplot2::theme(text = ggplot2::element_text(size = 20),
                      axis.text.x = ggplot2::element_text(angle = 90, vjust = 0.5, hjust=1)) +
       ggplot2::ylab('Average Score')
+
     print(p)
   }
 
+  if (generateBarPlot) {
+    return(p)  # Return the generated plot object
+  } else {
+    return( plotData)  # Return the processed data
+  }
 
-return()
 
 
 }
