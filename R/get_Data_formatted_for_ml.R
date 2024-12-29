@@ -3,28 +3,22 @@
 
 
 
-get_rf_input_param_list_output_cv_imp <- function(path_db,
-                                                  rat_studies=FALSE,
-                                                  studyid_metadata,
-                                                  fake_study = FALSE,
-                                                  use_xpt_file = FALSE,
-                                                  Round = FALSE,
-                                                  Impute = FALSE,
-                                                  reps,
-                                                  holdback,
-                                                  Undersample = FALSE,
-                                                  hyperparameter_tuning = FALSE,
-                                                  error_correction_method, # = must be 'Flip' or "Prune' or 'None'
-                                                  best.m = NULL, #rf mytr parameter
-                                                  testReps , # at least 2
-                                                  indeterminateUpper,
-                                                  indeterminateLower,
-                                                  Type,
-                                                  nTopImportance
-                                                  ){
+get_Data_formatted_for_ml <- function(path_db,
+                                      rat_studies=FALSE,
+                                      studyid_metadata=NULL,
+                                      fake_study = FALSE,
+                                      use_xpt_file = FALSE,
+                                      Round = FALSE,
+                                      Impute = FALSE,
+                                      reps,
+                                      holdback,
+                                      Undersample = FALSE,
+                                      hyperparameter_tuning = FALSE,
+                                      error_correction_method # = must be 'Flip' or "Prune' or 'None'
+                                      ){
 
-
-    if(use_xpt_file){
+  # Process the database to retrieve the vector of "STUDYIDs"-------------
+  if(use_xpt_file){
 
       studyid_or_studyids <- list.dirs(path_db , full.names = TRUE, recursive = FALSE)
 
@@ -74,6 +68,52 @@ get_rf_input_param_list_output_cv_imp <- function(path_db,
       }
     }
 
+
+  # process the database to get the "studyid_metadata"------------
+  if(is.null(studyid_metadata)) {
+    if(fake_study) {
+      # Extract study ID metadata
+      studyid_metadata <- dm[, "STUDYID", drop=FALSE]
+
+      # Remove duplicates based on STUDYID
+      studyid_metadata <- studyid_metadata[!duplicated(studyid_metadata$STUDYID), , drop =FALSE]
+
+      # Add a new column for Target_Organ
+      studyid_metadata$Target_Organ <- NA
+
+      # assign "Target_Organ" column values randomly
+      # randomly 50% of the value is Liver and rest are not_Liver
+      set.seed(123)  # Set seed for reproducibility
+      rows_number <- nrow(studyid_metadata)  # Number of rows
+
+      # Randomly sample 50% for "Liver" and rest for "not_Liver"
+      studyid_metadata$Target_Organ <- sample(c("Liver", "not_Liver"), size = rows_number, replace = TRUE, prob = c(0.5, 0.5))
+
+      # View the result
+
+    } else {
+
+      # create "studyid_metadata" data frame from "studyid_or_studyids" vector
+      studyid_metadata <- data.frame(STUDYID = studyid_or_studyids)
+
+      # Remove duplicates based on STUDYID
+      studyid_metadata <- studyid_metadata[!duplicated(studyid_metadata$STUDYID), , drop = FALSE]
+
+      # Add a new column for Target_Organ
+      studyid_metadata$Target_Organ <- NA
+
+      # assign "Target_Organ" column values randomly
+      # randomly 50% of the value is Liver and rest are not_Liver
+      set.seed(123)  # Set seed for reproducibility
+      rows_number <- nrow(studyid_metadata)  # Number of rows
+
+      # Randomly sample 50% for "Liver" and rest for "not_Liver"
+      studyid_metadata$Target_Organ <- sample(c("Liver", "not_Liver"), size = rows_number, replace = TRUE, prob = c(0.5, 0.5))
+
+    }
+  }
+
+
   #-----------------------------------------------------------------------
   # if studyid_metadata is not provided then use the data frame to
   # creae a data frame with two columns "STUDYID" and "Target_Organ"
@@ -109,24 +149,14 @@ get_rf_input_param_list_output_cv_imp <- function(path_db,
   rfData <- rfData_and_best_m[["rfData"]]
 
   # best.m input handling------------------------------------------------
-  if(is.null(best.m)){
-    best.m <- rfData_and_best_m[["best.m"]]
-    } else {
-    best.m <- best.m
-  }
-
-
-  train_and_evaluate_rf_model <- get_rf_model_with_cv (scores_data_df = rfData,
-                                                     Undersample = Undersample,
-                                                      best.m = best.m ,
-                                                      testReps = testReps,
-                                                      indeterminateUpper = indeterminateUpper,
-                                                      indeterminateLower = indeterminateLower,
-                                                       Type = Type ,
-                                                       nTopImportance =  nTopImportance)
+  # if(is.null(best.m)){
+  #   best.m <- rfData_and_best_m[["best.m"]]
+  #   } else {
+  #   best.m <- best.m
+  # }
 
 
 
-return(train_and_evaluate_rf_model)
+return(Data = rfData)
 
 }
