@@ -435,8 +435,8 @@ get_random_forest_model <- function(Liver_get_liver_om_lb_mi_tox_score_list,
     # ind <- sample(2, nrow(rfData), replace = T, prob = c((1- testHoldBack), testHoldBack))
     train <- rfData[trainIndex,]
 
-    train_data_two <- train
-    print(dim(train_data_two))
+    #train_data_two <- train
+    #print(dim(train_data_two))
 
     test <- rfData[testIndex,]
 
@@ -453,9 +453,9 @@ get_random_forest_model <- function(Liver_get_liver_om_lb_mi_tox_score_list,
       train <- train[trainIndex,]
       test <- rbind(train[-trainIndex,], test)
     }
-
-    train_data_two <- train
-    print(dim(train_data_two))
+#
+#     train_data_two <- train
+#     print(dim(train_data_two))
 
 
     #model building with current train data

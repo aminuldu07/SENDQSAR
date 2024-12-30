@@ -36,7 +36,7 @@
 #'   Undersample = TRUE
 #' )
 
-get_ml_data_and_tuned_hyperparameters <- function(scores_df,
+get_ml_data_and_tuned_hyperparameters <- function(Data, # Data == "scores_df"
                                                   studyid_metadata,
                                                   Impute = FALSE,
                                                   Round =FALSE,
@@ -46,7 +46,9 @@ get_ml_data_and_tuned_hyperparameters <- function(scores_df,
                                                   hyperparameter_tuning = FALSE,
                                                   error_correction_method = NULL) { # # Choose: "Flip" or "Prune" or "None"
 
-  input_scores_df <- scores_df
+  input_scores_df <- Data #input_scores_df <- scores_df
+
+
   metadata_df <- studyid_metadata
 
 

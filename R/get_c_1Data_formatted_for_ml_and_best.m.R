@@ -3,7 +3,7 @@
 
 
 
-get_Data_formatted_for_ml <- function(path_db,
+get_Data_formatted_for_ml_and_best.m <- function(path_db,
                                       rat_studies=FALSE,
                                       studyid_metadata=NULL,
                                       fake_study = FALSE,
@@ -134,7 +134,7 @@ get_Data_formatted_for_ml <- function(path_db,
 
 
 
-  rfData_and_best_m <- get_ml_data_and_tuned_hyperparameters( scores_df = column_harmonized_liverscr_df,
+  rfData_and_best_m <- get_ml_data_and_tuned_hyperparameters( Data = column_harmonized_liverscr_df,
                                                             studyid_metadata = studyid_metadata,
                                                             Impute = Impute,
                                                             Round = Round,
@@ -147,8 +147,9 @@ get_Data_formatted_for_ml <- function(path_db,
 
 
   rfData <- rfData_and_best_m[["rfData"]]
+  best.m <- rfData_and_best_m[["best.m"]]
 
-  # best.m input handling------------------------------------------------
+  # # best.m input handling------------------------------------------------
   # if(is.null(best.m)){
   #   best.m <- rfData_and_best_m[["best.m"]]
   #   } else {
@@ -157,6 +158,7 @@ get_Data_formatted_for_ml <- function(path_db,
 
 
 
-return(Data = rfData)
+return(list(Data = rfData,
+            best.m= best.m))
 
 }

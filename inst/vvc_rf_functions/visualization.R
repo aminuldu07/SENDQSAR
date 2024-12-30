@@ -4,17 +4,17 @@
 ###-----------------------@ROC-Curve-and-AUC------------------------------------
 # @ROC-Curve-and-AUC~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-pred1= stats::predict(rfAll,type = "prob")
-perf = ROCR::prediction(pred1[,1], levels(rfData[,1])[rfData[,1]])
-# 1. Area under curve
-auc = ROCR::performance(perf, "auc")
-AUC <- auc@y.values[[1]]
-print(AUC)
-# 2. True Positive and Negative Rate
-pred3 = ROCR::performance(perf, "tpr","fpr") # check the ROCR packge assignment here
-# 3. Plot the ROC curve
-plot(pred3,main=paste0("ROC Curve for Random Forest (AUC = ", round(AUC, digits = 3), ")"),col=2,lwd=2)
-abline(a=0,b=1,lwd=2,lty=2,col="gray")
+# pred1= stats::predict(rfAll,type = "prob")
+# perf = ROCR::prediction(pred1[,1], levels(rfData[,1])[rfData[,1]])
+# # 1. Area under curve
+# auc = ROCR::performance(perf, "auc")
+# AUC <- auc@y.values[[1]]
+# print(AUC)
+# # 2. True Positive and Negative Rate
+# pred3 = ROCR::performance(perf, "tpr","fpr") # check the ROCR packge assignment here
+# # 3. Plot the ROC curve
+# plot(pred3,main=paste0("ROC Curve for Random Forest (AUC = ", round(AUC, digits = 3), ")"),col=2,lwd=2)
+# abline(a=0,b=1,lwd=2,lty=2,col="gray")
 
 
 

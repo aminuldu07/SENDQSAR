@@ -125,7 +125,7 @@ get_auc_curve_with_rf_model  <- function(Data = NULL, # Input data frame for tra
 
     #Data <- column_harmonized_liverscr_df
 
-    rfData_and_best_m <- get_ml_data_and_tuned_hyperparameters( scores_df = column_harmonized_liverscr_df,
+    rfData_and_best_m <- get_ml_data_and_tuned_hyperparameters( Data = column_harmonized_liverscr_df,
                                                                 studyid_metadata = studyid_metadata,
                                                                 Impute = Impute,
                                                                 Round = Round,
@@ -136,6 +136,7 @@ get_auc_curve_with_rf_model  <- function(Data = NULL, # Input data frame for tra
                                                                 error_correction_method = error_correction_method)
 
   }
+
 
   # reassignment of the data
   rfData <- rfData_and_best_m[["rfData"]]
@@ -148,9 +149,8 @@ get_auc_curve_with_rf_model  <- function(Data = NULL, # Input data frame for tra
   }
 
 
-  # Train a Random Forest model using the specified mtry value
-  rfAll <- randomForest::randomForest(Target_Organ ~ ., data = rfData, mytry = best.m,
-                                      importance = FALSE, ntree = 500, proximity = TRUE)
+
+
 
   # Predict probabilities and calculate AUC
   pred1 <- stats::predict(rfAll, type = "prob")

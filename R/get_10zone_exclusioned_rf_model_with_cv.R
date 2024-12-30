@@ -1,18 +1,13 @@
 
-get_rf_model_with_cv <- function(Data,
-                                 Undersample = FALSE,
-                                 best.m = NULL, # any numeric value or call function to get it
-                                 testReps, # testRps must be at least 2;
-                                 Type) {
-
-
-# This functin must need a data input.
-# This funcitno is is designed to work with the chanin  way.
-# There is scond function with list of parmaters
-
-
-
-    rfData <- Data
+get_zone_exclusioned_rf_model_with_cv <- function(Data=NULL, #scores_df
+                                      Undersample = FALSE,
+                                      best.m = NULL, # any numeric value or call function to get it
+                                      testReps, # testRps must be at least 2;
+                                      indeterminateUpper,
+                                      indeterminateLower,
+                                      Type) {
+browser()
+    rfData <- Data #rfData <- scores_df
     #---------------------------------------------------------------------
     # Initialize model performance metric trackers------------------------
     #---------------------------------------------------------------------
@@ -26,7 +21,7 @@ get_rf_model_with_cv <- function(Data,
     NPV <- NULL
     Prevalence <- NULL
     Accuracy <- NULL
-    #nRemoved <- NULL
+    nRemoved <- NULL
 
 
     #-----------------doing cross-validation--------------------------
@@ -49,7 +44,7 @@ get_rf_model_with_cv <- function(Data,
     rfTestData <- rfTestData[,1:2] # Keep structure for predictions
 
     #remove 'gini' from the previous iteration
-    #if (exists('gini')) {rm(gini)}
+    if (exists('gini')) {rm(gini)}
 
 
     #-------------------------------------------------------------------
@@ -114,8 +109,29 @@ get_rf_model_with_cv <- function(Data,
       #Store these predictions in a structured data frame
       rfTestData[names(p2r), i] <- as.numeric(p2r)
 
+
+      #--------------------------------------------------------------------------
+      #--------------------------------------------------------------------------
+      #--------------------------------------------------------------------------
+      #Identifying Indeterminate Predictions (Tracking Indeterminate Predictions)
+      #Keeps track of the proportion of indeterminate predictions in each iteration
+      #Proportion Tracking
+      #------------------------------------------------------------------------
+      #------------------------------------------------------------------------
+
+      indeterminateIndex <- which((p2r < indeterminateUpper)&(p2r > indeterminateLower))
+
+      #Calculating the Proportion of Indeterminate Predictions
+      #Sets the indeterminate predictions to NA, effectively marking them
+      #as missing or invalid.
+      nRemoved <- c(nRemoved, length(indeterminateIndex)/length(p2r))
+
+      #Handling Indeterminate Predictions
+      p2r[indeterminateIndex] <- NA
+
       #Rounding the Predictions:
       p2r <- round(p2r)
+
 
       # Compute confusion matrix and extract metrics using "caret" package----
 
@@ -128,7 +144,7 @@ get_rf_model_with_cv <- function(Data,
       Accuracy <- c(Accuracy, Results$byClass[['Balanced Accuracy']])
 
 
-      # # Aggregate Gini importance scores
+      # Aggregate Gini importance scores
       # giniTmp <-  randomForest::importance(rf, type = Type)
       # if (exists('gini')) {
       #   gini <- cbind(gini, giniTmp)
@@ -147,21 +163,22 @@ get_rf_model_with_cv <- function(Data,
                                PPV,
                                NPV,
                                Prevalence,
-                               Accuracy)
+                               Accuracy,
+                               nRemoved)
     PerformanceSummary <- colMeans(PerformanceMatrix, na.rm = T)
     print(PerformanceSummary)
 
-    # #-------------------------------------------------------------------------
-    # # Feature Importance------------------------------------------------------
-    # #-------------------------------------------------------------------------
-    #
+    #-------------------------------------------------------------------------
+    # Feature Importance------------------------------------------------------
+    #-------------------------------------------------------------------------
+
     # print("Feature Importance (Mean Decrease):")
     # print(sort(rowMeans(gini), decreasing = T))
-    #
-    #
-    # #-------------------------------------------------------------------------
-    # # Top Important Features--------------------------------------------------
-    # #--------------------------------------------------------------------------
+
+
+    #-------------------------------------------------------------------------
+    # Top Important Features--------------------------------------------------
+    #--------------------------------------------------------------------------
     # imp <- as.matrix(rowMeans(gini)[1:nTopImportance])
     # if (Type == 1) {
     #   colnames(imp) <- 'MeanDecreaseAccuracy'
@@ -184,36 +201,11 @@ print(".........................................................................
 
     return(list(
       performance_metrics = PerformanceSummary,  # Aggregated performance metrics
-      #feature_importance = imp,                  # Top n features by importance
       raw_results = list(                        # Raw data for debugging or extended analysis
         sensitivity = Sensitivity,
         specificity = Specificity,
         accuracy = Accuracy
-
       )
     ))
 
-}
-
-#--------------------------------------------------------------------------
-#--------------------------------------------------------------------------
-#--------------------------------------------------------------------------
-#Identifying Indeterminate Predictions (Tracking Indeterminate Predictions)
-#Keeps track of the proportion of indeterminate predictions in each iteration
-#Proportion Tracking
-#------------------------------------------------------------------------
-#------------------------------------------------------------------------
-
-# indeterminateIndex <- which((p2r < indeterminateUpper)&(p2r > indeterminateLower))
-#
-# #Calculating the Proportion of Indeterminate Predictions
-# #Sets the indeterminate predictions to NA, effectively marking them
-# #as missing or invalid.
-# nRemoved <- c(nRemoved, length(indeterminateIndex)/length(p2r))
-#
-# #Handling Indeterminate Predictions
-# p2r[indeterminateIndex] <- NA
-#
-# #Rounding the Predictions:
-# p2r <- round(p2r)
-
+  }
