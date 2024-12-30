@@ -45,3 +45,6 @@ H <- p <- histoData %>%
   ggplot2::scale_fill_manual(values=c("#69b3a2", "#404080")) +
   # theme_ipsum() +
   ggplot2::labs(fill = "LIVER", x = "Model Prediction P(LIVER)", y = "Count")
+
+
+

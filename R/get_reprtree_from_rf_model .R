@@ -13,7 +13,7 @@ get_reprtree_from_rf_model <- function ( Data=NULL,
                                          hyperparameter_tuning = FALSE,
                                          error_correction_method) { # = must be 'Flip' or "Prune' or 'None'
 
-  browser()
+
   if(is.null(Data)){
     data_and_best.m <- get_Data_formatted_for_ml_and_best.m(path_db=path_db,
                                                    rat_studies=rat_studies,
@@ -29,7 +29,7 @@ get_reprtree_from_rf_model <- function ( Data=NULL,
                                                    error_correction_method=error_correction_method) # = must be 'Flip' or "Prune' or 'None'
 
         }
-  browser()
+
     Data <- data_and_best.m[["Data"]]
     best.m <- data_and_best.m[["best.m"]]
 
@@ -75,7 +75,7 @@ get_reprtree_from_rf_model <- function ( Data=NULL,
     #   train <- train[balancedIndex, ]
     # }
 
-
+    browser()
     # Train a Random Forest model using the specified mtry value
     rfAll <- randomForest::randomForest(Target_Organ ~ .,
                                         data = Data,
@@ -88,6 +88,15 @@ get_reprtree_from_rf_model <- function ( Data=NULL,
                          train,
                          metric='d2')
 
-    plot.reprtree(ReprTree(rfAll, train, metric='d2'))
+    #plot(ReprTree)
+    #library(reprtree)
+
+    # Plot the first tree (k = 1) from the random forest
+    reprtree::plot.getTree(rforest = rfAll, k = 5, depth = 10)#, main = "Tree 1")
+
+    #reprtree::plot.getTree(rfAll,train,  )
+    #plot(ReprTree(rfAll, train, metric = "d2"))
+
+    #reprtree::plot.reprtree(ReprTree(rfAll, train, metric='d2'))
 
 }
