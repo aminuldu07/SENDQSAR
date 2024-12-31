@@ -1,0 +1,72 @@
+---
+title: "Documentation for `get_bw_score` Function"
+author: "Md Aminul Islam Prodhan"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+The `get_bw_score` function is designed to compute the binding-weighted (BW) score for a given set of target predictions. It takes in a data frame of predictions and a binding threshold to calculate a score that reflects the relevance of binding targets.
+
+## Function Signature
+
+```{r}
+get_bw_score <- function(df, binding_threshold) {
+  # Function implementation
+}
+```
+
+# Arguments
+
+- `df`: A `data.frame` containing at least two columns:
+  - `prob`: Numeric values representing predicted binding probabilities.
+  - `affinity`: Numeric values representing binding affinity.
+
+- `binding_threshold`: A numeric value indicating the minimum probability required to consider a prediction as binding.
+
+# Return Value
+
+A numeric value representing the binding-weighted score, calculated as the weighted sum of the affinities of the predictions that exceed the `binding_threshold`. The formula is:
+
+\[
+BW\_Score = \sum_{i \in \text{Binding}} P_i \cdot A_i
+\]
+
+where \(P_i\) is the binding probability and \(A_i\) is the binding affinity.
+
+# Example Usage
+
+```{r example}
+# Example data frame
+predictions <- data.frame(
+  prob = c(0.8, 0.6, 0.4, 0.9),
+  affinity = c(5, 3, 2, 7)
+)
+
+# Define binding threshold
+threshold <- 0.5
+
+# Compute the binding-weighted score
+bw_score <- get_bw_score(predictions, threshold)
+print(bw_score)
+```
+
+# Edge Cases
+
+1. If the data frame `df` is empty, the function should return `0`.
+2. If none of the `prob` values exceed the `binding_threshold`, the function should return `0`.
+3. Ensure that both `prob` and `affinity` columns are numeric, and handle any invalid data types gracefully.
+
+# Implementation Details
+
+The function filters rows where the `prob` column exceeds the `binding_threshold` and computes the score using vectorized operations. This ensures efficiency and scalability for larger datasets.
+
+# Additional Notes
+
+- The function assumes the input data frame is correctly formatted. Pre-processing steps (e.g., missing value handling) should be performed beforehand.
+- Users can customize the `binding_threshold` to match the specificity requirements of their analysis.

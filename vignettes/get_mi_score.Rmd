@@ -1,0 +1,97 @@
+---
+title: "Function Documentation for `get_mi_score`"
+output: html_document
+---
+
+# `get_mi_score` Function Documentation
+
+The `get_mi_score` function processes medical information (MI) data from clinical study databases. It calculates the MI scores, manages severity levels, and processes the data according to specified parameters.
+
+## Parameters Explanation
+
+The `get_mi_score` function accepts the following parameters:
+
+1. **`studyid`** (`character`, optional): 
+   - The ID of the study from which to fetch data. If `NULL`, it will fetch data for all studies in the database.
+
+2. **`path_db`** (`character`): 
+   - The path to the SQLite database or folder containing XPT files. This is required to access the data.
+
+3. **`fake_study`** (`logical`, optional, default = `FALSE`): 
+   - A flag to indicate whether to process a fake study dataset. If `TRUE`, the function may mock data retrieval.
+
+4. **`use_xpt_file`** (`logical`, optional, default = `FALSE`): 
+   - A flag to determine if `.xpt` files should be used. If `TRUE`, the function will read XPT files from the provided path.
+
+5. **`master_compiledata`** (`data.frame`, optional): 
+   - A dataframe that contains compiled study data. If `NULL`, the function will fetch this data from the database.
+
+6. **`return_individual_scores`** (`logical`, optional, default = `FALSE`): 
+   - If `TRUE`, the function will return individual MI scores for each participant. Default is `FALSE`.
+
+7. **`return_zscore_by_USUBJID`** (`logical`, optional, default = `FALSE`): 
+   - If `TRUE`, the function will return the Z-scores for each USUBJID. Default is `FALSE`.
+
+## Key Steps in the Function
+
+The function follows several key steps to process the MI data:
+
+1. **Database Connection**: 
+   - If `use_xpt_file` is `FALSE`, the function connects to an SQLite database to fetch the required domains (`mi` and `dm`). Otherwise, it reads XPT files from the specified directory.
+
+2. **Data Cleaning and Filtering**: 
+   - The `MI` domain is filtered to include only relevant records, such as those with liver-related issues. Severity levels (`MISEV`) are standardized and missing values are replaced.
+
+3. **Severity Level Conversion**: 
+   - Severity levels in `MISEV` are mapped to numerical values (e.g., "MILD" becomes 2, "SEVERE" becomes 5).
+
+4. **Data Merging**: 
+   - The function merges data from the `mi` domain with compiled study data, ensuring that only valid participants (those not marked as "recovery" or "tk") are included.
+
+5. **Calculation of MI Scores**: 
+   - The MI scores are calculated based on the cleaned and merged data. If `return_individual_scores` is set to `TRUE`, the individual scores are returned.
+
+6. **Final Compilation**: 
+   - A final data frame containing the MI scores is generated and cleaned up. The function returns either the compiled MI score data or, optionally, Z-scores or individual participant scores.
+
+## Example Usage
+
+Here is an example of how to use the `get_mi_score` function:
+
+```{r}
+# Example 1: Basic usage with default parameters
+mi_scores <- get_mi_score(
+  studyid = "12345", 
+  path_db = "/path/to/database"
+)
+
+# Example 2: Using XPT files instead of a database
+mi_scores_xpt <- get_mi_score(
+  path_db = "/path/to/xpt/files", 
+  use_xpt_file = TRUE
+)
+
+# Example 3: Return individual scores
+mi_individual_scores <- get_mi_score(
+  studyid = "12345", 
+  path_db = "/path/to/database",
+  return_individual_scores = TRUE
+)
+
+# Example 4: Return Z-scores for each participant
+mi_zscores <- get_mi_score(
+  studyid = "12345", 
+  path_db = "/path/to/database", 
+  return_zscore_by_USUBJID = TRUE
+)
+
+## Conclusion
+
+The `get_mi_score` function is a versatile tool for processing and analyzing MI data from clinical study databases. By setting various parameters, users can tailor the output to meet specific needs, such as:
+
+- Calculating MI scores based on severity levels.
+- Returning individual scores or aggregated MI scores.
+- Returning Z-scores for each participant.
+- Handling data from either SQLite databases or XPT files.
+
+The function's flexibility makes it a powerful resource for researchers and data analysts working with clinical study data.

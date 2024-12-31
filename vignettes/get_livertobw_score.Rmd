@@ -1,0 +1,109 @@
+# Saving the provided R Markdown content as an .Rmd file.
+
+file_path = "/mnt/data/get_livertobw_score_doc.Rmd"
+
+rmd_content = """
+---
+title: "Documentation for get_livertobw_score Function"
+author: "Your Name"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+---
+
+## Introduction
+
+The `get_livertobw_score` function is designed to calculate liver-to-body-weight (Liver:BW) scores and their corresponding z-scores from study data. This function supports data retrieval from SQLite databases or `.xpt` files and provides options to return individual scores, USUBJID-specific z-scores, or averaged scores by study. 
+
+---
+
+## Function Parameters
+
+### Inputs
+
+- **`studyid`** (character, default = `NULL`):
+  - Identifier for the study of interest.
+  - If `NULL`, all studies in the database are considered.
+
+- **`path_db`** (character):
+  - Path to the SQLite database or `.xpt` files.
+
+- **`fake_study`** (logical, default = `FALSE`):
+  - Indicator for handling fake or test study data.
+
+- **`use_xpt_file`** (logical, default = `FALSE`):
+  - If `TRUE`, reads data from `.xpt` files. Otherwise, fetches data from the SQLite database.
+
+- **`master_compiledata`** (data.frame, default = `NULL`):
+  - Precompiled dataset of study information.
+  - If not provided, it is fetched using `get_compile_data()`.
+
+- **`bwzscore_BW`** (data.frame, default = `NULL`):
+  - Precomputed body weight z-scores.
+  - If not provided, it is calculated using `get_bw_score()`.
+
+- **`return_individual_scores`** (logical, default = `FALSE`):
+  - If `TRUE`, returns individual z-scores averaged by study.
+
+- **`return_zscore_by_USUBJID`** (logical, default = `FALSE`):
+  - If `TRUE`, returns z-scores grouped by `USUBJID`.
+
+### Outputs
+
+- Data frame containing:
+  - Liver:BW z-scores grouped by study (`return_individual_scores = TRUE`).
+  - Z-scores by `USUBJID` (`return_zscore_by_USUBJID = TRUE`).
+  - Averaged z-scores by study (default).
+
+---
+
+## Workflow
+
+### 1. Data Preparation
+
+- **Database Connection**:
+  - Connects to SQLite database using `DBI` if `use_xpt_file = FALSE`.
+  - Retrieves data for specified `studyid` using helper function `fetch_domain_data()`.
+- **Compile Data**:
+  - If `master_compiledata` is not provided, it is retrieved using `get_compile_data()`.
+- **Body Weight Scores**:
+  - If `bwzscore_BW` is not provided, it is calculated using `get_bw_score()`.
+
+### 2. Data Extraction
+
+- Filters liver-specific data from the `OM` domain.
+- Removes test and recovery animals based on `master_compiledata`.
+
+### 3. Liver-to-Body-Weight Calculations
+
+- **Calculation**:
+  - Computes the liver weight-to-body-weight ratio (`liverToBW`).
+  - Calculates z-scores for `liverToBW` using vehicle arm statistics (mean and SD).
+  - Converts z-scores to absolute values.
+
+### 4. Score Computation
+
+- **Mutual Exclusivity**:
+  - Validates that `return_individual_scores` and `return_zscore_by_USUBJID` are not both `TRUE`.
+- **Score Types**:
+  - Individual study-level scores (`return_individual_scores = TRUE`).
+  - USUBJID-specific z-scores (`return_zscore_by_USUBJID = TRUE`).
+  - Default: Average z-scores by study.
+
+### 5. Output
+
+- Returns a data frame based on the selected output option.
+
+---
+
+## Examples
+
+### Example 1: Default Averaged Scores
+```r
+path <- "path_to_database"
+study_id <- "STUDY123"
+result <- get_livertobw_score(studyid = study_id, path_db = path)
+head(result)
