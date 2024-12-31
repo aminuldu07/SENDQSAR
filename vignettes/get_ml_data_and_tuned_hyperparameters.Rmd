@@ -1,0 +1,120 @@
+---
+title: "Documentation for `get_ml_data_and_tuned_hyperparameters` Function"
+output: html_document
+---
+
+## Overview
+
+The `get_ml_data_and_tuned_hyperparameters` function processes and prepares machine learning data for modeling, with various optional preprocessing steps such as missing value imputation, undersampling, and hyperparameter tuning. It also supports error correction via specific methods like "Flip" and "Prune".
+
+## Function Definition
+
+```r
+get_ml_data_and_tuned_hyperparameters <- function(Data,
+                                                  studyid_metadata,
+                                                  Impute = FALSE,
+                                                  Round = FALSE,
+                                                  reps,
+                                                  holdback,
+                                                  Undersample = FALSE,
+                                                  hyperparameter_tuning = FALSE,
+                                                  error_correction_method = NULL) {
+  # Function implementation
+}
+```
+```r
+result <- get_ml_data_and_tuned_hyperparameters(Data = scores_df,
+                                               studyid_metadata = metadata_df,
+                                               Impute = TRUE,
+                                               Round = TRUE,
+                                               reps = 10,
+                                               holdback = 0.25,
+                                               Undersample = TRUE,
+                                               hyperparameter_tuning = TRUE,
+                                               error_correction_method = "Flip")
+
+# Access the final data and best mtry hyperparameter
+rfData <- result$rfData
+best_mtry <- result$best.m
+
+)
+```
+## Parameters
+
+- **Data** (*data frame*):  
+  Input data containing the scores. This will typically be a data frame named `scores_df`.
+
+- **studyid_metadata** (*data frame*):  
+  A data frame containing metadata, typically including the `STUDYID` column, which is used for joining with the `Data`.
+
+- **Impute** (*logical*):  
+  If `TRUE`, missing values in the dataset will be imputed using random forest imputation.
+
+- **Round** (*logical*):  
+  If `TRUE`, specific columns will be rounded according to the rules described in the function.
+
+- **reps** (*numeric*):  
+  The number of repetitions for cross-validation. A value of 0 skips repetition.
+
+- **holdback** (*numeric*):  
+  The fraction of data to hold back for testing. A value of 1 means leave-one-out cross-validation.
+
+- **Undersample** (*logical*):  
+  If `TRUE`, the training data will be undersampled to balance the target classes.
+
+- **hyperparameter_tuning** (*logical*):  
+  If `TRUE`, hyperparameter tuning will be performed using cross-validation.
+
+- **error_correction_method** (*character*):  
+  Specifies the error correction method to use. Can be one of `"Flip"`, `"Prune"`, or `"None"`. Defaults to `NULL`, which means no correction.
+
+## Returns
+
+- **A list containing**:
+  - **rfData**:  
+    The final prepared data after preprocessing, imputation, and any error correction methods.
+  - **best.m**:  
+    The best `mtry` hyperparameter for the random forest model (determined through tuning or default).
+
+## Function Workflow
+
+### Data Merging
+- The function first joins the metadata (`studyid_metadata`) with the input data (`Data`) based on the `STUDYID` column.
+
+### Target Variable Encoding
+- The target variable (`Target_Organ`) is encoded such that:
+  - `'Liver'` is encoded as `1`.
+  - `'not_Liver'` is encoded as `0`.
+- This encoding facilitates the modeling process.
+
+### Missing Value Imputation
+- If `Impute` is `TRUE`, missing values are imputed using the `randomForest::rfImpute` function.
+
+### Rounding of Specific Columns
+- If `Round` is `TRUE`:
+  - Columns related to averages or liver-related data are rounded down using `floor()`.
+  - Other columns (e.g., `"MI"` columns) are rounded up using `ceiling()`.
+
+### Data Splitting
+- The data is split into training and testing sets:
+  - A fraction of the data (`holdback`) is held back for testing.
+  - For each repetition (`reps`), the data is split again.
+- The training set is optionally undersampled to balance the target classes.
+
+### Hyperparameter Tuning
+- If `hyperparameter_tuning` is `TRUE`:
+  - The function performs hyperparameter tuning for the random forest model using cross-validation with `trainControl` from the **caret** package.
+  - The `mtry` parameter is tuned, which controls the number of variables randomly sampled as candidates at each split.
+
+### Model Training
+- A random forest model is trained on the prepared data using the **randomForest** package.
+- The `best.m` hyperparameter is selected based on the tuning or set to a default value.
+
+### Error Correction
+- If `error_correction_method` is specified, the function corrects the predictions based on the chosen method:
+  - `"Flip"`: Flips the target class if certain conditions are met.
+  - `"Prune"`: Removes instances that are misclassified.
+  - `"None"`: No error correction is applied.
+
+### Final Data Return
+- The processed data (`rfData`) and the best `mtry` hyperparameter (`best.m`) are returned.

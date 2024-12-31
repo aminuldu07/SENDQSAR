@@ -1,20 +1,36 @@
-
-#' @title get_random_forest_model
-#' @param data_frame Mandatory, character \cr
-#'   Studyid number
-#' @param Liver_get_liver_om_lb_mi_tox_score_list Mandatory, character \cr
-#'   Studyid number
-#' @param not_Liver_get_liver_om_lb_mi_tox_score_list Mandatory, character \cr
-#'   path of database
-#' @return score
+#' @title get_col_harmonized_scores_df
+#' @description
+#' This function harmonizes liver score data by cleaning column names,
+#' replacing missing values with zeros, and optionally rounding specific columns.
+#' The function also identifies and harmonizes synonyms, removes unnecessary columns,
+#' and reorders the data based on column sums.
+#'
+#' @param liver_score_data_frame A data frame containing liver score data.
+#'   This data frame should have column names that may require harmonization.
+#' @param Round A logical value indicating whether the data should be rounded.
+#'   If TRUE, certain liver-related columns are floored and capped, and histology-related columns are ceiled. Default is FALSE.
+#'
+#' @details
+#' The function performs the following operations:
+#' - Harmonizes column names by replacing spaces, commas, and slashes with dots.
+#' - Replaces missing values (NA) with zero.
+#' - Identifies and harmonizes synonym columns, replacing their values with the higher value between the synonyms.
+#' - Removes specific unwanted columns such as 'INFILTRATE', 'UNREMARKABLE', 'THIKENING', and 'POSITIVE'.
+#' - Optionally rounds liver score columns by flooring and capping them at 5, and histology-related columns by ceiling.
+#' - Reorders columns based on the sum of their values.
+#'
+#' @return A data frame with harmonized liver scores, optional rounding, and columns reordered based on their sums.
 #'
 #' @examples
 #' \dontrun{
-#' get_liver_lb_score(studyid='1234123', database_path = dbtoken)
+#' # Example usage
+#' result <- get_col_harmonized_scores_df(liver_score_data_frame = liver_scores, Round = TRUE)
 #' }
-#' @export
 #'
-
+#' @export
+get_col_harmonized_scores_df <- function(liver_score_data_frame, Round = FALSE) {
+  # Function implementation here...
+}
 
 
 get_col_harmonized_scores_df <- function(liver_score_data_frame,

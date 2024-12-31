@@ -1,40 +1,47 @@
-#' Get Random Forest Data and Best Model
+#' @title Get Random Forest Data and Tuned Hyperparameters
 #'
-#' This function retrieves and processes data for random forest analysis from a SQLite database.
-#' It performs the following steps:
-#' 1. Connects to the SQLite database and retrieves unique `STUDYID` values from the `dm` table.
-#' 2. Generates liver toxicity scores for the given study IDs.
-#' 3. Harmonizes the columns in the scores data frame.
-#' 4. Reads metadata for study IDs.
-#' 5. Prepares the data and tunes hyperparameters for a random forest model.
+#' @description
+#' The `get_ml_data_and_tuned_hyperparameters` function processes input data and metadata to prepare data for
+#' random forest analysis. It includes steps for data preprocessing, optional imputation, rounding,
+#' error correction, and hyperparameter tuning.
 #'
-#' @param path_db Character. Path to the SQLite database.
-#' @param studyid_metadata_path Character. Path to the CSV file containing metadata for study IDs.
-#' @param fake_study Logical. Whether to use fake study IDs. Default is `TRUE`.
-#' @param use_xpt_file Logical. Whether to use XPT file format. Default is `FALSE`.
-#' @param output_individual_scores Logical. Whether to output individual scores. Default is `TRUE`.
-#' @param output_zscore_by_USUBJID Logical. Whether to output z-scores by `USUBJID`. Default is `FALSE`.
-#' @param Impute Logical. Whether to impute missing values in the data. Default is `TRUE`.
-#' @param Round Logical. Whether to round numerical values in the data. Default is `TRUE`.
-#' @param reps Integer. Number of repetitions for model evaluation. Default is `1`.
-#' @param holdback Numeric. Proportion of data to hold back for validation. Default is `0.75`.
-#' @param Undersample Logical. Whether to perform undersampling to balance the data. Default is `TRUE`.
-#' @param hyperparameter_tuning Logical. Whether to perform hyperparameter tuning. Default is `FALSE`.
-#' @param error_correction_method Character. Method for error correction. Default is `'None'`.
+#' @param Data data.frame. Input data frame containing scores, typically named `scores_df`.
+#' @param studyid_metadata data.frame. Metadata containing `STUDYID` values, used for joining with `Data`.
+#' @param Impute logical. Indicates whether to impute missing values in the dataset using random forest imputation. Default is `FALSE`.
+#' @param Round logical. Specifies whether to round specific numerical columns according to predefined rules. Default is `FALSE`.
+#' @param reps integer. Number of repetitions for cross-validation. A value of `0` skips repetition.
+#' @param holdback numeric. Fraction of data to hold back for testing. A value of `1` performs leave-one-out cross-validation.
+#' @param Undersample logical. Indicates whether to undersample the training data to balance the target classes. Default is `FALSE`.
+#' @param hyperparameter_tuning logical. Specifies whether to perform hyperparameter tuning for the random forest model. Default is `FALSE`.
+#' @param error_correction_method character. Specifies the method for error correction. Can be `"Flip"`, `"Prune"`, or `NULL`. Default is `NULL`.
 #'
-#' @return A list containing the processed data and the best model parameters.
+#' @return
+#' A list containing:
+#' \describe{
+#'   \item{rfData}{The final processed data after preprocessing and error correction.}
+#'   \item{best.m}{The best `mtry` hyperparameter determined for the random forest model.}
+#' }
+#'
 #' @export
 #'
 #' @examples
-#' path_db <- "C:/path/to/database.db"
-#' studyid_metadata_path <- "C:/path/to/study_metadata.csv"
-#' rfData_and_best_m <- get_rfData_and_best_m(
-#'   path_db = path_db,
-#'   studyid_metadata_path = studyid_metadata_path,
-#'   fake_study = TRUE,
+#' # Example usage:
+#' Data <- scores_df
+#' studyid_metadata <- read.csv("path/to/study_metadata.csv")
+#' result <- get_ml_data_and_tuned_hyperparameters(
+#'   Data = Data,
+#'   studyid_metadata = studyid_metadata,
+#'   Impute = TRUE,
 #'   Round = TRUE,
-#'   Undersample = TRUE
+#'   reps = 10,
+#'   holdback = 0.75,
+#'   Undersample = TRUE,
+#'   hyperparameter_tuning = TRUE,
+#'   error_correction_method = "Flip"
 #' )
+#' rfData <- result$rfData
+#' best_mtry <- result$best.m
+
 
 get_ml_data_and_tuned_hyperparameters <- function(Data, # Data == "scores_df"
                                                   studyid_metadata,
