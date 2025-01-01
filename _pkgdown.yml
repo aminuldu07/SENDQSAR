@@ -27,8 +27,6 @@ navbar:
       menu:
       - text: Introduction
         href: articles/Introduction.html
-      - text: Compile_Data_calculation_documentation
-        href: articles/Compile_Data_calculation_documentation.html
       - text: get_compile_data
         href: articles/get_compile_data.html
       - text: get_bw_score
