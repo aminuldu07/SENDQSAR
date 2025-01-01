@@ -1,52 +1,139 @@
+SENDQSAR
+================
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+# SENDQSAR: QSAR Modeling with SEND Database
 
-# SENDQSAR
+## About
 
-<!-- badges: start -->
-<!-- badges: end -->
+This package facilitates developing Quantitative Structure-Activity
+Relationship (QSAR) models using the SEND database. It streamlines data
+acquisition, preprocessing, descriptor calculation, and model
+evaluation, enabling researchers to efficiently explore molecular
+descriptors and create robust predictive models.
 
-The goal of SENDQSAR is to …
+## Features
+
+- **Automated Data Processing**: Simplifies data acquisition and
+  preprocessing steps.
+- **Comprehensive Analysis**: Provides z-score calculations for various
+  parameters such as body weight, liver-to-body weight ratio, and
+  laboratory tests.
+- **Machine Learning Integration**: Supports classification modeling,
+  hyperparameter tuning, and performance evaluation.
+- **Visualization Tools**: Includes histograms, bar plots, and AUC
+  curves for better data interpretation.
+
+## Functions Overview
+
+### Data Acquisition and Processing
+
+- `get_compile_data` - Fetches data from the database specified by the
+  database path into a structured data frame for analysis.
+- `get_bw_score` - Calculates body weight (BW) z-scores for each animal.
+- `get_livertobw_zscore` - Computes liver-to-body weight z-scores.
+- `get_lb_score` - Calculates z-scores for laboratory test (LB) results.
+- `get_mi_score` - Computes z-scores for microscopic findings (MI).
+- `get_liver_om_lb_mi_tox_score_list` - Combines z-scores of LB, MI, and
+  liver-to-BW into a single data frame.
+- `get_col_harmonized_scores_df` - Harmonizes column names across
+  studies.
+
+### Machine Learning Preparation and Modeling
+
+- `get_ml_data_and_tuned_hyperparameters` - Prepares data and tunes
+  hyperparameters for machine learning.
+- `get_rf_model_with_cv` - Builds a random forest model with
+  cross-validation and outputs performance metrics.
+- `get_zone_exclusioned_rf_model_with_cv` - Introduces an indeterminate
+  zone for improved classification accuracy.
+- `get_imp_features_from_rf_model_with_cv` - Computes feature importance
+  for model interpretation.
+- `get_auc_curve_with_rf_model` - Generates AUC curves to evaluate model
+  performance.
+
+### Visualization and Reporting
+
+- `get_histogram_barplot` - Creates bar plots for target variable
+  classes.
+- `get_reprtree_from_rf_model` - Builds representative decision trees
+  for interpretability.
+- `get_prediction_plot` - Visualizes prediction probabilities with
+  histograms.
+
+### Automated Pipelines
+
+- `get_Data_formatted_for_ml_and_best.m` - Formats data for machine
+  learning pipelines.
+- `get_rf_input_param_list_output_cv_imp` - Automates preprocessing,
+  modeling, and evaluation in one step.
+- `get_zone_exclusioned_rf_model_cv_imp` - Similar to the above
+  function, but excludes uncertain predictions based on thresholds.
+
+## Workflow
+
+1.  **Input Database Path**: Provide the database path containing
+    nonclinical study results for each STUDYID.
+2.  **Preprocessing**: Use functions 1-8 to clean, harmonize, and
+    prepare data.
+3.  **Model Building**: Employ machine learning functions (9-18) for
+    training, validation, and evaluation.
+4.  **Visualization**: Generate plots and performance metrics for better
+    interpretation.
+
+## Dependencies
+
+- `randomForest`
+- `ROCR`
+- `ggplot2`
+- `reprtree`
 
 ## Installation
 
-You can install the development version of SENDQSAR from
-[GitHub](https://github.com/) with:
-
 ``` r
-# install.packages("pak")
-pak::pak("aminuldu07/SENDQSAR")
+# Install from GitHub
+devtools::install_github("aminuldu07/SENDQSAR")
 ```
 
-## Example
+## Examples
 
-This is a basic example which shows you how to solve a common problem:
+### Example 1: Basic Data Compilation
 
 ``` r
 library(SENDQSAR)
-## basic example code
+data <- get_compile_data("/path/to/database")
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+### Example 2: Z-Score Calculation
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+bw_scores <- get_bw_score(data)
+liver_scores <- get_livertobw_zscore(data)
 ```
 
-You’ll still need to render `README.Rmd` regularly, to keep `README.md`
-up-to-date. `devtools::build_readme()` is handy for this.
+### Example 3: Machine Learning Model
 
-You can also embed plots, for example:
+``` r
+model <- get_rf_model_with_cv(data, n_repeats=10)
+print(model$confusion_matrix)
+```
 
-<img src="man/figures/README-pressure-1.png" width="100%" />
+### Example 4: Visualization
 
-In that case, don’t forget to commit and push the resulting figure
-files, so they display on GitHub and CRAN.
+``` r
+get_histogram_barplot(data, target_col="target_variable")
+```
+
+## Contribution
+
+Contributions are welcome! Feel free to submit issues or pull requests
+via GitHub.
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file
+for details.
+
+## Contact
+
+For more information, visit the project GitHub Page or contact
+<email@example.com>.
