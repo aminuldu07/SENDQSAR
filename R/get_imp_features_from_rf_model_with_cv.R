@@ -1,3 +1,48 @@
+#' @title Get Important Features from Random Forest Model with Cross-Validation
+#'
+#'@description
+#' This function performs cross-validation with test repetitions on a random forest model, calculates feature importance using Gini importance, and returns the top `n` important features.
+#'
+#' @param Data A data frame containing the training data (rows as samples, columns as features). The first column is assumed to be the target variable.
+#' @param Undersample A logical value indicating whether to apply under-sampling to balance the classes in the training data. Default is `FALSE`.
+#' @param best.m A numeric value representing the number of variables to consider at each split of the Random Forest model (or a function to determine this). Default is `NULL`.
+#' @param testReps A numeric value indicating the number of test repetitions (must be at least 2).
+#' @param Type A numeric value indicating the type of importance to be calculated. `1` for Mean Decrease Accuracy and `2` for Mean Decrease Gini.
+#' @param nTopImportance A numeric value indicating the number of top important features to return based on their importance scores.
+#'
+#' @return A list containing:
+#' \describe{
+#'   \item{gini_scores}{A matrix of Gini importance scores for each feature across the different cross-validation iterations. The matrix has rows representing features and columns representing test iterations.}
+#' }
+#'
+#' @details
+#' This function trains a Random Forest model using cross-validation with specified repetitions and calculates the feature importance using Gini importance scores. The function also supports optional under-sampling to balance the class distribution in the training set.
+#'
+#' The function performs the following steps:
+#' \itemize{
+#'   \item Initializes performance metric trackers.
+#'   \item Prepares the input data for cross-validation.
+#'   \item Performs cross-validation, where each repetition involves training the model on a subset of data and testing on the remaining data.
+#'   \item Optionally applies under-sampling to the training data.
+#'   \item Trains a Random Forest model on each fold and calculates Gini importance scores.
+#'   \item Aggregates and sorts the Gini importance scores to identify the top features.
+#'   \item Plots the importance of top features.
+#' }
+#'
+#' @examples
+#' # Example of calling the function
+#' result <- get_imp_features_from_rf_model_with_cv(
+#'   Data = scores_df,
+#'   Undersample = FALSE,
+#'   best.m = 3,
+#'   testReps = 5,
+#'   Type = 2,
+#'   nTopImportance = 10
+#' )
+#'
+#' @export
+
+
 
 get_imp_features_from_rf_model_with_cv <- function(Data=NULL, #scores_df
                                                   Undersample = FALSE,

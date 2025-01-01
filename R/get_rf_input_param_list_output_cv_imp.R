@@ -1,4 +1,68 @@
-
+#' @title Prepare and Evaluate Random Forest Model with Cross-Validation and Feature Importance
+#'
+#'@description
+#' This function prepares the data for training a Random Forest (RF) model with cross-validation, handles imputation, hyperparameter tuning, and evaluates the model's performance. It supports both real and fake study data, with options for rat studies, error correction, and feature importance selection.
+#'
+#' @param path_db A character string specifying the path to the SQLite database or directory containing the XPT file.
+#' @param rat_studies A logical value indicating whether to filter for rat studies. Default is `FALSE`.
+#' @param studyid_metadata A data frame containing metadata for the studies.
+#' @param fake_study A logical value indicating whether to use fake study data. Default is `FALSE`.
+#' @param use_xpt_file A logical value indicating whether to use XPT file data. Default is `FALSE`.
+#' @param Round A logical value indicating whether to round the liver scores. Default is `FALSE`.
+#' @param Impute A logical value indicating whether to impute missing values. Default is `FALSE`.
+#' @param reps An integer specifying the number of repetitions for model evaluation.
+#' @param holdback A numeric value specifying the proportion of data to hold back for validation.
+#' @param Undersample A logical value indicating whether to undersample the data to balance classes. Default is `FALSE`.
+#' @param hyperparameter_tuning A logical value indicating whether to tune the Random Forest model's hyperparameters. Default is `FALSE`.
+#' @param error_correction_method A character string specifying the error correction method. Options are 'Flip', 'Prune', or 'None'.
+#' @param best.m A numeric value specifying the number of trees in the Random Forest model. If `NULL`, the function determines this automatically.
+#' @param testReps An integer specifying the number of test repetitions for model evaluation.
+#' @param indeterminateUpper A numeric value for the upper threshold of indeterminate predictions.
+#' @param indeterminateLower A numeric value for the lower threshold of indeterminate predictions.
+#' @param Type A character string specifying the type of Random Forest model to use. Options include 'classification' or 'regression'.
+#' @param nTopImportance An integer specifying the number of top important features to consider for the model.
+#'
+#' @return A list containing the trained Random Forest model, cross-validation results, and feature importance scores.
+#' The list is returned by the `get_rf_model_with_cv` function.
+#'
+#' @details
+#' The function performs the following steps:
+#' \itemize{
+#'   \item Fetches the study data based on the specified parameters.
+#'   \item Calculates liver scores and harmonizes the data.
+#'   \item Prepares data for machine learning, including imputation and optional hyperparameter tuning.
+#'   \item Trains and evaluates the Random Forest model with cross-validation.
+#'   \item Applies error correction (if specified) and selects the most important features.
+#' }
+#'
+#' @examples
+#' # Example usage of the function
+#' result <- get_rf_input_param_list_output_cv_imp(
+#'   path_db = "path/to/database",
+#'   rat_studies = TRUE,
+#'   studyid_metadata = metadata_df,
+#'   fake_study = FALSE,
+#'   use_xpt_file = FALSE,
+#'   Round = TRUE,
+#'   Impute = TRUE,
+#'   reps = 10,
+#'   holdback = 0.2,
+#'   Undersample = TRUE,
+#'   hyperparameter_tuning = TRUE,
+#'   error_correction_method = "Flip",
+#'   best.m = NULL,
+#'   testReps = 5,
+#'   indeterminateUpper = 0.9,
+#'   indeterminateLower = 0.1,
+#'   Type = "classification",
+#'   nTopImportance = 10
+#' )
+#'
+#' @import DBI
+#' @import RSQLite
+#' @importFrom stats lm
+#'
+#' @export
 
 
 

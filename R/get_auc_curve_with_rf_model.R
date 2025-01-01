@@ -1,42 +1,61 @@
-#' Generate and Plot AUC Curve for Random Forest Model
+#' @title Compute and Plot AUC Curve with Random Forest Model
 #'
-#' This function trains a Random Forest model on provided or dynamically generated data, computes the
-#' Area Under the Curve (AUC) for the model's performance, and plots the Receiver Operating Characteristic (ROC) curve.
+#'@description
+#' This function trains a Random Forest model, computes the ROC curve, and
+#' calculates the AUC (Area Under the Curve). It allows various preprocessing
+#' options, such as imputation, rounding, undersampling, and hyperparameter tuning.
 #'
-#' @param rfData Data frame. The input data for training the Random Forest model. If `NULL`, the data is generated using
-#'   \code{get_rfData_and_best_m}.
-#' @param best.m Integer. The `mtry` hyperparameter for Random Forest. If `NULL`, the value is determined dynamically
-#'   using \code{get_rfData_and_best_m}.
-#' @param path_db Character. Path to the SQLite database. Required if `rfData` or `best.m` is `NULL`.
-#' @param studyid_metadata_path Character. Path to the CSV file containing study ID metadata. Required if `rfData` or
-#'   `best.m` is `NULL`.
-#' @param fake_study Logical. Whether to use fake study IDs. Default is \code{TRUE}.
-#' @param Round Logical. Whether to round numerical values in the data. Default is \code{TRUE}.
-#' @param Undersample Logical. Whether to perform undersampling to balance the data. Default is \code{TRUE}.
+#' @param Data A data frame containing the training data. If `NULL`, data will be fetched from the database.
+#' @param path_db A string representing the path to the SQLite database used to fetch data when `Data` is `NULL`.
+#' @param rat_studies Logical; whether to filter for rat studies. Defaults to `FALSE`.
+#' @param studyid_metadata A data frame containing metadata associated with study IDs.
+#' @param fake_study Logical; whether to use fake study IDs for data simulation. Defaults to `FALSE`.
+#' @param use_xpt_file Logical; whether to use an XPT file for input data. Defaults to `FALSE`.
+#' @param Round Logical; whether to round numerical values. Defaults to `FALSE`.
+#' @param Impute Logical; whether to perform imputation on missing values. Defaults to `FALSE`.
+#' @param best.m The 'mtry' hyperparameter for Random Forest. If `NULL`, it is determined by the function.
+#' @param reps A numeric value indicating the number of repetitions for cross-validation. Defaults to a numeric value.
+#' @param holdback Numeric; either 1 or a fraction value (e.g., 0.75) for holdback during cross-validation.
+#' @param Undersample Logical; whether to perform undersampling. Defaults to `FALSE`.
+#' @param hyperparameter_tuning Logical; whether to perform hyperparameter tuning. Defaults to `FALSE`.
+#' @param error_correction_method Character; one of "Flip", "Prune", or "None", specifying the method of error correction.
+#' @param output_individual_scores Logical; whether to output individual scores. Defaults to `TRUE`.
+#' @param output_zscore_by_USUBJID Logical; whether to output z-scores by subject ID. Defaults to `FALSE`.
 #'
-#' @return This function does not return a value. It prints the AUC value and plots the ROC curve.
+#' @return This function does not return any explicit value. It generates:
+#'   \itemize{
+#'     \item The AUC (Area Under the Curve) printed to the console.
+#'     \item A ROC curve plot with the calculated AUC value.
+#'     \item Various performance metrics (e.g., True Positive Rate, False Positive Rate), displayed in the plot.
+#'   }
+#'
 #' @details
-#' If `rfData` and `best.m` are not provided, the function dynamically generates the required data by connecting to
-#' the specified SQLite database and processing metadata.
+#' The function prepares data for training a Random Forest model by first fetching data from an SQLite database
+#' or generating synthetic data (if `fake_study` is `TRUE`). It processes the data using various options such
+#' as imputation, rounding, and undersampling. The model is trained using the Random Forest algorithm, and
+#' performance is evaluated via the ROC curve and AUC metric.
 #'
-#' The function uses the `randomForest` package to train the model and the `ROCR` package to calculate and plot
-#' the AUC and ROC curve.
-#'
-#' @export
+#' The function also allows for hyperparameter tuning and error correction. After training the model,
+#' predictions are made, and the AUC is calculated and visualized with a ROC curve plot.
 #'
 #' @examples
-#' # Using pre-calculated rfData and best.m
-#' get_auc_curve(rfData = my_rfData, best.m = 5)
+#' # Example 1: Using real data from the database
+#' get_auc_curve_with_rf_model(Data = NULL, path_db = "path/to/database.db", rat_studies = TRUE, reps = 10,
+#'                             holdback = 0.75, error_correction_method = "Prune")
 #'
-#' # Dynamically generating rfData and best.m
-#' get_auc_curve(
-#'   path_db = "path/to/database.db",
-#'   studyid_metadata_path = "path/to/study_metadata.csv",
-#'   fake_study = TRUE,
-#'   Round = TRUE,
-#'   Undersample = TRUE
-#' )
-
+#' # Example 2: Using synthetic data with fake study IDs
+#' get_auc_curve_with_rf_model(Data = NULL, fake_study = TRUE, reps = 5, holdback = 0.8,
+#'                             error_correction_method = "Flip")
+#'
+#' @seealso
+#' `randomForest`, `ROCR`
+#'
+#' @import DBI
+#' @import RSQLite
+#' @import ROCR
+#' @import randomForest
+#'
+#' @export
 
 
 

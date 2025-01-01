@@ -1,4 +1,53 @@
-
+#' @title Retrieve and Preprocess Data for Machine Learning Models
+#'
+#'@description
+#' This function processes data from a given SQLite database or XPT file, calculates liver toxicity scores, and prepares data for machine learning models.
+#' It can also tune hyperparameters and apply error correction methods.
+#'
+#' @param path_db A character string representing the path to the SQLite database or XPT file.
+#' @param rat_studies A logical flag to filter for rat studies (default is FALSE).
+#' @param studyid_metadata A data frame containing metadata for the study IDs. If NULL, metadata is generated (default is NULL).
+#' @param fake_study A logical flag to use fake study data (default is FALSE).
+#' @param use_xpt_file A logical flag to indicate whether to use an XPT file instead of a SQLite database (default is FALSE).
+#' @param Round A logical flag to round liver toxicity scores (default is FALSE).
+#' @param Impute A logical flag to impute missing values in the dataset (default is FALSE).
+#' @param reps An integer specifying the number of repetitions for cross-validation.
+#' @param holdback A numeric value indicating the fraction of data to hold back for validation.
+#' @param Undersample A logical flag to undersample the majority class (default is FALSE).
+#' @param hyperparameter_tuning A logical flag to perform hyperparameter tuning (default is FALSE).
+#' @param error_correction_method A character string specifying the error correction method. Must be one of 'Flip', 'Prune', or 'None'.
+#'
+#' @return A list containing:
+#'   \item{Data}{A data frame containing the preprocessed data ready for machine learning.}
+#'   \item{best.m}{The best machine learning model after hyperparameter tuning, if applicable.}
+#'
+#' @details
+#' This function performs several key steps:
+#' - Retrieves study IDs from an SQLite database or XPT file.
+#' - Generates or uses provided study metadata, including a random assignment of "Target_Organ" values (either "Liver" or "not_Liver").
+#' - Calculates liver toxicity scores using the `get_liver_om_lb_mi_tox_score_list` function.
+#' - Harmonizes the calculated scores using the `get_col_harmonized_scores_df` function.
+#' - Prepares the data for machine learning and tunes hyperparameters (if enabled) using the `get_ml_data_and_tuned_hyperparameters` function.
+#' - Returns the processed data and the best model.
+#'
+#' @examples
+#' \dontrun{
+#' result <- get_Data_formatted_for_ml_and_best.m(
+#'   path_db = "path/to/database.db",
+#'   rat_studies = TRUE,
+#'   reps = 5,
+#'   holdback = 0.2,
+#'   error_correction_method = "Flip"
+#' )
+#'
+#' # Access the processed data and the best model
+#' processed_data <- result$Data
+#' best_model <- result$best.m
+#' }
+#'
+#' @import DBI
+#' @import RSQLite
+#' @export
 
 
 

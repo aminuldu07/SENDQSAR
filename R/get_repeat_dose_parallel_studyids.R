@@ -1,4 +1,29 @@
-
+#' @title Get Repeat Dose Parallel Study IDs
+#'
+#'@description
+#' This function retrieves study IDs from a database that correspond to parallel-design studies involving repeat-dose toxicity.
+#' It optionally filters the studies for rat species.
+#'
+#' @param path_db A character string representing the file path to the SQLite database. This is a required parameter.
+#' @param rat_studies A logical flag indicating whether to filter the studies for rats only. Defaults to `FALSE`.
+#'
+#' @return A vector of study IDs that meet the specified criteria. This includes:
+#'   \itemize{
+#'     \item Study IDs that match both the parallel design and repeat-dose toxicity criteria.
+#'     \item Optionally, study IDs that match rat species if `rat_studies = TRUE`.
+#'   }
+#'
+#' @examples
+#' \dontrun{
+#'   # Example without filtering for rat studies
+#'   study_ids <- get_repeat_dose_parallel_studyids(path_db = "path/to/database.sqlite")
+#'
+#'   # Example with filtering for rat studies
+#'   study_ids_rats <- get_repeat_dose_parallel_studyids(path_db = "path/to/database.sqlite", rat_studies = TRUE)
+#' }
+#'
+#' @export
+#'
 get_repeat_dose_parallel_studyids <- function (path_db,
                                                rat_studies = FALSE) {
 

@@ -1,0 +1,69 @@
+---
+title: "Documentation for `get_Data_formatted_for_ml_and_best.m` Function"
+author: "Your Name"
+output: html_document
+---
+
+## Purpose
+The function `get_Data_formatted_for_ml_and_best.m` is designed to retrieve and preprocess data for machine learning (ML) models from a given SQLite database or XPT file. It performs several tasks such as fetching study IDs, retrieving study metadata, calculating liver toxicity scores, and tuning hyperparameters for ML models. The final output is a list containing processed data ready for machine learning and the best model.
+
+## Input Parameters
+
+| Parameter                | Description                                                                 | Type        | Default Value   |
+|--------------------------|-----------------------------------------------------------------------------|-------------|-----------------|
+| `path_db`                | Path to the SQLite database or XPT file location.                          | character   | None            |
+| `rat_studies`            | Flag to filter for rat studies.                                             | logical     | FALSE           |
+| `studyid_metadata`       | Optional metadata for study IDs. If NULL, will be generated.               | data.frame  | NULL            |
+| `fake_study`             | Flag to use fake study data.                                                | logical     | FALSE           |
+| `use_xpt_file`           | Flag to indicate whether to use an XPT file instead of SQLite database.    | logical     | FALSE           |
+| `Round`                  | Flag to round liver toxicity scores.                                        | logical     | FALSE           |
+| `Impute`                 | Flag to impute missing values in the dataset.                               | logical     | FALSE           |
+| `reps`                   | Number of repetitions for cross-validation.                                | integer     | None            |
+| `holdback`               | Fraction of data to hold back for validation.                              | numeric     | None            |
+| `Undersample`            | Flag to undersample the majority class.                                     | logical     | FALSE           |
+| `hyperparameter_tuning`  | Flag to perform hyperparameter tuning for the model.                       | logical     | FALSE           |
+| `error_correction_method`| Method to handle error correction. Must be one of 'Flip', 'Prune', or 'None'.| character   | None            |
+
+## Output
+
+The function returns a list with the following elements:
+
+- `Data`: A data frame containing the preprocessed data ready for machine learning.
+- `best.m`: The best machine learning model after hyperparameter tuning, if applicable.
+
+## Key Steps
+
+1. **Fetch Study IDs**:
+   - If `use_xpt_file` is `TRUE`, it retrieves study IDs from directories within the specified path.
+   - If `use_xpt_file` is `FALSE` and `fake_study` is `TRUE`, the function connects to an SQLite database and retrieves the study IDs from the 'dm' table.
+   - If `fake_study` is `FALSE`, it fetches repeat-dose and parallel study IDs from the database.
+
+2. **Process Study Metadata**:
+   - If `studyid_metadata` is not provided, it generates metadata by selecting unique study IDs and assigning random "Target_Organ" values (either "Liver" or "not_Liver").
+
+3. **Calculate Liver Toxicity Scores**:
+   - The function calculates liver toxicity scores using the `get_liver_om_lb_mi_tox_score_list` function.
+
+4. **Harmonize Scores**:
+   - The calculated liver toxicity scores are harmonized using the `get_col_harmonized_scores_df` function, optionally rounding them based on the `Round` parameter.
+
+5. **Machine Learning Data Preparation**:
+   - The function prepares the data for machine learning and performs hyperparameter tuning (if `hyperparameter_tuning` is `TRUE`) using the `get_ml_data_and_tuned_hyperparameters` function.
+
+6. **Return Processed Data and Best Model**:
+   - The final output consists of the processed data and the best machine learning model (`best.m`).
+
+## Example Usage
+
+```r
+result <- get_Data_formatted_for_ml_and_best.m(
+  path_db = "path/to/database.db",
+  rat_studies = TRUE,
+  reps = 5,
+  holdback = 0.2,
+  error_correction_method = "Flip"
+)
+
+# Access the processed data and the best model
+processed_data <- result$Data
+best_model <- result$best.m

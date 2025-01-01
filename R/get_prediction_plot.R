@@ -1,3 +1,49 @@
+#' @title Generate Prediction Plot for Random Forest Model
+#'
+#'@description
+#' This function performs model building and prediction using a random forest algorithm. It iterates over multiple test repetitions, training the model on the training data and predicting on the test data. After predictions are made, a histogram plot is generated to visualize the distribution of predicted probabilities for the outcome variable (`LIVER`).
+#'
+#' @param Data A data frame containing the dataset to use for training and testing. If `NULL`, the function will attempt to fetch and format the data from the database using `get_Data_formatted_for_ml_and_best.m` function.
+#' @param path_db A string indicating the path to the database that contains the dataset.
+#' @param rat_studies A logical flag indicating whether to use rat studies data. Defaults to `FALSE`.
+#' @param studyid_metadata A data frame containing metadata related to the study IDs. Defaults to `NULL`.
+#' @param fake_study A logical flag indicating whether to use fake study data. Defaults to `FALSE`.
+#' @param use_xpt_file A logical flag indicating whether to use an XPT file. Defaults to `FALSE`.
+#' @param Round A logical flag indicating whether to round the predictions. Defaults to `FALSE`.
+#' @param Impute A logical flag indicating whether to impute missing values. Defaults to `FALSE`.
+#' @param reps An integer specifying the number of repetitions for cross-validation.
+#' @param holdback A numeric value indicating the proportion of data to hold back for testing during cross-validation.
+#' @param Undersample A logical flag indicating whether to perform undersampling on the dataset to balance the classes. Defaults to `FALSE`.
+#' @param hyperparameter_tuning A logical flag indicating whether to perform hyperparameter tuning. Defaults to `FALSE`.
+#' @param error_correction_method A string specifying the error correction method to be used. Possible values are "Flip", "Prune", or "None".
+#' @param testReps An integer specifying the number of test repetitions for model evaluation.
+#'
+#' @return A `ggplot` object representing the histogram of predicted probabilities for the `LIVER` variable across test repetitions.
+#'
+#' @details
+#' The function works as follows:
+#' - If `Data` is `NULL`, the function fetches the data and the best model configuration by calling the `get_Data_formatted_for_ml_and_best.m` function.
+#' - The dataset is divided into training and test sets for each repetition (`testReps`).
+#' - If `Undersample` is enabled, undersampling is applied to balance the dataset.
+#' - A random forest model is trained on the training data and predictions are made on the test data.
+#' - The predictions are averaged over the test repetitions and a histogram is plotted to visualize the distribution of predicted probabilities for `LIVER`.
+#'
+#' @examples
+#' # Example function call
+#' get_prediction_plot(
+#'   path_db = "path_to_db",
+#'   rat_studies = FALSE,
+#'   reps = 10,
+#'   holdback = 0.2,
+#'   Undersample = TRUE,
+#'   hyperparameter_tuning = FALSE,
+#'   error_correction_method = "Flip",
+#'   testReps = 5
+#' )
+#'
+#' @export
+
+
 get_prediction_plot <- function(Data=NULL,
                                 path_db,
                                 rat_studies=FALSE,

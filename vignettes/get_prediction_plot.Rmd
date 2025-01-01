@@ -1,0 +1,70 @@
+---
+title: "Documentation for get_prediction_plot Function"
+output: html_document
+---
+
+## Function Purpose
+
+The `get_prediction_plot` function performs model building and prediction for a dataset using a random forest model. It iterates over multiple test repetitions, trains the model on the training data, and makes predictions on the test data. The function then generates a histogram to visualize the distribution of predictions for the outcome variable (`LIVER`).
+
+## Input Parameters
+
+The function accepts the following input parameters:
+
+| Parameter                    | Description                                                                                     | Type    |
+|------------------------------|-------------------------------------------------------------------------------------------------|---------|
+| `Data`                        | The dataset to use for training and testing. If `NULL`, it will be fetched using the `get_Data_formatted_for_ml_and_best.m` function. | DataFrame (optional) |
+| `path_db`                     | The path to the database that contains the dataset.                                               | String  |
+| `rat_studies`                 | A flag indicating whether to use rat studies data. Default is `FALSE`.                          | Boolean |
+| `studyid_metadata`            | Metadata related to the study IDs. Default is `NULL`.                                             | DataFrame (optional) |
+| `fake_study`                  | A flag indicating whether to use fake study data. Default is `FALSE`.                            | Boolean |
+| `use_xpt_file`               | A flag indicating whether to use an XPT file. Default is `FALSE`.                                | Boolean |
+| `Round`                       | A flag indicating whether to round the predictions. Default is `FALSE`.                          | Boolean |
+| `Impute`                      | A flag indicating whether to impute missing values. Default is `FALSE`.                          | Boolean |
+| `reps`                        | The number of repetitions for the cross-validation process.                                       | Integer |
+| `holdback`                    | The proportion of data to hold back for testing during cross-validation.                         | Numeric |
+| `Undersample`                 | A flag indicating whether to perform undersampling on the dataset. Default is `FALSE`.           | Boolean |
+| `hyperparameter_tuning`       | A flag indicating whether to perform hyperparameter tuning. Default is `FALSE`.                  | Boolean |
+| `error_correction_method`     | The method to use for error correction (e.g., "Flip", "Prune", or "None").                        | String  |
+| `testReps`                    | The number of test repetitions for model evaluation.                                             | Integer |
+
+## Output
+
+The function returns a histogram plot visualizing the predicted probabilities for the `LIVER` variable across test repetitions. The plot shows the distribution of predictions (probabilities) for both classes (LIVER = "Y" or "N").
+
+## Key Steps
+
+1. **Data Preparation**: 
+   - If `Data` is `NULL`, the function fetches and formats the data using the `get_Data_formatted_for_ml_and_best.m` function.
+   
+2. **Cross-Validation**:
+   - The dataset is divided into training and testing sets for each repetition (`testReps`).
+   - If `Undersample` is enabled, undersampling is applied to balance the dataset.
+   
+3. **Model Training**:
+   - A random forest model is trained using the training set for each repetition.
+   
+4. **Prediction**:
+   - The model makes predictions on the test set.
+   - The predicted probabilities are stored for each repetition.
+   
+5. **Result Visualization**:
+   - The predictions are averaged across repetitions, and a histogram is created to visualize the distribution of the predicted probabilities for the `LIVER` variable.
+   
+6. **Plot**:
+   - The histogram is displayed using `ggplot2`, showing the predicted probabilities for the `LIVER` outcome (coded as "Y" or "N").
+
+## Example Usage
+
+```r
+# Example function call
+get_prediction_plot(
+  path_db = "path_to_db",
+  rat_studies = FALSE,
+  reps = 10,
+  holdback = 0.2,
+  Undersample = TRUE,
+  hyperparameter_tuning = FALSE,
+  error_correction_method = "Flip",
+  testReps = 5
+)

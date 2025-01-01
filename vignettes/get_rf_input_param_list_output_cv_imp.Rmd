@@ -1,0 +1,81 @@
+---
+title: "Documentation for `get_rf_input_param_list_output_cv_imp` Function"
+output: html_document
+---
+
+## Purpose
+
+The `get_rf_input_param_list_output_cv_imp` function prepares the necessary data for training and evaluating a Random Forest (RF) model with cross-validation and variable importance scores. It handles various configurations, such as imputation, hyperparameter tuning, and the inclusion of rat studies. The function interacts with either an XPT file or an SQLite database to extract and harmonize study data, followed by model training and evaluation.
+
+## Input Parameters
+
+| Parameter                 | Type        | Description                                                                                                                                                 | Default Value |
+|---------------------------|-------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
+| `path_db`                 | character   | Path to the SQLite database.                                                                                                                                 | N/A           |
+| `rat_studies`             | logical     | If `TRUE`, limits the studies to rat studies.                                                                                                                | `FALSE`       |
+| `studyid_metadata`        | data.frame  | A data frame containing metadata for the studies.                                                                                                           | N/A           |
+| `fake_study`              | logical     | If `TRUE`, uses a fake study for data processing.                                                                                                           | `FALSE`       |
+| `use_xpt_file`            | logical     | If `TRUE`, reads data from an XPT file instead of a database.                                                                                              | `FALSE`       |
+| `Round`                   | logical     | If `TRUE`, rounds the liver scores.                                                                                                                          | `FALSE`       |
+| `Impute`                  | logical     | If `TRUE`, imputes missing values in the data.                                                                                                               | `FALSE`       |
+| `reps`                    | integer     | Number of repetitions for model evaluation.                                                                                                                 | N/A           |
+| `holdback`                | numeric     | The proportion of data to hold back for validation.                                                                                                         | N/A           |
+| `Undersample`             | logical     | If `TRUE`, undersamples the data to balance the classes.                                                                                                   | `FALSE`       |
+| `hyperparameter_tuning`   | logical     | If `TRUE`, tunes hyperparameters for the Random Forest model.                                                                                              | `FALSE`       |
+| `error_correction_method` | character   | The error correction method. Options: 'Flip', 'Prune', or 'None'.                                                                                          | N/A           |
+| `best.m`                  | numeric     | A predefined value for the number of trees in the Random Forest model. If `NULL`, the function will determine this automatically.                           | `NULL`        |
+| `testReps`                | integer     | Number of test repetitions for model evaluation.                                                                                                           | N/A           |
+| `indeterminateUpper`      | numeric     | Upper threshold for indeterminate predictions.                                                                                                             | N/A           |
+| `indeterminateLower`      | numeric     | Lower threshold for indeterminate predictions.                                                                                                             | N/A           |
+| `Type`                    | character   | The type of Random Forest model to use. Options include classification or regression models.                                                                | N/A           |
+| `nTopImportance`          | integer     | The number of top important features to consider for the model.                                                                                             | N/A           |
+
+## Output
+
+The function returns a Random Forest model trained with cross-validation (CV) and includes a list of variable importance scores. Specifically, it returns the result of the `get_rf_model_with_cv` function, which includes the trained model, cross-validation results, and feature importance scores.
+
+## Key Steps
+
+1. **Data Source Selection**:
+   - If `use_xpt_file` is `TRUE`, the function loads data from an XPT file.
+   - If `fake_study` is `TRUE`, it fetches data from a SQLite database and filters based on `rat_studies`.
+   - If neither condition is met, it retrieves study IDs from the database using `get_repeat_dose_parallel_studyids`.
+
+2. **Data Harmonization**:
+   - The function calls `get_liver_om_lb_mi_tox_score_list` to calculate liver scores for the studies, which are then harmonized using `get_col_harmonized_scores_df`.
+
+3. **Machine Learning Data Preparation**:
+   - The function prepares data for Random Forest model training by calling `get_ml_data_and_tuned_hyperparameters`. This step involves imputation, optional hyperparameter tuning, and data balancing.
+
+4. **Random Forest Model Training and Evaluation**:
+   - The function calls `get_rf_model_with_cv` to train and evaluate the Random Forest model with cross-validation. The model's performance is evaluated across multiple repetitions (`testReps`), with the option to include top importance features.
+
+5. **Error Correction**:
+   - If specified, the function applies an error correction method (either "Flip", "Prune", or "None").
+
+6. **Return**:
+   - The function returns the trained Random Forest model along with cross-validation results and feature importance scores.
+
+## Example Usage
+
+```r
+result <- get_rf_input_param_list_output_cv_imp(
+  path_db = "path/to/database",
+  rat_studies = TRUE,
+  studyid_metadata = metadata_df,
+  fake_study = FALSE,
+  use_xpt_file = FALSE,
+  Round = TRUE,
+  Impute = TRUE,
+  reps = 10,
+  holdback = 0.2,
+  Undersample = TRUE,
+  hyperparameter_tuning = TRUE,
+  error_correction_method = "Flip",
+  best.m = NULL,
+  testReps = 5,
+  indeterminateUpper = 0.9,
+  indeterminateLower = 0.1,
+  Type = "classification",
+  nTopImportance = 10
+)

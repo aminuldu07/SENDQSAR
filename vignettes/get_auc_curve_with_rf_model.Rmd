@@ -1,0 +1,63 @@
+---
+title: "Documentation for get_auc_curve_with_rf_model"
+output: html_document
+---
+
+# Function: `get_auc_curve_with_rf_model`
+
+## Purpose
+
+The function `get_auc_curve_with_rf_model` is designed to train a Random Forest model using a provided dataset, optionally from an SQLite database. It computes and visualizes the ROC curve along with the AUC (Area Under the Curve) metric. The function offers various options for handling data preprocessing, including hyperparameter tuning, imputation, and undersampling, and outputs the model performance via the ROC curve.
+
+## Input Parameters
+
+The function accepts the following parameters:
+
+| Parameter                      | Type     | Description |
+|----------------------------------|----------|-------------|
+| `Data`                           | data.frame | Input data frame for training. If `NULL`, the function fetches data from the database. |
+| `path_db`                        | string   | Path to the SQLite database. Used to fetch study data if `Data` is `NULL`. |
+| `rat_studies`                    | logical  | Whether to filter for rat studies (default is `FALSE`). |
+| `studyid_metadata`               | data.frame | Metadata associated with study IDs. |
+| `fake_study`                     | logical  | Whether to use fake study IDs for data simulation (default is `FALSE`). |
+| `use_xpt_file`                   | logical  | Whether to use an XPT file for input data (default is `FALSE`). |
+| `Round`                          | logical  | Whether to round numerical values (default is `FALSE`). |
+| `Impute`                         | logical  | Whether to perform imputation on missing values (default is `FALSE`). |
+| `best.m`                         | numeric  | The 'mtry' hyperparameter for Random Forest (optional). |
+| `reps`                           | numeric  | Number of repetitions for cross-validation (numeric value). |
+| `holdback`                       | numeric  | Fraction value (e.g., 0.75) for holdback during cross-validation. |
+| `Undersample`                    | logical  | Whether to perform undersampling (default is `FALSE`). |
+| `hyperparameter_tuning`          | logical  | Whether to perform hyperparameter tuning (default is `FALSE`). |
+| `error_correction_method`        | string   | Method for error correction: "Flip", "Prune", or "None". |
+| `output_individual_scores`       | logical  | Whether to output individual scores (default is `TRUE`). |
+| `output_zscore_by_USUBJID`       | logical  | Whether to output z-scores by subject ID (default is `FALSE`). |
+
+## Output
+
+The function does not return any explicit values. However, it generates the following outputs:
+
+1. **AUC Value**: The AUC of the ROC curve is printed to the console.
+2. **ROC Curve Plot**: A ROC curve is displayed, showing the model's performance with the computed AUC value.
+3. **Performance Metrics**: Other performance metrics (e.g., True Positive Rate, False Positive Rate) are computed but not returned directly.
+
+## Key Steps
+
+1. **Data Generation or Fetching**:
+   - If `Data` is not provided, the function fetches the data either from the SQLite database or generates synthetic data (if `fake_study` is `TRUE`).
+   - If `use_xpt_file` is `TRUE`, it fetches data from the specified XPT files.
+
+2. **Data Preprocessing**:
+   - The function performs data preprocessing, including imputation (if `Impute` is `TRUE`), rounding (if `Round` is `TRUE`), and undersampling (if `Undersample` is `TRUE`).
+   - It harmonizes the liver scores and prepares the data for machine learning.
+
+3. **Model Training**:
+   - The function then prepares the data for Random Forest (RF) modeling, tuning hyperparameters if `hyperparameter_tuning` is enabled.
+   - A Random Forest model is trained using the prepared data, and predictions are generated.
+
+4. **AUC Calculation and Plotting**:
+   - The model's performance is evaluated by computing the AUC (Area Under the Curve) and plotting the ROC curve.
+   - The AUC is printed to the console, and the ROC curve is displayed with the calculated AUC value.
+
+5. **Error Correction and Hyperparameter Tuning**:
+   - If specified, the function applies an error correction method (`error_correction_method`) and performs hyperparameter tuning to optimize the model.
+
