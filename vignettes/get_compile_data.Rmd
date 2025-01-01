@@ -8,15 +8,15 @@ output: html_document
 ## Purpose
 
 The `get_compile_data` function retrieves and cleans study data from the DM 
-(Demographics) domain by applying multiple filtering steps. First, it removes
-recovery animals by filtering the DM data using information from the DS 
-(Disposition) domain. Additionally, if the study involves rats or mice,
-the function further filters out toxicokinetic animals by excluding USUBJIDs
-present in the Pharmacokinetic (PC) domain. These steps ensure the data set
-excludes recovery animals and toxicokinetic (TK) animals, focusing only on
-the target population relevant to the study's primary analysis.
-
-This function supports data retrieval from both SQLite databases and `.xpt` files. 
+(Demographics) domain by applying multiple filtering steps and compiles the 
+remaining data into a cleaned format. First, it removes recovery animals by
+filtering the DM data using information from the DS (Disposition) domain. 
+Additionally, if the study involves rats or mice,the function further filters out
+toxicokinetic animals by excluding USUBJIDs present in the Pharmacokinetic (PC) 
+domain. These steps ensure the data set excludes recovery animals and 
+toxicokinetic (TK) animals, focusing only onthe target population relevant to 
+the study's primary analysis.This function supports data retrieval from both 
+SQLite databases and `.xpt` files. 
 
 ## Function Parameters (Arguments)
 | **Parameter**   | **Type**       | **Description**                                                                                     | **Mandatory/Default** |
@@ -30,11 +30,12 @@ This function supports data retrieval from both SQLite databases and `.xpt` file
 
 ## Details
 
-This function processes study data based on the specified parameters. It connects to a database or reads `.xpt` files, filters unwanted rows, and compiles the remaining data into a cleaned format. 
+### Database Connection
+
+-This function connects to a SQLite database or reads `.xpt` files specified by `path_db`. 
+ 
 
 ### Data Fetching
-
--Data Sources :  SQLite database or `.xpt` files
 
 The function retrieves data from the following SEND domains based on the input parameters:
 
@@ -45,14 +46,14 @@ The function retrieves data from the following SEND domains based on the input p
 
 ### Filtering Steps
 
-1. **Recovery Animals**  
+- **Recovery Animals**  
    Recovery animals are excluded by filtering the DM data based on `DSDECOD` values in the `DS` domain.
 
-2. **Toxicokinetic (TK) Animals**  
+- **Toxicokinetic (TK) Animals**  
    For studies involving rats or mice, the function removes animals whose `USUBJID` appears in the PC domain.
 
-3. **Dose Selection**  
-   The function identifies and retains animals belonging to the "vehicle" or "high-dose" (`HD`) groups using dose ranking logic from the TX domain.
+- **Dose Selection**  
+   The function identifies and retains animals assigned to either the "vehicle" group or the "high-dose" (HD) group by applying dose-ranking logic from the TX domain, where "Control" groups are reclassified as "vehicle." 
 
 
 ## Return Value
@@ -84,37 +85,9 @@ df <- get_compile_data(
 )
 ```
 
-## Implementation
-
-The implementation involves the following steps:
-
-### 1. Database Connection
-
-If `fake_study = FALSE` and `use_xpt_file = FALSE`, the function connects to the SQLite database specified by `path_db`. Data is fetched using SQL queries for each relevant domain.
-
-### 2. Data Preparation
-
-For each domain:
-
-- Convert data to `data.table` format.
-- Extract key columns and perform transformations such as renaming or mutating variables.
-
-### 3. Filtering
-
-#### Recovery Animals
-Filtered using the `DS` domain, retaining specific `DSDECOD` values.
-
-#### TK Animals
-Excluded if `Species` is "rat" or "mouse" and they appear in the `PC` domain.
-
-### 4. Dose Ranking
-
-The `TX` domain is processed to determine dose levels (e.g., `vehicle`, `HD`). A ranked dataset is merged with the filtered data.
-
 ### 5. Final Output
 
-The cleaned data is returned as a `data.frame`.
-The function returns a cleaned and compiled data frame with filtered study data, ready for further analysis.
+The cleaned data is returned as a `data.frame` which is ready for further analysis.
 
 ## Required Libraries
 
@@ -128,15 +101,6 @@ This function requires the following R packages:
 - `tidyr`
 - `stringr`
 
-### Key Features
-1. **Data Fetching**: Establishes a connection to the database (or reads `.xpt` files) and retrieves necessary domain data such as `dm` (Demographics) and `ts` (Trial Summary).
-2. **Data Processing**: Performs data transformations, including renaming columns, updating values, and selecting relevant columns.
-3. **Filtering Logic**:
-   - Converts "Control" groups to "vehicle" and retains only animals in the "vehicle" or "HD" (high-dose) groups.
-   - Removes recovery animals using the `ds` (Disposition) domain.
-   - Excludes toxicokinetic (TK) animals for rat studies by analyzing the `pp` (Pharmacokinetics) and `pooldef` domains.
-4. **Species Detection and Handling**: Extracts species information from the `ts` domain to customize the filtering logic for different species.
-
 Notes
 
 - The function assumes standard SEND domains and column names.
@@ -149,3 +113,4 @@ Notes
 - [RSQLite](https://cran.r-project.org/package=RSQLite)
 - [data.table](https://cran.r-project.org/package=data.table)
 - [SENDsanitizer](https://github.com/phuse-org/SEND-sanitizer)
+
