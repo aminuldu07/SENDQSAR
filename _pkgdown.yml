@@ -37,6 +37,10 @@ navbar:
         href: articles/LB_score_calculation_documentation.html
       - text: MI score Calculation
         href: articles/MI_score_calculation_documentation.html
+      - text: get_lb_score
+        href: articles/get_lb_score.html
+      - text: get_mi_score
+        href: articles/get_mi_score.html
 
     # resources:
     #     text: Resources

@@ -60,31 +60,31 @@ Here is an example of how to use the `get_mi_score` function:
 
 ```{r}
 # Example 1: Basic usage with default parameters
-mi_scores <- get_mi_score(
-  studyid = "12345", 
-  path_db = "/path/to/database"
-)
-
-# Example 2: Using XPT files instead of a database
-mi_scores_xpt <- get_mi_score(
-  path_db = "/path/to/xpt/files", 
-  use_xpt_file = TRUE
-)
-
-# Example 3: Return individual scores
-mi_individual_scores <- get_mi_score(
-  studyid = "12345", 
-  path_db = "/path/to/database",
-  return_individual_scores = TRUE
-)
-
-# Example 4: Return Z-scores for each participant
-mi_zscores <- get_mi_score(
-  studyid = "12345", 
-  path_db = "/path/to/database", 
-  return_zscore_by_USUBJID = TRUE
-)
-
+# mi_scores <- get_mi_score(
+#   studyid = "12345", 
+#   path_db = "/path/to/database"
+# )
+# 
+# # Example 2: Using XPT files instead of a database
+# mi_scores_xpt <- get_mi_score(
+#   path_db = "/path/to/xpt/files", 
+#   use_xpt_file = TRUE
+# )
+# 
+# # Example 3: Return individual scores
+# mi_individual_scores <- get_mi_score(
+#   studyid = "12345", 
+#   path_db = "/path/to/database",
+#   return_individual_scores = TRUE
+# )
+# 
+# # Example 4: Return Z-scores for each participant
+# mi_zscores <- get_mi_score(
+#   studyid = "12345", 
+#   path_db = "/path/to/database", 
+#   return_zscore_by_USUBJID = TRUE
+# )
+```
 ## Conclusion
 
 The `get_mi_score` function is a versatile tool for processing and analyzing MI data from clinical study databases. By setting various parameters, users can tailor the output to meet specific needs, such as:

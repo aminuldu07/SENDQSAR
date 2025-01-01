@@ -1,6 +1,6 @@
 ---
 title: "Function Documentation: `get_liver_om_lb_mi_tox_score_list`"
-author: "Your Name"
+author: "Md Aminul Islam Prodhan"
 date: "2024-12-31"
 output: html_document
 ---
@@ -107,7 +107,8 @@ The function returns different outputs based on the flags passed:
 In this example, we call the `get_liver_om_lb_mi_tox_score_list` function to retrieve averaged scores for a single study. The `studyid_or_studyids` argument is set to a single study ID, and the `path_db` argument points to the location of the database.
 
 ```{r}
-result <- get_liver_om_lb_mi_tox_score_list(
-  studyid_or_studyids = "Study_001",
-  path_db = "path/to/database"
-)
+#result <- get_liver_om_lb_mi_tox_score_list(
+  #studyid_or_studyids = "Study_001",
+  #path_db = "path/to/database"
+#)
+```

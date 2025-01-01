@@ -24,6 +24,8 @@
     <li><a class="dropdown-item" href="../articles/BwTOLiver_score_calculation_documentation.html">BwTOLiver score Calculation</a></li>
     <li><a class="dropdown-item" href="../articles/LB_score_calculation_documentation.html">LB score Calculation</a></li>
     <li><a class="dropdown-item" href="../articles/MI_score_calculation_documentation.html">MI score Calculation</a></li>
+    <li><a class="dropdown-item" href="../articles/get_lb_score.html">get_lb_score</a></li>
+    <li><a class="dropdown-item" href="../articles/get_mi_score.html">get_mi_score</a></li>
   </ul></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><a class="external-link nav-link" href="https://github.com/aminuldu07/SENDQSAR" aria-label="github"><span class="fa fab fa-github fa-lg"></span></a></li>
       </ul></div>
@@ -50,46 +52,58 @@
 
       <dl><dt>
 
-          <code><a href="get_all_lb_TESTCD_zscore.html">get_all_lb_TESTCD_zscore()</a></code>
+          <code><a href="get_auc_curve_with_rf_model.html">get_auc_curve_with_rf_model()</a></code>
 
         </dt>
-        <dd>get LB score for a given studyid</dd>
+        <dd>Compute and Plot AUC Curve with Random Forest Model</dd>
       </dl><dl><dt>
 
           <code><a href="get_bw_score.html">get_bw_score()</a></code>
 
         </dt>
-        <dd>get BW score for a given studyid</dd>
+        <dd>Calculate BW Score for a Given Study ID</dd>
+      </dl><dl><dt>
+
+          <code><a href="get_col_harmonized_scores_df.html">get_col_harmonized_scores_df()</a></code>
+
+        </dt>
+        <dd>get_col_harmonized_scores_df</dd>
       </dl><dl><dt>
 
           <code><a href="get_compile_data.html">get_compile_data()</a></code>
 
         </dt>
-        <dd>filter out tk and recovery animal</dd>
+        <dd>Retrieve Compiled Data from SQLite Database or XPT File</dd>
       </dl><dl><dt>
 
-          <code><a href="get_fixed_parameter_rf_model.html">get_fixed_parameter_rf_model()</a></code>
+          <code><a href="get_Data_formatted_for_ml_and_best.m.html">get_Data_formatted_for_ml_and_best.m()</a></code>
 
         </dt>
-        <dd>get_random_forest_model</dd>
+        <dd>Retrieve and Preprocess Data for Machine Learning Models</dd>
       </dl><dl><dt>
 
-          <code><a href="get_harmonized_column.html">get_harmonized_column()</a></code>
+          <code><a href="get_histogram_barplot.html">get_histogram_barplot()</a></code>
 
         </dt>
-        <dd>get_random_forest_model</dd>
+        <dd>Generate Histogram or Bar Plot for Liver-Related Scores</dd>
+      </dl><dl><dt>
+
+          <code><a href="get_imp_features_from_rf_model_with_cv.html">get_imp_features_from_rf_model_with_cv()</a></code>
+
+        </dt>
+        <dd>Get Important Features from Random Forest Model with Cross-Validation</dd>
       </dl><dl><dt>
 
           <code><a href="get_lb_score.html">get_lb_score()</a></code>
 
         </dt>
-        <dd>get LB score for a given studyid</dd>
+        <dd>Get LB Score for a Given Study ID</dd>
       </dl><dl><dt>
 
           <code><a href="get_livertobw_score.html">get_livertobw_score()</a></code>
 
         </dt>
-        <dd>get_liver_livertobw_score</dd>
+        <dd>Calculate Liver-to-Body-Weight Scores and Z-Scores</dd>
       </dl><dl><dt>
 
           <code><a href="get_liver_om_lb_mi_tox_score_list.html">get_liver_om_lb_mi_tox_score_list()</a></code>
@@ -101,19 +115,55 @@
           <code><a href="get_mi_score.html">get_mi_score()</a></code>
 
         </dt>
-        <dd>get MI score for a given studyid</dd>
+        <dd>Get MI score for a given studyid</dd>
       </dl><dl><dt>
 
-          <code><a href="get_random_forest_model.html">get_random_forest_model()</a></code>
+          <code><a href="get_ml_data_and_tuned_hyperparameters.html">get_ml_data_and_tuned_hyperparameters()</a></code>
 
         </dt>
-        <dd>get_random_forest_model</dd>
+        <dd>Get Random Forest Data and Tuned Hyperparameters</dd>
       </dl><dl><dt>
 
-          <code><a href="predicted_random_forest_model.html">predicted_random_forest_model()</a></code>
+          <code><a href="get_prediction_plot.html">get_prediction_plot()</a></code>
 
         </dt>
-        <dd>predicted_random_forest_model</dd>
+        <dd>Generate Prediction Plot for Random Forest Model</dd>
+      </dl><dl><dt>
+
+          <code><a href="get_repeat_dose_parallel_studyids.html">get_repeat_dose_parallel_studyids()</a></code>
+
+        </dt>
+        <dd>Get Repeat Dose Parallel Study IDs</dd>
+      </dl><dl><dt>
+
+          <code><a href="get_reprtree_from_rf_model.html">get_reprtree_from_rf_model()</a></code>
+
+        </dt>
+        <dd>Get Representation Tree from Random Forest Model</dd>
+      </dl><dl><dt>
+
+          <code><a href="get_rf_input_param_list_output_cv_imp.html">get_rf_input_param_list_output_cv_imp()</a></code>
+
+        </dt>
+        <dd>Prepare and Evaluate Random Forest Model with Cross-Validation and Feature Importance</dd>
+      </dl><dl><dt>
+
+          <code><a href="get_rf_model_output_cv_imp.html">get_rf_model_output_cv_imp()</a></code>
+
+        </dt>
+        <dd>Perform Cross-Validation with Random Forest and Feature Importance Calculation</dd>
+      </dl><dl><dt>
+
+          <code><a href="get_rf_model_with_cv.html">get_rf_model_with_cv()</a></code>
+
+        </dt>
+        <dd>Random Forest with Cross-Validation</dd>
+      </dl><dl><dt>
+
+          <code><a href="get_zone_exclusioned_rf_model_with_cv.html">get_zone_exclusioned_rf_model_with_cv()</a></code>
+
+        </dt>
+        <dd>Random Forest Model with Cross-validation and Exclusion</dd>
       </dl></div>
   </main></div>
 
