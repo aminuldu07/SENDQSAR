@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Documentation for `get_rf_input_param_list_output_cv_imp` Function • SENDQSAR</title>
+<title>get_reprtree_from_rf_model Function Documentation • SENDQSAR</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Documentation for `get_rf_input_param_list_output_cv_imp` Function">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="get_reprtree_from_rf_model Function Documentation">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -74,11 +74,13 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Documentation for `get_rf_input_param_list_output_cv_imp` Function</h1>
+      <h1>get_reprtree_from_rf_model Function Documentation</h1>
+                        <h4 data-toc-skip class="author">Your Name</h4>
             
+            <h4 data-toc-skip class="date">2024-12-31</h4>
       
-      <small class="dont-index">Source: <a href="https://github.com/aminuldu07/SENDQSAR/blob/HEAD/vignettes/get_rf_input_param_list_output_cv_imp.Rmd" class="external-link"><code>vignettes/get_rf_input_param_list_output_cv_imp.Rmd</code></a></small>
-      <div class="d-none name"><code>get_rf_input_param_list_output_cv_imp.Rmd</code></div>
+      <small class="dont-index">Source: <a href="https://github.com/aminuldu07/SENDQSAR/blob/HEAD/vignettes/get_reprtree_from_rf_model.Rmd" class="external-link"><code>vignettes/get_reprtree_from_rf_model.Rmd</code></a></small>
+      <div class="d-none name"><code>get_reprtree_from_rf_model.Rmd</code></div>
     </div>
 
     
@@ -86,145 +88,118 @@
 <div class="section level2">
 <h2 id="purpose">Purpose<a class="anchor" aria-label="anchor" href="#purpose"></a>
 </h2>
-<p>The <code>get_rf_input_param_list_output_cv_imp</code> function
-prepares the necessary data for training and evaluating a Random Forest
-(RF) model with cross-validation and variable importance scores. It
-handles various configurations, such as imputation, hyperparameter
-tuning, and the inclusion of rat studies. The function interacts with
-either an XPT file or an SQLite database to extract and harmonize study
-data, followed by model training and evaluation.</p>
+<p>The <code>get_reprtree_from_rf_model</code> function is designed to
+train a Random Forest model on a provided dataset and generate a
+representation tree (ReprTree) from the trained model. The function
+supports various configurations for data preprocessing, model
+hyperparameters, and sampling strategies, including random
+undersampling. Additionally, it allows for error correction and
+hyperparameter tuning.</p>
 </div>
 <div class="section level2">
 <h2 id="input-parameters">Input Parameters<a class="anchor" aria-label="anchor" href="#input-parameters"></a>
 </h2>
-<table class="table">
+<p>The following table describes the input parameters for the
+<code>get_reprtree_from_rf_model</code> function:</p>
+<table style="width:100%;" class="table">
 <colgroup>
-<col width="12%">
-<col width="6%">
-<col width="74%">
-<col width="7%">
+<col width="11%">
+<col width="71%">
+<col width="9%">
+<col width="8%">
 </colgroup>
 <thead><tr class="header">
 <th>Parameter</th>
-<th>Type</th>
 <th>Description</th>
+<th>Type</th>
 <th>Default Value</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
+<td><code>Data</code></td>
+<td>A dataset to train the Random Forest model. If NULL, data is fetched
+using the <code>get_Data_formatted_for_ml_and_best.m</code>
+function.</td>
+<td>Data frame</td>
+<td>NULL</td>
+</tr>
+<tr class="even">
 <td><code>path_db</code></td>
-<td>character</td>
-<td>Path to the SQLite database.</td>
-<td>N/A</td>
+<td>The path to the database used for fetching or processing the
+data.</td>
+<td>Character string</td>
+<td>-</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>rat_studies</code></td>
-<td>logical</td>
-<td>If <code>TRUE</code>, limits the studies to rat studies.</td>
-<td><code>FALSE</code></td>
+<td>A flag indicating whether rat studies are used.</td>
+<td>Boolean (TRUE/FALSE)</td>
+<td>FALSE</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>studyid_metadata</code></td>
-<td>data.frame</td>
-<td>A data frame containing metadata for the studies.</td>
-<td>N/A</td>
+<td>Metadata related to study IDs.</td>
+<td>Data frame</td>
+<td>NULL</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>fake_study</code></td>
-<td>logical</td>
-<td>If <code>TRUE</code>, uses a fake study for data processing.</td>
-<td><code>FALSE</code></td>
+<td>A flag indicating whether to use fake study data.</td>
+<td>Boolean (TRUE/FALSE)</td>
+<td>FALSE</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>use_xpt_file</code></td>
-<td>logical</td>
-<td>If <code>TRUE</code>, reads data from an XPT file instead of a
-database.</td>
-<td><code>FALSE</code></td>
+<td>A flag to indicate whether to use the XPT file format for data
+input.</td>
+<td>Boolean (TRUE/FALSE)</td>
+<td>FALSE</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>Round</code></td>
-<td>logical</td>
-<td>If <code>TRUE</code>, rounds the liver scores.</td>
-<td><code>FALSE</code></td>
+<td>A flag to round the data before processing.</td>
+<td>Boolean (TRUE/FALSE)</td>
+<td>FALSE</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>Impute</code></td>
-<td>logical</td>
-<td>If <code>TRUE</code>, imputes missing values in the data.</td>
-<td><code>FALSE</code></td>
+<td>A flag to specify whether to impute missing values in the data.</td>
+<td>Boolean (TRUE/FALSE)</td>
+<td>FALSE</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>reps</code></td>
-<td>integer</td>
-<td>Number of repetitions for model evaluation.</td>
-<td>N/A</td>
+<td>The number of repetitions to perform for cross-validation or
+resampling.</td>
+<td>Integer</td>
+<td>-</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>holdback</code></td>
-<td>numeric</td>
-<td>The proportion of data to hold back for validation.</td>
-<td>N/A</td>
+<td>The fraction of data to hold back for testing.</td>
+<td>Numeric</td>
+<td>-</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>Undersample</code></td>
-<td>logical</td>
-<td>If <code>TRUE</code>, undersamples the data to balance the
-classes.</td>
-<td><code>FALSE</code></td>
+<td>A flag indicating whether undersampling should be applied to balance
+the dataset.</td>
+<td>Boolean (TRUE/FALSE)</td>
+<td>FALSE</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>hyperparameter_tuning</code></td>
-<td>logical</td>
-<td>If <code>TRUE</code>, tunes hyperparameters for the Random Forest
-model.</td>
-<td><code>FALSE</code></td>
+<td>A flag indicating whether hyperparameter tuning should be
+performed.</td>
+<td>Boolean (TRUE/FALSE)</td>
+<td>FALSE</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>error_correction_method</code></td>
-<td>character</td>
-<td>The error correction method. Options: ‘Flip’, ‘Prune’, or
-‘None’.</td>
-<td>N/A</td>
-</tr>
-<tr class="odd">
-<td><code>best.m</code></td>
-<td>numeric</td>
-<td>A predefined value for the number of trees in the Random Forest
-model. If <code>NULL</code>, the function will determine this
-automatically.</td>
-<td><code>NULL</code></td>
-</tr>
-<tr class="even">
-<td><code>testReps</code></td>
-<td>integer</td>
-<td>Number of test repetitions for model evaluation.</td>
-<td>N/A</td>
-</tr>
-<tr class="odd">
-<td><code>indeterminateUpper</code></td>
-<td>numeric</td>
-<td>Upper threshold for indeterminate predictions.</td>
-<td>N/A</td>
-</tr>
-<tr class="even">
-<td><code>indeterminateLower</code></td>
-<td>numeric</td>
-<td>Lower threshold for indeterminate predictions.</td>
-<td>N/A</td>
-</tr>
-<tr class="odd">
-<td><code>Type</code></td>
-<td>character</td>
-<td>The type of Random Forest model to use. Options include
-classification or regression models.</td>
-<td>N/A</td>
-</tr>
-<tr class="even">
-<td><code>nTopImportance</code></td>
-<td>integer</td>
-<td>The number of top important features to consider for the model.</td>
-<td>N/A</td>
+<td>The method for error correction; valid options are
+<code>'Flip'</code>, <code>'Prune'</code>, or <code>'None'</code>.</td>
+<td>Character string</td>
+<td>-</td>
 </tr>
 </tbody>
 </table>
@@ -232,67 +207,58 @@ classification or regression models.</td>
 <div class="section level2">
 <h2 id="output">Output<a class="anchor" aria-label="anchor" href="#output"></a>
 </h2>
-<p>The function returns a Random Forest model trained with
-cross-validation (CV) and includes a list of variable importance scores.
-Specifically, it returns the result of the
-<code>get_rf_model_with_cv</code> function, which includes the trained
-model, cross-validation results, and feature importance scores.</p>
+<p>The function generates a representation tree (ReprTree) from the
+trained Random Forest model and visualizes the first tree (k=5) from the
+model.</p>
+<ul>
+<li>A plot of the first tree from the Random Forest is displayed.</li>
+<li>The representation tree object is generated but not explicitly
+returned.</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="key-steps">Key Steps<a class="anchor" aria-label="anchor" href="#key-steps"></a>
 </h2>
 <ol style="list-style-type: decimal">
 <li>
-<strong>Data Source Selection</strong>:
+<strong>Data Preparation:</strong>
 <ul>
-<li>If <code>use_xpt_file</code> is <code>TRUE</code>, the function
-loads data from an XPT file.</li>
-<li>If <code>fake_study</code> is <code>TRUE</code>, it fetches data
-from a SQLite database and filters based on
-<code>rat_studies</code>.</li>
-<li>If neither condition is met, it retrieves study IDs from the
-database using <code>get_repeat_dose_parallel_studyids</code>.</li>
+<li>If the <code>Data</code> parameter is <code>NULL</code>, the
+function calls <code>get_Data_formatted_for_ml_and_best.m</code> to
+prepare the data for modeling.</li>
+<li>Data is split into training and testing sets (70% for training and
+30% for testing).</li>
+<li>If undersampling is enabled (<code>Undersample = TRUE</code>),
+positive and negative samples are balanced in the training set by
+undersampling the majority class.</li>
 </ul>
 </li>
 <li>
-<strong>Data Harmonization</strong>:
+<strong>Model Training:</strong>
 <ul>
-<li>The function calls <code>get_liver_om_lb_mi_tox_score_list</code> to
-calculate liver scores for the studies, which are then harmonized using
-<code>get_col_harmonized_scores_df</code>.</li>
+<li>A Random Forest model is trained using the <code>randomForest</code>
+function. The target variable is <code>Target_Organ</code>, and the
+model uses the best hyperparameter (<code>best.m</code>) determined
+beforehand.</li>
+<li>The number of trees in the forest is set to 500, and proximity
+calculations are enabled.</li>
 </ul>
 </li>
 <li>
-<strong>Machine Learning Data Preparation</strong>:
+<strong>ReprTree Generation:</strong>
 <ul>
-<li>The function prepares data for Random Forest model training by
-calling <code>get_ml_data_and_tuned_hyperparameters</code>. This step
-involves imputation, optional hyperparameter tuning, and data
-balancing.</li>
+<li>A ReprTree is generated using the <code><a href="https://rdrr.io/pkg/reprtree/man/ReprTree.html" class="external-link">reprtree::ReprTree</a></code>
+function, which creates a representation of the trained Random Forest
+model.</li>
+<li>The first tree (k=5) is plotted using
+<code><a href="https://rdrr.io/pkg/reprtree/man/plot.getTree.html" class="external-link">reprtree::plot.getTree</a></code>.</li>
 </ul>
 </li>
 <li>
-<strong>Random Forest Model Training and Evaluation</strong>:
+<strong>Visualization:</strong>
 <ul>
-<li>The function calls <code>get_rf_model_with_cv</code> to train and
-evaluate the Random Forest model with cross-validation. The model’s
-performance is evaluated across multiple repetitions
-(<code>testReps</code>), with the option to include top importance
-features.</li>
-</ul>
-</li>
-<li>
-<strong>Error Correction</strong>:
-<ul>
-<li>If specified, the function applies an error correction method
-(either “Flip”, “Prune”, or “None”).</li>
-</ul>
-</li>
-<li>
-<strong>Return</strong>:
-<ul>
-<li>The function returns the trained Random Forest model along with
-cross-validation results and feature importance scores.</li>
+<li>The first tree in the Random Forest model is visualized using the
+<code><a href="https://rdrr.io/pkg/reprtree/man/plot.getTree.html" class="external-link">reprtree::plot.getTree</a></code> function.</li>
 </ul>
 </li>
 </ol>
@@ -300,13 +266,11 @@ cross-validation results and feature importance scores.</li>
 <div class="section level2">
 <h2 id="example-usage">Example Usage<a class="anchor" aria-label="anchor" href="#example-usage"></a>
 </h2>
-<p>```r result &lt;- get_rf_input_param_list_output_cv_imp( path_db =
-“path/to/database”, rat_studies = TRUE, studyid_metadata = metadata_df,
-fake_study = FALSE, use_xpt_file = FALSE, Round = TRUE, Impute = TRUE,
-reps = 10, holdback = 0.2, Undersample = TRUE, hyperparameter_tuning =
-TRUE, error_correction_method = “Flip”, best.m = NULL, testReps = 5,
-indeterminateUpper = 0.9, indeterminateLower = 0.1, Type =
-“classification”, nTopImportance = 10 )</p>
+<p>```r get_reprtree_from_rf_model( Data = my_data, path_db =
+“path/to/database”, rat_studies = TRUE, studyid_metadata = my_metadata,
+fake_study = FALSE, use_xpt_file = TRUE, Round = TRUE, Impute = TRUE,
+reps = 5, holdback = 0.3, Undersample = TRUE, hyperparameter_tuning =
+FALSE, error_correction_method = “Flip” )</p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
