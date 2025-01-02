@@ -37,9 +37,13 @@ Returns a cleaned `data.frame` with the following columns:
 - `ARMCD`
 - `SETCD`
 
+The cleaned data is now ready to be used for further analysis. 
+
+
 ## Implementation Details
 
 The `get_compile_data` function leverages the following steps to calculate the `compile_data` data frame for a given study:
+
 
 ### Database Connection
 
@@ -57,10 +61,10 @@ The function retrieves data from the following SEND domains based on the input p
 
 ### Filtering Steps
 
-- **Recovery Animals**  
+- **Filtering Recovery Animals**  
    Recovery animals are excluded by filtering the DM data based on `DSDECOD` values in the `DS` domain.
 
-- **Toxicokinetic (TK) Animals**  
+- **Filtering Toxicokinetic (TK) Animals**  
    For studies involving rats or mice, the function removes animals whose `USUBJID` appears in the PC domain.
 
 - **Dose Selection**  
@@ -69,7 +73,7 @@ The function retrieves data from the following SEND domains based on the input p
 
 
 
-## Examples
+## Examples Usage
 
 ```r
 # Example usage with SQLite database
@@ -86,10 +90,6 @@ df <- get_compile_data(
   use_xpt_file = TRUE
 )
 ```
-
-## Final Output
-
-The cleaned data is returned as a `data.frame` which is ready for further analysis.
 
 ## Required Libraries
 

@@ -89,9 +89,9 @@ Prodhan</h4>
 <p>The <code>get_bw_score</code> function is designed to normalize the
 the body-weight (BW) of each subject (animal) termed as ‘USUBJID’ in
 SEND database, using Z-scoring method. Z-scoring is a basic method which
-Z-scored the continuous data like the clinical pathology, lab test
-results by transforming each value into how many standard deviations it
-is above or below the control mean.</p>
+Z-scored the continuous data like the body weight, clinical pathology,
+lab test results by transforming each value into how many standard
+deviations it is above or below the control mean.</p>
 </div>
 <div class="section level2">
 <h2 id="z-score-calculation">Z-Score Calculation<a class="anchor" aria-label="anchor" href="#z-score-calculation"></a>
@@ -206,7 +206,7 @@ identifiers).</td>
 <div class="section level2">
 <h2 id="return-value">Return Value<a class="anchor" aria-label="anchor" href="#return-value"></a>
 </h2>
-<p>A <code>data.frame</code> containing the calculated BW scores. The
+<p>A <code>data.frame</code> containing the calculated BW Z-scores. The
 structure of the output depends on the provided parameters:</p>
 <ul>
 <li>If <code>return_individual_scores = TRUE</code>: Returns averaged
@@ -221,22 +221,57 @@ each animal/subject by <code>USUBJID</code> for each domain per
 <div class="section level2">
 <h2 id="implementation-details">Implementation Details<a class="anchor" aria-label="anchor" href="#implementation-details"></a>
 </h2>
-<p>The <code>get_bw_score</code> function is implemented in R and
-leverages the following steps to calculate the BW score for a given
-study:</p>
+<p>The <code>get_bw_score</code> function follows a systematic approach
+to calculate the BW Z-score for a given study ID. Below are the key
+steps involved:</p>
 <div class="section level3">
 <h3 id="database-connection">Database Connection<a class="anchor" aria-label="anchor" href="#database-connection"></a>
 </h3>
-<p>-The function connects to the specified SQLite database using the
-<code>RSQLite</code> package. It retrieves data related to the given
-<code>studyid</code> from the database.</p>
+<p>The function establishes a connection to the specified
+<code>SQLite</code> database using the <code>RSQLite</code> package or
+processes .xpt files depending on the value of the
+<code>use_xpt_file</code> parameter:</p>
+<ul>
+<li>If <code>use_xpt_file</code> = <code>TRUE</code>: Data is loaded
+from .xpt files located in the folder specified by path_db.</li>
+<li>If <code>use_xpt_file</code> = <code>FALSE</code>: Data is extracted
+from the SQLite database file located at path_db.</li>
+</ul>
 </div>
 <div class="section level3">
 <h3 id="data-retrieval">Data Retrieval<a class="anchor" aria-label="anchor" href="#data-retrieval"></a>
 </h3>
-<p>Depending on the value of the <code>use_xpt_file</code> parameter: -
-If <code>TRUE</code>, data is loaded from <code>.xpt</code> files. - If
-<code>FALSE</code>, data is extracted from the database.</p>
+<p>The function retrieves the necessary data related to the specified
+studyid. The data retrieval process depends on whether
+master_compiledata is provided or NULL:</p>
+<p>When <code>master_compiledata = NULL</code>,</p>
+<p>If <code>master_compiledata</code> is not provided, the function
+extracts data from the following SEND domains:</p>
+<ul>
+<li>
+<code>BW</code> (Body Weight) : Provide the Body Weight measurements
+at the individual level.</li>
+<li>
+<code>DM</code> (Demographics): Supplies animal-level demographic
+details.</li>
+<li>
+<code>DS</code> (Disposition): Identifies recovery animals using the
+<code>DSDECOD</code> column.</li>
+<li>
+<code>PC</code> (Pharmacokinetics): Provide <code>USUBJID</code> of
+the TK animals for rats and mice study.</li>
+<li>
+<code>TX</code> (Treatment): Provide dose levels information such as
+“vehicle” or “HD.”</li>
+</ul>
+<p>When <code>master_compiledata is Provided</code>,</p>
+<p>If <code>master_compiledata</code> value is provided, this function
+retrieve the following domains:</p>
+<ul>
+<li>
+<code>BW</code> (Body Weight) : Provide the Body Weight measurements
+at the individual level.</li>
+</ul>
 </div>
 <div class="section level3">
 <h3 id="baseline-weight-adjustment">Baseline Weight Adjustment<a class="anchor" aria-label="anchor" href="#baseline-weight-adjustment"></a>
@@ -247,18 +282,18 @@ weight recorded on the first day of dosing.</p>
 <div class="section level3">
 <h3 id="z-score-normalization">Z-Score Normalization<a class="anchor" aria-label="anchor" href="#z-score-normalization"></a>
 </h3>
-<p>-The adjusted weights are further normalized using the Z-score
-equation using the equation described in the “Z-Score Calculation”</p>
+<p>The adjusted weights are further normalized using the Z-score
+equation described in the “Z-Score Calculation” section above.</p>
 </div>
 <div class="section level3">
 <h3 id="handling-optional-parameters">Handling Optional Parameters<a class="anchor" aria-label="anchor" href="#handling-optional-parameters"></a>
 </h3>
 <ul>
-<li>If <code>return_individual_scores = TRUE</code>, the function
-appends individual Z-scores to the output.</li>
-<li>If <code>return_zscore_by_USUBJID = TRUE</code>, the function
-organizes Z-scores by unique subject identifiers
-(<code>USUBJID</code>).</li>
+<li>If <code>return_individual_scores = TRUE</code>, Returns averaged
+Z-scores for each of the domain per <code>studyid</code>.</li>
+<li>If <code>return_zscore_by_USUBJID = TRUE</code>, Returns Z-score for
+each animal/subject by unique subject
+identifiers<code>USUBJID</code>.</li>
 </ul>
 </div>
 <div class="section level3">
@@ -279,8 +314,8 @@ include summarized scores, individual scores, or Z-scores by
 <h3 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a>
 </h3>
 <p>The function requires the following R packages: -
-<code>RSQLite</code>: To connect to the SQLite database. - Additional
-dependencies may be needed for <code>.xpt</code> file handling if
+<code>RSQLite</code>: To connect to the SQLite database. -
+<code>haven</code> : To read <code>.xpt</code> file, if
 <code>use_xpt_file = TRUE</code>.</p>
 <hr>
 <p>This implementation ensures flexibility in handling different input

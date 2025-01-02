@@ -148,6 +148,37 @@ reproducibility and interpretability of toxicological risk assessments.
 <p>The weight of each animal at the end of the dosing period was
 normalized by subtracting the baseline weight measured on the first day
 of dosing.</p>
+<div class="section level3">
+<h3 id="required-libraries">Required Libraries<a class="anchor" aria-label="anchor" href="#required-libraries"></a>
+</h3>
+<p>This function requires the following R packages:</p>
+<ul>
+<li><code>DBI</code></li>
+<li><code>RSQLite</code></li>
+<li><code>data.table</code></li>
+<li><code>dplyr</code></li>
+<li><code>haven</code></li>
+<li><code>tidyr</code></li>
+<li><code>stringr</code></li>
+</ul>
+<p>##Notes</p>
+<ul>
+<li>The function assumes standard SEND domains and column names.</li>
+<li>For non-standard data, adjustments may be needed.</li>
+<li>Check your database or <code>.xpt</code> files to ensure
+compatibility with the function.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="see-also">See Also<a class="anchor" aria-label="anchor" href="#see-also"></a>
+</h3>
+<ul>
+<li><a href="https://cran.r-project.org/package=DBI" class="external-link">DBI</a></li>
+<li><a href="https://cran.r-project.org/package=RSQLite" class="external-link">RSQLite</a></li>
+<li><a href="https://cran.r-project.org/package=data.table" class="external-link">data.table</a></li>
+<li><a href="https://github.com/phuse-org/SEND-sanitizer" class="external-link">SENDsanitizer</a></li>
+</ul>
+</div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

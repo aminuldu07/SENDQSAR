@@ -25,3 +25,29 @@ For the body weight (BW), organ mass (OM), and laboratory test (LB) domains, the
 
 The weight of each animal at the end of the dosing period was normalized by subtracting the baseline weight measured on the first day of dosing. 
 
+
+## Required Libraries
+
+This function requires the following R packages:
+
+- `DBI`
+- `RSQLite`
+- `data.table`
+- `dplyr`
+- `haven`
+- `tidyr`
+- `stringr`
+
+##Notes
+
+- The function assumes standard SEND domains and column names.
+- For non-standard data, adjustments may be needed.
+- Check your database or `.xpt` files to ensure compatibility with the function.
+
+## See Also
+
+- [DBI](https://cran.r-project.org/package=DBI)
+- [RSQLite](https://cran.r-project.org/package=RSQLite)
+- [data.table](https://cran.r-project.org/package=data.table)
+- [SENDsanitizer](https://github.com/phuse-org/SEND-sanitizer)
+

@@ -18,7 +18,7 @@
 #' }
 #' @export
 #'
-#' @importFrom magrittr %>
+#' @importFrom magrittr %>%
 
 get_compile_data <- function(studyid = NULL,
                              path_db,
