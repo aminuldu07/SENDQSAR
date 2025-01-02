@@ -84,16 +84,20 @@ Prodhan</h4>
     
     
 <div class="section level2">
-<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+<h2 id="purpose">Purpose<a class="anchor" aria-label="anchor" href="#purpose"></a>
 </h2>
-<p>The <code>get_bw_score</code> function is designed to normalized the
-the body-weight (BW) of each subject (animal) using Z-scores method with
-comparisons made against the respective control group for each
-study.</p>
-<div class="section level4">
-<h4 id="z-score-calculation">Z-Score Calculation<a class="anchor" aria-label="anchor" href="#z-score-calculation"></a>
-</h4>
-<p>The Z-score normalization is performed as shown in Equation 1:</p>
+<p>The <code>get_bw_score</code> function is designed to normalize the
+the body-weight (BW) of each subject (animal) termed as ‘USUBJID’ in
+SEND database, using Z-scoring method. Z-scoring is a basic method which
+Z-scored the continuous data like the clinical pathology, lab test
+results by transforming each value into how many standard deviations it
+is above or below the control mean.</p>
+</div>
+<div class="section level2">
+<h2 id="z-score-calculation">Z-Score Calculation<a class="anchor" aria-label="anchor" href="#z-score-calculation"></a>
+</h2>
+<p>The Z-score normalization is performed as shown in Equation
+below:</p>
 <p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Z</mi><mrow><mi>s</mi><mo>,</mo><mi>i</mi></mrow></msub><mo>=</mo><mfrac><mrow><msub><mi>x</mi><mrow><mi>s</mi><mo>,</mo><mi>i</mi></mrow></msub><mo>−</mo><msub><mi>μ</mi><mrow><mi>s</mi><mo>,</mo><mi>c</mi></mrow></msub></mrow><msub><mi>σ</mi><mrow><mi>s</mi><mo>,</mo><mi>c</mi></mrow></msub></mfrac></mrow><annotation encoding="application/x-tex">
 Z_{s,i} = \frac{x_{s,i} - \mu_{s,c}}{\sigma_{s,c}}
 </annotation></semantics></math></p>
@@ -123,9 +127,9 @@ refers to an individual animal in the study, -
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math>
 refers to the control-treated group of animals within the study.</p>
 </div>
-<div class="section level3">
-<h3 id="parameters">Parameters<a class="anchor" aria-label="anchor" href="#parameters"></a>
-</h3>
+<div class="section level2">
+<h2 id="function-parameters-arguments">Function Parameters (Arguments)<a class="anchor" aria-label="anchor" href="#function-parameters-arguments"></a>
+</h2>
 <table class="table">
 <colgroup>
 <col width="17%">
@@ -142,15 +146,18 @@ refers to the control-treated group of animals within the study.</p>
 <tbody>
 <tr class="odd">
 <td><code>studyid</code></td>
-<td>Mandatory, character</td>
-<td>The study ID for which the BW score is to be calculated. If
-<code>NULL</code>, all studies in the database are analyzed.</td>
+<td>Conditional, character</td>
+<td>The STUDYID of the Study for which the BW score is to be calculated.
+Required when use_xpt_file = FALSE. If use_xpt_file = TRUE, studyid is
+ignored, and the .xpt files of that study in the specified folder are
+analyzed.</td>
 <td><code>NULL</code></td>
 </tr>
 <tr class="even">
 <td><code>path_db</code></td>
 <td>Mandatory, character</td>
-<td>The path to the database file containing study data.</td>
+<td>The path to the database or the <code>.xpt</code> file containing
+study data.</td>
 <td>—</td>
 </tr>
 <tr class="odd">
@@ -163,47 +170,127 @@ refers to the control-treated group of animals within the study.</p>
 <tr class="even">
 <td><code>use_xpt_file</code></td>
 <td>Mandatory, Boolean</td>
-<td>If <code>TRUE</code>, the function processes study data using
-<code>.xpt</code> files.</td>
+<td>If TRUE, the function processes study data using .xpt files located
+in the folder specified by path_db. In this case, studyid is ignored. If
+FALSE, the function uses the database file at path_db and requires a
+valid studyid.</td>
 <td><code>FALSE</code></td>
 </tr>
 <tr class="odd">
 <td><code>master_compiledata</code></td>
 <td>Optional, character</td>
-<td>The path to an additional database or compiled data file for
-analysis. If <code>NULL</code>, only the primary database is used.</td>
+<td>If master_compiledata is not provided (i.e., NULL), the function
+will automatically call the <code>get_compile_data</code> function to
+calculate it.</td>
 <td><code>NULL</code></td>
 </tr>
 <tr class="even">
 <td><code>return_individual_scores</code></td>
 <td>Optional, Boolean</td>
 <td>If <code>TRUE</code>, the function returns individual scores for
-each record in the study.</td>
+each of the domain by averaging the scores of all the subjects/animals
+(USUBJID) in the study.</td>
 <td><code>FALSE</code></td>
 </tr>
 <tr class="odd">
 <td><code>return_zscore_by_USUBJID</code></td>
 <td>Optional, Boolean</td>
-<td>If <code>TRUE</code>, the function returns z-scores by
-<code>USUBJID</code> (unique subject identifiers).</td>
+<td>If <code>TRUE</code>, the function returns z-scores for each of the
+animals/subjects by <code>USUBJID</code> (unique subject
+identifiers).</td>
 <td><code>FALSE</code></td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="section level3">
-<h3 id="returns">Returns<a class="anchor" aria-label="anchor" href="#returns"></a>
-</h3>
+<div class="section level2">
+<h2 id="return-value">Return Value<a class="anchor" aria-label="anchor" href="#return-value"></a>
+</h2>
 <p>A <code>data.frame</code> containing the calculated BW scores. The
-structure of the output depends on the provided parameters: - If
-<code>return_individual_scores = TRUE</code>: Returns individual scores
-for each record. - If <code>return_zscore_by_USUBJID = TRUE</code>:
-Returns z-scores by <code>USUBJID</code>. - Otherwise, a summarized BW
-score for the specified <code>studyid</code>.</p>
+structure of the output depends on the provided parameters:</p>
+<ul>
+<li>If <code>return_individual_scores = TRUE</code>: Returns averaged
+Z-scores for each of the domain per <code>studyid</code>.</li>
+<li>If <code>return_zscore_by_USUBJID = TRUE</code>: Returns Z-score for
+each animal/subject by <code>USUBJID</code> for each domain per
+<code>studyid</code>.</li>
+<li>Otherwise, a summarized BW Z-score for the specified
+<code>studyid</code>.</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="implementation-details">Implementation Details<a class="anchor" aria-label="anchor" href="#implementation-details"></a>
+</h2>
+<p>The <code>get_bw_score</code> function is implemented in R and
+leverages the following steps to calculate the BW score for a given
+study:</p>
+<div class="section level3">
+<h3 id="database-connection">Database Connection<a class="anchor" aria-label="anchor" href="#database-connection"></a>
+</h3>
+<p>-The function connects to the specified SQLite database using the
+<code>RSQLite</code> package. It retrieves data related to the given
+<code>studyid</code> from the database.</p>
 </div>
 <div class="section level3">
-<h3 id="example-usage">Example Usage<a class="anchor" aria-label="anchor" href="#example-usage"></a>
+<h3 id="data-retrieval">Data Retrieval<a class="anchor" aria-label="anchor" href="#data-retrieval"></a>
 </h3>
+<p>Depending on the value of the <code>use_xpt_file</code> parameter: -
+If <code>TRUE</code>, data is loaded from <code>.xpt</code> files. - If
+<code>FALSE</code>, data is extracted from the database.</p>
+</div>
+<div class="section level3">
+<h3 id="baseline-weight-adjustment">Baseline Weight Adjustment<a class="anchor" aria-label="anchor" href="#baseline-weight-adjustment"></a>
+</h3>
+<p>The weight of each animal is normalized by subtracting their baseline
+weight recorded on the first day of dosing.</p>
+</div>
+<div class="section level3">
+<h3 id="z-score-normalization">Z-Score Normalization<a class="anchor" aria-label="anchor" href="#z-score-normalization"></a>
+</h3>
+<p>-The adjusted weights are further normalized using the Z-score
+equation using the equation described in the “Z-Score Calculation”</p>
+</div>
+<div class="section level3">
+<h3 id="handling-optional-parameters">Handling Optional Parameters<a class="anchor" aria-label="anchor" href="#handling-optional-parameters"></a>
+</h3>
+<ul>
+<li>If <code>return_individual_scores = TRUE</code>, the function
+appends individual Z-scores to the output.</li>
+<li>If <code>return_zscore_by_USUBJID = TRUE</code>, the function
+organizes Z-scores by unique subject identifiers
+(<code>USUBJID</code>).</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="fake-study-handling">Fake Study Handling<a class="anchor" aria-label="anchor" href="#fake-study-handling"></a>
+</h3>
+<p>If <code>fake_study = TRUE</code>, special handling is applied for
+data sets generated by the <code>SENDsanitizer</code> package to account
+for their structure.</p>
+</div>
+<div class="section level3">
+<h3 id="output-generation">Output Generation<a class="anchor" aria-label="anchor" href="#output-generation"></a>
+</h3>
+<p>A data frame containing the requested scores is returned. This may
+include summarized scores, individual scores, or Z-scores by
+<code>USUBJID</code>, based on the parameters provided.</p>
+</div>
+<div class="section level3">
+<h3 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a>
+</h3>
+<p>The function requires the following R packages: -
+<code>RSQLite</code>: To connect to the SQLite database. - Additional
+dependencies may be needed for <code>.xpt</code> file handling if
+<code>use_xpt_file = TRUE</code>.</p>
+<hr>
+<p>This implementation ensures flexibility in handling different input
+types and configurations while maintaining a consistent structure for
+the output.</p>
+</div>
+</div>
+<div class="section level2">
+<h2 id="example-usage">Example Usage<a class="anchor" aria-label="anchor" href="#example-usage"></a>
+</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example 1: Basic usage</span></span>
 <span><span class="fu"><a href="../reference/get_bw_score.html">get_bw_score</a></span><span class="op">(</span>studyid <span class="op">=</span> <span class="st">'1234123'</span>, path_db <span class="op">=</span> <span class="st">'path/to/database.db'</span><span class="op">)</span></span>
@@ -213,26 +300,6 @@ score for the specified <code>studyid</code>.</p>
 <span></span>
 <span><span class="co"># Example 3: Include z-scores by USUBJID</span></span>
 <span><span class="fu"><a href="../reference/get_bw_score.html">get_bw_score</a></span><span class="op">(</span>studyid <span class="op">=</span> <span class="st">'1234123'</span>, path_db <span class="op">=</span> <span class="st">'path/to/database.db'</span>, return_zscore_by_USUBJID <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-</div>
-</div>
-<div class="section level2">
-<h2 id="implementation-details">Implementation Details<a class="anchor" aria-label="anchor" href="#implementation-details"></a>
-</h2>
-<p>The function filters rows where the <code>prob</code> column exceeds
-the <code>binding_threshold</code> and computes the score using
-vectorized operations. This ensures efficiency and scalability for
-larger datasets.</p>
-</div>
-<div class="section level2">
-<h2 id="additional-notes">Additional Notes<a class="anchor" aria-label="anchor" href="#additional-notes"></a>
-</h2>
-<ul>
-<li>The function assumes the input data frame is correctly formatted.
-Pre-processing steps (e.g., missing value handling) should be performed
-beforehand.</li>
-<li>Users can customize the <code>binding_threshold</code> to match the
-specificity requirements of their analysis.</li>
-</ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

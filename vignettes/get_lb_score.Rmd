@@ -4,7 +4,8 @@ title: "Documentation for `get_lb_score` Function"
 output: html_document
 ---
 
-## Overview
+## Purpose
+For the laboratory test (LB) data, Z-scores were also calculated for six key enzymes commonly found in blood or serum that are indicative of liver function: Bilirubin, Albumin (ALB), Alanine Aminotransferase (ALT), Alkaline Phosphatase (ALP), Aspartate Aminotransferase (AST), and Gamma-Glutamyl Transferase (GGT). These enzymes serve as important biomarkers for detecting liver damage or dysfunction.
 
 The `get_lb_score` function computes liver biomarker z-scores for clinical studies, utilizing data from a database or `.xpt` file. It processes lab data (`lb` domain) and calculates z-scores for several liver biomarkers (e.g., ALT, AST, ALP, GGT, BILI, ALB) based on study data, while performing several transformations and filtering operations to prepare the data.
 

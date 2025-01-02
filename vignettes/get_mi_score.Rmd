@@ -3,7 +3,8 @@ title: "Function Documentation for `get_mi_score`"
 output: html_document
 ---
 
-# `get_mi_score` Function Documentation
+# Purpose
+Z-scores for the Microscopic Findings (histopathological findings) were derived based on both the incidence (frequency) and severity of liver-related lesions. Initially, a score was calculated purely from the severity of the findings, which was then further adjusted based on the incidence rate providing a more accurate reflection of the overall histopathological impact on liver. 
 
 The `get_mi_score` function processes medical information (MI) data from clinical study databases. It calculates the MI scores, manages severity levels, and processes the data according to specified parameters.
 

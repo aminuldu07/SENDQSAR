@@ -91,7 +91,12 @@ calculate liver-to-body-weight (Liver:BW) scores and their corresponding
 z-scores from study data. This function supports data retrieval from
 SQLite databases or <code>.xpt</code> files and provides options to
 return individual scores, USUBJID-specific z-scores, or averaged scores
-by study.</p>
+by study. the weight of each animal at the end of the dosing period was
+normalized by subtracting the baseline weight measured on the first day
+of dosing. Following this, the liver weight to body weight ratio was
+calculated for each animal. These liver-to-body weight ratios were then
+normalized using Z-scores, with comparisons made against the respective
+control group for each study</p>
 <hr>
 </div>
 <div class="section level2">
