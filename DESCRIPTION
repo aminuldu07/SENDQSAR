@@ -45,7 +45,8 @@ Imports:
     glue,
     matrixStats,
     magrittr,
-    haven
+    haven,
+    reprtree
 Suggests: 
     knitr,
     rmarkdown,

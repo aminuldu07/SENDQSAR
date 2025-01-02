@@ -80,6 +80,7 @@ The function performs the following steps:
 }
 }
 \examples{
+\dontrun{
 # Example usage of the function
 result <- get_rf_input_param_list_output_cv_imp(
   path_db = "path/to/database",
@@ -101,5 +102,5 @@ result <- get_rf_input_param_list_output_cv_imp(
   Type = "classification",
   nTopImportance = 10
 )
-
+}
 }

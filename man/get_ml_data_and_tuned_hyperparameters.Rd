@@ -48,6 +48,7 @@ random forest analysis. It includes steps for data preprocessing, optional imput
 error correction, and hyperparameter tuning.
 }
 \examples{
+\dontrun{
 # Example usage:
 Data <- scores_df
 studyid_metadata <- read.csv("path/to/study_metadata.csv")
@@ -64,4 +65,5 @@ result <- get_ml_data_and_tuned_hyperparameters(
 )
 rfData <- result$rfData
 best_mtry <- result$best.m
+}
 }

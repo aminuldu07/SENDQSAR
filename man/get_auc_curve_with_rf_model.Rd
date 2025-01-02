@@ -79,14 +79,16 @@ The function also allows for hyperparameter tuning and error correction. After t
 predictions are made, and the AUC is calculated and visualized with a ROC curve plot.
 }
 \examples{
+\dontrun{
 # Example 1: Using real data from the database
-get_auc_curve_with_rf_model(Data = NULL, path_db = "path/to/database.db", rat_studies = TRUE, reps = 10,
-                            holdback = 0.75, error_correction_method = "Prune")
+#This is a placeholder example. Replace the path with a valid database.
+ get_auc_curve_with_rf_model(Data = NULL, path_db = "path/to/database.db", rat_studies = TRUE, reps = 10,
+                             holdback = 0.75, error_correction_method = "Prune")
 
-# Example 2: Using synthetic data with fake study IDs
-get_auc_curve_with_rf_model(Data = NULL, fake_study = TRUE, reps = 5, holdback = 0.8,
-                            error_correction_method = "Flip")
-
+# Example 2: Using sample data (if applicable)
+ get_auc_curve_with_rf_model(Data = sample_data, path_db = NULL, rat_studies = FALSE, reps = 5,
+                             holdback = 0.5, error_correction_method = "CorrectMethod")
+}
 }
 \seealso{
 \code{randomForest}, \code{ROCR}

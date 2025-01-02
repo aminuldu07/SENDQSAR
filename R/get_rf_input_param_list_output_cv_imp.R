@@ -36,6 +36,7 @@
 #' }
 #'
 #' @examples
+#' \dontrun{
 #' # Example usage of the function
 #' result <- get_rf_input_param_list_output_cv_imp(
 #'   path_db = "path/to/database",
@@ -57,7 +58,7 @@
 #'   Type = "classification",
 #'   nTopImportance = 10
 #' )
-#'
+#' }
 #' @import DBI
 #' @import RSQLite
 #' @importFrom stats lm

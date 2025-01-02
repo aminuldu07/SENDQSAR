@@ -29,6 +29,7 @@
 #' - The predictions are averaged over the test repetitions and a histogram is plotted to visualize the distribution of predicted probabilities for `LIVER`.
 #'
 #' @examples
+#' \dontrun{
 #' # Example function call
 #' get_prediction_plot(
 #'   path_db = "path_to_db",
@@ -40,6 +41,7 @@
 #'   error_correction_method = "Flip",
 #'   testReps = 5
 #' )
+#' }
 #'
 #' @export
 

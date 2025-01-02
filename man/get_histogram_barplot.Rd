@@ -66,10 +66,12 @@ When generating a plot, the function compares liver-related findings to other fi
 displaying the average scores for each finding in a bar plot.
 }
 \examples{
+\dontrun{
 # Example 1: Generate a bar plot with fake study data
-get_histogram_barplot(generateBarPlot = TRUE, fake_study = TRUE)
+#get_histogram_barplot(generateBarPlot = TRUE, fake_study = TRUE)
 
 # Example 2: Get processed data without generating a plot
-data <- get_histogram_barplot(generateBarPlot = FALSE, fake_study = FALSE, path_db = "path/to/db")
+#data <- get_histogram_barplot(generateBarPlot = FALSE, fake_study = FALSE, path_db = "path/to/db")
+}
 
 }

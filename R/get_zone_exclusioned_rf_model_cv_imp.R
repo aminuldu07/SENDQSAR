@@ -30,7 +30,8 @@
 #' top `nTopImportance` features based on either Mean Decrease Accuracy or Mean Decrease Gini.
 #'
 #' @examples
-#' # Example usage of the function
+#' \dontrun{
+#' #Example usage of the function
 #' result <- get_rf_model_output_cv_imp(
 #'   scores_df = your_data,
 #'   Undersample = FALSE,
@@ -42,11 +43,12 @@
 #'   nTopImportance = 10
 #' )
 #'
-#' # View performance metrics
+#' #View performance metrics
 #' print(result$performance_metrics)
 #'
-#' # View top features by importance
+#' #View top features by importance
 #' print(result$feature_importance)
+#' }
 #'
 #' @import randomForest
 #' @import caret

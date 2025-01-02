@@ -27,7 +27,8 @@
 #' 4. **Visualization**: The first tree from the Random Forest model is plotted using the `reprtree::plot.getTree` function.
 #'
 #' @examples
-#' get_reprtree_from_rf_model(
+#' \dontrun{
+#' #get_reprtree_from_rf_model(
 #'   Data = my_data,
 #'   path_db = "path/to/database",
 #'   rat_studies = TRUE,
@@ -42,7 +43,7 @@
 #'   hyperparameter_tuning = FALSE,
 #'   error_correction_method = "Flip"
 #' )
-#'
+#' }
 #' @import randomForest
 #' @import reprtree
 #' @export

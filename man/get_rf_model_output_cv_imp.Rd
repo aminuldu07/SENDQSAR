@@ -54,7 +54,8 @@ by marking them as \code{NA}. The function tracks performance metrics such as se
 top \code{nTopImportance} features based on either Mean Decrease Accuracy or Mean Decrease Gini.
 }
 \examples{
-# Example usage of the function
+\dontrun{
+#Example usage of the function
 result <- get_rf_model_output_cv_imp(
   scores_df = your_data,
   Undersample = FALSE,
@@ -66,10 +67,11 @@ result <- get_rf_model_output_cv_imp(
   nTopImportance = 10
 )
 
-# View performance metrics
+#View performance metrics
 print(result$performance_metrics)
 
-# View top features by importance
+#View top features by importance
 print(result$feature_importance)
+}
 
 }

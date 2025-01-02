@@ -63,7 +63,8 @@ The function performs the following steps:
 }
 }
 \examples{
-get_reprtree_from_rf_model(
+\dontrun{
+#get_reprtree_from_rf_model(
   Data = my_data,
   path_db = "path/to/database",
   rat_studies = TRUE,
@@ -78,5 +79,5 @@ get_reprtree_from_rf_model(
   hyperparameter_tuning = FALSE,
   error_correction_method = "Flip"
 )
-
+}
 }

@@ -37,6 +37,13 @@ This function requires the following R packages:
 - `haven`
 - `tidyr`
 - `stringr`
+- `ROCR`
+- `caret`
+- `ggplot2`
+- `randomForest`
+- `reprtree`
+- `stats`
+
 
 ##Notes
 
@@ -51,3 +58,36 @@ This function requires the following R packages:
 - [data.table](https://cran.r-project.org/package=data.table)
 - [SENDsanitizer](https://github.com/phuse-org/SEND-sanitizer)
 
+Imports: 
+    sendigR,
+    RSQLite,
+    caret,
+    data.table,
+    DBI,
+    fs,
+    dplyr,
+    randomForest,
+    reshape2,
+    ROCR,
+    stringr,
+    tidyr,
+    ggplot2,
+    glue,
+    matrixStats,
+    magrittr,
+    haven,
+    reprtree
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    usethis
+    
+#' # Example 1: Using real data from the database
+#' get_auc_curve_with_rf_model(Data = NULL, path_db = "path/to/database.db", rat_studies = TRUE, reps = 10,
+#'                             holdback = 0.75, error_correction_method = "Prune")
+#'
+#' # Example 2: Using synthetic data with fake study IDs
+#' get_auc_curve_with_rf_model(Data = NULL, fake_study = TRUE, reps = 5, holdback = 0.8,
+#'                             error_correction_method = "Flip")
+#'

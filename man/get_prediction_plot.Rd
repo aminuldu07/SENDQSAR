@@ -67,6 +67,7 @@ The function works as follows:
 }
 }
 \examples{
+\dontrun{
 # Example function call
 get_prediction_plot(
   path_db = "path_to_db",
@@ -78,5 +79,6 @@ get_prediction_plot(
   error_correction_method = "Flip",
   testReps = 5
 )
+}
 
 }

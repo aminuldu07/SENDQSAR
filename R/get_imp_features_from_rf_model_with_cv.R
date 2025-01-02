@@ -30,6 +30,7 @@
 #' }
 #'
 #' @examples
+#' \dontrun{
 #' # Example of calling the function
 #' result <- get_imp_features_from_rf_model_with_cv(
 #'   Data = scores_df,
@@ -39,6 +40,7 @@
 #'   Type = 2,
 #'   nTopImportance = 10
 #' )
+#' }
 #'
 #' @export
 

@@ -29,24 +29,26 @@
 #' A random forest model is trained on the training set, and predictions are evaluated on the test set. The results are aggregated to provide summary performance metrics.
 #'
 #' @examples
+#' \dontrun{
 #' # Load necessary libraries
 #' library(randomForest)
 #' library(caret)
 #'
 #' # Example dataset
-#' data(iris)
-#' iris$Target_Organ <- ifelse(iris$Species == "setosa", 1, 0)
-#' iris <- iris[, -5]  # Remove Species column
+#'
+#' Data$Target_Organ <- ifelse(iris$Species == "setosa", 1, 0)
+#' Data <- Data[, -5]  # Remove Species column
 #'
 #' # Run the function
 #' results <- get_rf_model_with_cv(Data = iris,
-#'                                 Undersample = TRUE,
+#'                                Undersample = TRUE,
 #'                                 best.m = 2,
 #'                                 testReps = 5,
 #'                                 Type = 2)
 #'
 #' # Print results
 #' print(results$performance_metrics)
+#' }
 #'
 #' @export
 

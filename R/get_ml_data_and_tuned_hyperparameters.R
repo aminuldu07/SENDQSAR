@@ -25,6 +25,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' # Example usage:
 #' Data <- scores_df
 #' studyid_metadata <- read.csv("path/to/study_metadata.csv")
@@ -41,6 +42,7 @@
 #' )
 #' rfData <- result$rfData
 #' best_mtry <- result$best.m
+#' }
 
 
 get_ml_data_and_tuned_hyperparameters <- function(Data, # Data == "scores_df"

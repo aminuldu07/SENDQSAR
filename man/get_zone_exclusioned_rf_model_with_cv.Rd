@@ -61,17 +61,17 @@ predictions and provides an aggregated performance summary across multiple test 
 # Example usage
 Data <- your_data_frame  # Replace with actual dataset
 results <- get_zone_exclusioned_rf_model_with_cv(Data = Data,
-                                                Undersample = TRUE,
-                                                best.m = 5,
+                                                 Undersample = TRUE,
+                                               best.m = 5,
                                                 testReps = 10,
                                                 indeterminateUpper = 0.8,
                                                 indeterminateLower = 0.2,
-                                                Type = 1)
+                                                 Type = 1)
 
-# View the aggregated performance metrics
+ View the aggregated performance metrics
 print(results$performance_metrics)
 
-# Access raw results for further analysis
+ Access raw results for further analysis
 print(results$raw_results)
 }
 

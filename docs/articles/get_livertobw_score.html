@@ -8,8 +8,8 @@
 <title>Documentation for 'get_livertobw_score' Function • SENDQSAR</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
-<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Documentation for 'get_livertobw_score' Function">
 </head>
 <body>
@@ -75,7 +75,7 @@
                         <h4 data-toc-skip class="author">Md Aminul Islam
 Prodhan</h4>
             
-            <h4 data-toc-skip class="date">2025-01-01</h4>
+            <h4 data-toc-skip class="date">2025-01-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/aminuldu07/SENDQSAR/blob/HEAD/vignettes/get_livertobw_score.Rmd" class="external-link"><code>vignettes/get_livertobw_score.Rmd</code></a></small>
       <div class="d-none name"><code>get_livertobw_score.Rmd</code></div>
@@ -84,93 +84,112 @@ Prodhan</h4>
     
     
 <div class="section level2">
-<h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
+<h2 id="purpose">Purpose<a class="anchor" aria-label="anchor" href="#purpose"></a>
 </h2>
 <p>The <code>get_livertobw_score</code> function is designed to
-calculate liver-to-body-weight (Liver:BW) scores and their corresponding
+calculate liver-to-body-weight (LiverToBW) ratio and their corresponding
 z-scores from study data. This function supports data retrieval from
 SQLite databases or <code>.xpt</code> files and provides options to
 return individual scores, USUBJID-specific z-scores, or averaged scores
-by study. the weight of each animal at the end of the dosing period was
+by study. The weight of each animal at the end of the dosing period was
 normalized by subtracting the baseline weight measured on the first day
 of dosing. Following this, the liver weight to body weight ratio was
 calculated for each animal. These liver-to-body weight ratios were then
 normalized using Z-scores, with comparisons made against the respective
 control group for each study</p>
-<hr>
 </div>
 <div class="section level2">
 <h2 id="function-parameters">Function Parameters<a class="anchor" aria-label="anchor" href="#function-parameters"></a>
 </h2>
 <div class="section level3">
+<h3 id="function-parameters-arguments">Function Parameters (Arguments)<a class="anchor" aria-label="anchor" href="#function-parameters-arguments"></a>
+</h3>
+</div>
+<div class="section level3">
 <h3 id="inputs">Inputs<a class="anchor" aria-label="anchor" href="#inputs"></a>
 </h3>
-<ul>
-<li>
-<strong><code>studyid</code></strong> (character, default =
-<code>NULL</code>):
-<ul>
-<li>Identifier for the study of interest.</li>
-<li>If <code>NULL</code>, all studies in the database are
-considered.</li>
-</ul>
-</li>
-<li>
-<strong><code>path_db</code></strong> (character):
-<ul>
-<li>Path to the SQLite database or <code>.xpt</code> files.</li>
-</ul>
-</li>
-<li>
-<strong><code>fake_study</code></strong> (logical, default =
-<code>FALSE</code>):
-<ul>
-<li>Indicator for handling fake or test study data.</li>
-</ul>
-</li>
-<li>
-<strong><code>use_xpt_file</code></strong> (logical, default =
-<code>FALSE</code>):
-<ul>
-<li>If <code>TRUE</code>, reads data from <code>.xpt</code> files.
-Otherwise, fetches data from the SQLite database.</li>
-</ul>
-</li>
-<li>
-<strong><code>master_compiledata</code></strong> (data.frame,
-default = <code>NULL</code>):
-<ul>
-<li>Precompiled dataset of study information.</li>
-<li>If not provided, it is fetched using
-<code><a href="../reference/get_compile_data.html">get_compile_data()</a></code>.</li>
-</ul>
-</li>
-<li>
-<strong><code>bwzscore_BW</code></strong> (data.frame, default =
-<code>NULL</code>):
-<ul>
-<li>Precomputed body weight z-scores.</li>
-<li>If not provided, it is calculated using
-<code><a href="../reference/get_bw_score.html">get_bw_score()</a></code>.</li>
-</ul>
-</li>
-<li>
-<strong><code>return_individual_scores</code></strong> (logical,
-default = <code>FALSE</code>):
-<ul>
-<li>If <code>TRUE</code>, returns individual z-scores averaged by
-study.</li>
-</ul>
-</li>
-<li>
-<strong><code>return_zscore_by_USUBJID</code></strong> (logical,
-default = <code>FALSE</code>):
-<ul>
-<li>If <code>TRUE</code>, returns z-scores grouped by
-<code>USUBJID</code>.</li>
-</ul>
-</li>
-</ul>
+<table class="table">
+<colgroup>
+<col width="18%">
+<col width="10%">
+<col width="9%">
+<col width="62%">
+</colgroup>
+<thead><tr class="header">
+<th><strong>Parameter</strong></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Description</strong></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>studyid</code></td>
+<td>character</td>
+<td><code>NULL</code></td>
+<td>The STUDYID of the study for which the BW score is to be calculated.
+Required when <code>use_xpt_file = FALSE</code>. If
+<code>use_xpt_file = TRUE</code>, <code>studyid</code> is ignored, and
+the <code>.xpt</code> files of that study in the specified folder are
+analyzed.</td>
+</tr>
+<tr class="even">
+<td><code>path_db</code></td>
+<td>character</td>
+<td>N/A</td>
+<td>Path to the SQLite database or <code>.xpt</code> files.</td>
+</tr>
+<tr class="odd">
+<td><code>fake_study</code></td>
+<td>logical</td>
+<td><code>FALSE</code></td>
+<td>Indicator for handling fake or test study data.</td>
+</tr>
+<tr class="even">
+<td><code>use_xpt_file</code></td>
+<td>logical</td>
+<td><code>FALSE</code></td>
+<td>If <code>TRUE</code>, reads data from <code>.xpt</code> files.
+Otherwise, fetches data from the SQLite database.</td>
+</tr>
+<tr class="odd">
+<td><code>master_compiledata</code></td>
+<td>data.frame</td>
+<td><code>NULL</code></td>
+<td>If <code>master_compiledata</code> is not supplied (i.e.,
+<code>NULL</code>) , it is fetched using
+<code><a href="../reference/get_compile_data.html">get_compile_data()</a></code>.</td>
+</tr>
+<tr class="even">
+<td><code>bwzscore_BW</code></td>
+<td>data.frame</td>
+<td><code>NULL</code></td>
+<td>If <code>bwzscore_BW</code> is not supplied (i.e.,
+<code>NULL</code>),it is fetched using using
+<code><a href="../reference/get_bw_score.html">get_bw_score()</a></code>.</td>
+</tr>
+<tr class="odd">
+<td><code>return_individual_scores</code></td>
+<td>logical</td>
+<td><code>FALSE</code></td>
+<td>If <code>TRUE</code>, returns averaged z-score for each domain
+calculated from the scores of all subjects/animals
+(<code>USUBJID</code>).</td>
+</tr>
+<tr class="even">
+<td><code>return_zscore_by_USUBJID</code></td>
+<td>logical</td>
+<td><code>FALSE</code></td>
+<td>If <code>TRUE</code>, returns Z-scores for each animal/subject
+(identified by <code>USUBJID</code>).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key Points</strong>: - <strong>Mandatory Parameter</strong>:
+<code>path_db</code> is required for the function to work. -
+<strong>Logical Exclusivity</strong>: Both
+<code>return_individual_scores</code> and
+<code>return_zscore_by_USUBJID</code> cannot be <code>TRUE</code>
+simultaneously.</p>
 </div>
 <div class="section level3">
 <h3 id="outputs">Outputs<a class="anchor" aria-label="anchor" href="#outputs"></a>
