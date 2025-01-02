@@ -72,7 +72,10 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Documentation for `get_lb_score` Function</h1>
+                        <h4 data-toc-skip class="author">Md Aminul Islam
+Prodhan</h4>
             
+            <h4 data-toc-skip class="date">2025-01-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/aminuldu07/SENDQSAR/blob/HEAD/vignettes/get_lb_score.Rmd" class="external-link"><code>vignettes/get_lb_score.Rmd</code></a></small>
       <div class="d-none name"><code>get_lb_score.Rmd</code></div>
@@ -83,117 +86,237 @@
 <div class="section level2">
 <h2 id="purpose">Purpose<a class="anchor" aria-label="anchor" href="#purpose"></a>
 </h2>
-<p>For the laboratory test (LB) data, Z-scores were also calculated for
-six key enzymes commonly found in blood or serum that are indicative of
-liver function: Bilirubin, Albumin (ALB), Alanine Aminotransferase
-(ALT), Alkaline Phosphatase (ALP), Aspartate Aminotransferase (AST), and
-Gamma-Glutamyl Transferase (GGT). These enzymes serve as important
-biomarkers for detecting liver damage or dysfunction.</p>
-<p>The <code>get_lb_score</code> function computes liver biomarker
-z-scores for clinical studies, utilizing data from a database or
-<code>.xpt</code> file. It processes lab data (<code>lb</code> domain)
-and calculates z-scores for several liver biomarkers (e.g., ALT, AST,
-ALP, GGT, BILI, ALB) based on study data, while performing several
-transformations and filtering operations to prepare the data.</p>
+<p>The <code>get_lb_score</code> function is designed to calculate
+Z-scores for Laboratory Test results(LB) data, focusing on six key
+enzymes indicative of liver function: Bilirubin (BILI), Albumin (ALB),
+Alanine Aminotransferase (ALT), Alkaline Phosphatase (ALP), Aspartate
+Aminotransferase (AST), and Gamma-Glutamyl Transferase (GGT). These
+biomarkers are critical for assessing liver health and detecting
+potential damage or dysfunction. The function processes lab data from
+clinical studies, leveraging information from a database or .xpt files,
+and applies various transformations and filtering steps to compute the
+Z-scores efficiently.</p>
 </div>
 <div class="section level2">
-<h2 id="function-definition">Function Definition<a class="anchor" aria-label="anchor" href="#function-definition"></a>
+<h2 id="function-parameters-arguments">Function Parameters (Arguments)<a class="anchor" aria-label="anchor" href="#function-parameters-arguments"></a>
 </h2>
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">get_lb_score</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">studyid</span> <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>                         <span class="va">path_db</span>,</span>
-<span>                         <span class="va">fake_study</span> <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>                         <span class="va">use_xpt_file</span> <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>                         <span class="va">master_compiledata</span> <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>                         <span class="va">return_individual_scores</span> <span class="op">=</span> <span class="cn">FALSE</span>,</span>
-<span>                         <span class="va">return_zscore_by_USUBJID</span> <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="co"># Function body goes here</span></span>
-<span><span class="op">}</span></span></code></pre></div>
-</div>
-<div class="section level2">
-<h2 id="parameters">Parameters<a class="anchor" aria-label="anchor" href="#parameters"></a>
-</h2>
+<table class="table">
+<colgroup>
+<col width="17%">
+<col width="10%">
+<col width="7%">
+<col width="64%">
+</colgroup>
+<thead><tr class="header">
+<th><strong>Parameter</strong></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Description</strong></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>studyid</code></td>
+<td>character</td>
+<td><code>NULL</code></td>
+<td>The STUDYID of the study for which the BW score is to be calculated.
+Required when <code>use_xpt_file = FALSE</code>. If
+<code>use_xpt_file = TRUE</code>, <code>studyid</code> is ignored, and
+the <code>.xpt</code> files of that study in the specified folder are
+analyzed.</td>
+</tr>
+<tr class="even">
+<td><code>path_db</code></td>
+<td>character</td>
+<td>-</td>
+<td>The file path to the database (SQLite or <code>.xpt</code>
+file).</td>
+</tr>
+<tr class="odd">
+<td><code>fake_study</code></td>
+<td>logical</td>
+<td><code>FALSE</code></td>
+<td>A flag to indicate if the study is fake or not and handle data
+accordingly.</td>
+</tr>
+<tr class="even">
+<td><code>use_xpt_file</code></td>
+<td>logical</td>
+<td><code>FALSE</code></td>
+<td>If <code>TRUE</code>, reads data from <code>.xpt</code> files.
+Otherwise, fetches data from the SQLite database.</td>
+</tr>
+<tr class="odd">
+<td><code>master_compiledata</code></td>
+<td>data.frame</td>
+<td><code>NULL</code></td>
+<td>If <code>master_compiledata</code> is not supplied (i.e.,
+<code>NULL</code>) , it is fetched using
+<code><a href="../reference/get_compile_data.html">get_compile_data()</a></code>.</td>
+</tr>
+<tr class="even">
+<td><code>return_individual_scores</code></td>
+<td>logical</td>
+<td><code>FALSE</code></td>
+<td>If <code>TRUE</code>, returns averaged z-score for each domain
+calculated from the scores of all subjects/animals
+(<code>USUBJID</code>).</td>
+</tr>
+<tr class="odd">
+<td><code>return_zscore_by_USUBJID</code></td>
+<td>logical</td>
+<td><code>FALSE</code></td>
+<td>If <code>TRUE</code>, returns Z-scores for each animal/subject
+(identified by <code>USUBJID</code>).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key Points</strong>: - <strong>Mandatory Parameter</strong>:
+<code>path_db</code> is required for the function to work. -
+<strong>Logical Exclusivity</strong>: Both
+<code>return_individual_scores</code> and
+<code>return_zscore_by_USUBJID</code> cannot be <code>TRUE</code>
+simultaneously.</p>
+<div class="section level3">
+<h3 id="outputs">Outputs<a class="anchor" aria-label="anchor" href="#outputs"></a>
+</h3>
+<p>A <code>data.frame</code> containing the calculated Z-scores. The
+structure of the output depends on the provided parameters:</p>
 <ul>
-<li>
-<code>studyid</code> (character): The study ID to filter data for.
-Default is <code>NULL</code>.</li>
-<li>
-<code>path_db</code> (character): The file path to the database
-(SQLite or <code>.xpt</code> file).</li>
-<li>
-<code>fake_study</code> (logical): A flag to indicate if the study
-is fake or not. Default is <code>FALSE</code>.</li>
-<li>
-<code>use_xpt_file</code> (logical): Whether to use
-<code>.xpt</code> file for data extraction. Default is
-<code>FALSE</code>.</li>
-<li>
-<code>master_compiledata</code> (data.frame): The compile data frame
-that includes participant information. If <code>NULL</code>, the
-function will call <code>get_compile_data</code>.</li>
-<li>
-<code>return_individual_scores</code> (logical): Whether to return
-individual z-scores for each biomarker. Default is
-<code>FALSE</code>.</li>
-<li>
-<code>return_zscore_by_USUBJID</code> (logical): If
-<code>TRUE</code>, return z-scores by <code>USUBJID</code> (unique
-subject ID). Default is <code>FALSE</code>.</li>
-</ul>
-</div>
-<div class="section level2">
-<h2 id="workflow">Workflow<a class="anchor" aria-label="anchor" href="#workflow"></a>
-</h2>
-<ol style="list-style-type: decimal">
-<li>
-<strong>Data Retrieval</strong>:
-<ul>
-<li>The function first fetches data from either the SQLite database or
-<code>.xpt</code> file depending on the value of
-<code>use_xpt_file</code>.</li>
-<li>The lab data (<code>lb</code> domain) is fetched for the specified
+<li>If <code>return_individual_scores = TRUE</code>: Returns averaged
+Z-scores for each of the domain per <code>studyid</code>.</li>
+<li>If <code>return_zscore_by_USUBJID = TRUE</code>: Returns Z-score for
+each animal/subject by <code>USUBJID</code> for each domain per
+<code>studyid</code>.</li>
+<li>Otherwise, a summarized BW Z-score for the specified
 <code>studyid</code>.</li>
 </ul>
-</li>
-<li>
-<strong>Data Processing</strong>:
-<ul>
-<li>Various filtering operations are applied based on the biomarker and
-study conditions.</li>
-<li>The <code>LBSPEC</code> field is populated where necessary (e.g.,
-“WHOLE BLOOD”, “SERUM”, “URINE”).</li>
-</ul>
-</li>
-<li>
-<strong>z-Score Calculation</strong>:
-<ul>
-<li>For each liver biomarker (ALT, AST, ALP, GGT, BILI, ALB), the
-function computes a z-score using the formula:
-<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>=</mo><mi>r</mi><mi>a</mi><mi>c</mi><mrow><mi>e</mi><mi>x</mi><mi>t</mi><mrow><mi>L</mi><mi>B</mi><mi>S</mi><mi>T</mi><mi>R</mi><mi>E</mi><mi>S</mi><mi>N</mi></mrow><mo>−</mo><mi>e</mi><mi>x</mi><mi>t</mi><msub><mrow><mi>m</mi><mi>e</mi><mi>a</mi><mi>n</mi></mrow><mrow><mi>e</mi><mi>x</mi><mi>t</mi><mrow><mi>v</mi><mi>e</mi><mi>h</mi><mi>i</mi><mi>c</mi><mi>l</mi><mi>e</mi></mrow></mrow></msub></mrow><mrow><mi>e</mi><mi>x</mi><mi>t</mi><msub><mrow><mi>s</mi><mi>d</mi></mrow><mrow><mi>e</mi><mi>x</mi><mi>t</mi><mrow><mi>v</mi><mi>e</mi><mi>h</mi><mi>i</mi><mi>c</mi><mi>l</mi><mi>e</mi></mrow></mrow></msub></mrow></mrow><annotation encoding="application/x-tex">
-z = rac{{    ext{{LBSTRESN}} -   ext{{mean}}_{   ext{{vehicle}}}}}{{ ext{{sd}}_{ ext{{vehicle}}}}}
-</annotation></semantics></math>
-</li>
-<li>The z-scores are averaged by <code>STUDYID</code> and classified
-into discrete categories (0, 1, 2, or 3) based on predefined
-thresholds.</li>
-</ul>
-</li>
-</ol>
+</div>
 </div>
 <div class="section level2">
-<h2 id="merging-results">Merging Results<a class="anchor" aria-label="anchor" href="#merging-results"></a>
+<h2 id="implementation-details">Implementation Details<a class="anchor" aria-label="anchor" href="#implementation-details"></a>
 </h2>
-<p>The individual z-scores for each biomarker are merged into a single
-data frame. The resulting data frame can be returned: - By
-<code>USUBJID</code> (unique subject ID), if
-<code>return_zscore_by_USUBJID</code> is <code>TRUE</code>. - By study
-(<code>STUDYID</code>), with the z-scores averaged across subjects in
-the study.</p>
+<div class="section level3">
+<h3 id="data-preparation">Data Preparation<a class="anchor" aria-label="anchor" href="#data-preparation"></a>
+</h3>
+<ul>
+<li>
+<strong>Database Connection</strong>:
+<ul>
+<li>Connects to SQLite database using <code>DBI</code> if
+<code>use_xpt_file = FALSE</code>.</li>
+<li>If <code>use_xpt_file</code> = <code>TRUE</code>: Data is loaded
+from .xpt files located in the folder specified by path_db.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="data-retrieval">Data Retrieval<a class="anchor" aria-label="anchor" href="#data-retrieval"></a>
+</h3>
+<p>The function retrieves the necessary data related to the specified
+studyid. The data retrieval process depends on whether some arguments is
+provided or NULL:</p>
+<ul>
+<li>
+<strong>Compile Data</strong>:
+<ul>
+<li>If <code>master_compiledata</code> is not supplied, it is retrieved
+using <code><a href="../reference/get_compile_data.html">get_compile_data()</a></code>.</li>
+</ul>
+</li>
+</ul>
+<p>When <code>master_compiledata = NULL</code>,</p>
+<p>If <code>master_compiledata</code> is not provided, the function
+extracts data from the following SEND domains:</p>
+<ul>
+<li>
+<code>BW</code> (Body Weight) : Provide the Body Weight measurements
+at the individual level.</li>
+<li>
+<code>DM</code> (Demographics): Supplies animal-level demographic
+details.</li>
+<li>
+<code>DS</code> (Disposition): Identifies recovery animals using the
+<code>DSDECOD</code> column.</li>
+<li>
+<code>PC</code> (Pharmacokinetics): Provide <code>USUBJID</code> of
+the TK animals for rats and mice study.</li>
+<li>
+<code>TX</code> (Treatment): Provide dose levels information such as
+“vehicle” or “HD.”</li>
+</ul>
+<p>When <code>master_compiledata is Provided</code>,</p>
+<p>If <code>master_compiledata</code> value is provided, this function
+retrieve the following domains:</p>
+<ul>
+<li>
+<code>lb</code> (Laboratory Test Results) : Provide the Organ
+measurements at the individual level.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="laboratory-test-resultslb-z-score-calculation">Laboratory Test Results(LB) Z-score calculation<a class="anchor" aria-label="anchor" href="#laboratory-test-resultslb-z-score-calculation"></a>
+</h3>
+<ul>
+<li>
+<strong>Calculation</strong>:
+<ul>
+<li>Computes the Z-scores for six enzymes in Laboratory Test Results
+(lb) domain.</li>
+<li>Calculates z-scores for <code>lb</code> domain using vehicle arm
+statistics (mean and SD).</li>
+<li>Converts z-scores to absolute values.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="handling-optional-parameters">Handling Optional Parameters<a class="anchor" aria-label="anchor" href="#handling-optional-parameters"></a>
+</h3>
+<ul>
+<li>If <code>return_individual_scores = TRUE</code>, Returns averaged
+Z-scores for each of the domain per <code>studyid</code>.</li>
+<li>If <code>return_zscore_by_USUBJID = TRUE</code>, Returns Z-score for
+each animal/subject by unique subject
+identifiers<code>USUBJID</code>.</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="fake-study-handling">Fake Study Handling<a class="anchor" aria-label="anchor" href="#fake-study-handling"></a>
+</h3>
+<p>If <code>fake_study = TRUE</code>, special handling is applied for
+data sets generated by the <code>SENDsanitizer</code> package to account
+for their structure.</p>
+</div>
+<div class="section level3">
+<h3 id="output">Output<a class="anchor" aria-label="anchor" href="#output"></a>
+</h3>
+<p>A data frame containing the calculated Z-scores is returned. This may
+include summarized scores, individual scores, or Z-scores by
+<code>USUBJID</code>, based on the parameters provided.</p>
+</div>
+<div class="section level3">
+<h3 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a>
+</h3>
+<p>The function requires the following R packages:</p>
+<ul>
+<li>
+<code>RSQLite</code>: To connect to the SQLite database.</li>
+<li>
+<code>haven</code> : To read <code>.xpt</code> file, if
+<code>use_xpt_file = TRUE</code>.</li>
+</ul>
+<hr>
+<p>This implementation ensures flexibility in handling different input
+types and configurations while maintaining a consistent structure for
+the output.</p>
+<hr>
+</div>
 </div>
 <div class="section level2">
 <h2 id="example-usage">Example Usage<a class="anchor" aria-label="anchor" href="#example-usage"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Example 1: Run the function with a given study ID and database path</span></span>
 <span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/get_lb_score.html">get_lb_score</a></span><span class="op">(</span>studyid <span class="op">=</span> <span class="st">"12345"</span>, path_db <span class="op">=</span> <span class="st">"path_to_database"</span><span class="op">)</span></span>
 <span></span>

@@ -2,7 +2,7 @@
 % Please edit documentation in R/get_bw_score.R
 \name{get_bw_score}
 \alias{get_bw_score}
-\title{Calculate Body Weight Z-score for a Given STUDYID from SQLite Database or \code{.xpt} Files}
+\title{Calculate Body Weight Z-score for a given STUDYID from SQLite Database or \code{.xpt} Files}
 \usage{
 get_bw_score(
   studyid = NULL,
@@ -26,7 +26,7 @@ Must be \code{NULL} for \code{.xpt} files (\code{use_xpt_file = TRUE}).}
 \item{use_xpt_file}{Logical. Whether to retrieve study data from \code{.xpt} files instead of the SQLite database. Defaults to \code{FALSE}.}
 
 \item{master_compiledata}{Optional, character \cr
-If \code{master_compiledata} is not provided (i.e., \code{NULL}), the function will automatically call the \code{get_compile_data} function to calculate it.}
+If \code{master_compiledata} is not supplied (i.e., \code{NULL}), the function will automatically call the \code{get_compile_data} function to calculate it.}
 
 \item{return_individual_scores}{Optional, logical \cr
 If TRUE, the function returns individual scores for each domain by averaging the scores of all subjects/animals (\code{USUBJID}) in the study. Default is \code{FALSE}.}

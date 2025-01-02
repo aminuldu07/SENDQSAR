@@ -4,7 +4,7 @@
 #' This function computes the LB Z-score for a given STUDYID using data stored in a specified database.
 #' It offers various optional parameters to customize the output, such as whether to return individual scores or Z-scores by `USUBJID`.
 #'
-#' #' @param studyid Character. STUDYID number. Defaults to `NULL`.
+#' @param studyid Character. STUDYID number. Defaults to `NULL`.
 #'    Required for SQLite databases (`use_xpt_file = FALSE`).
 #'    Must be `NULL` for `.xpt` files (`use_xpt_file = TRUE`).
 #' @param path_db Character. Path to the SQLite database file or a folder containing `.xpt` files. Mandatory.
@@ -17,8 +17,11 @@
 #' @param return_zscore_by_USUBJID Optional, logical \cr
 #'    If `TRUE`, the function returns Z-scores for each animal/subject by `USUBJID`. Default is `FALSE`.
 #'
-#' @return a data frame
-#'   The calculated LB score based on the provided data and parameters.
+#' @return
+#' A data frame containing the LB Z-scores:
+#' - If `return_individual_scores = TRUE`: Returns averaged Z-scores for each  domain per `studyid`.
+#' - If `return_zscore_by_USUBJID = TRUE`: Returns Z-score for each animal/subject by `USUBJID` for each domain per `studyid`.
+#' - Otherwise, a summarized BW score for the specified `studyid`.
 #'
 #' @examples
 #' \dontrun{

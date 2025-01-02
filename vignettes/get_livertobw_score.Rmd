@@ -9,8 +9,6 @@ output: html_document
 
 The `get_livertobw_score` function is designed to calculate liver-to-body-weight (LiverToBW) ratio  and their corresponding z-scores from study data. This function supports data retrieval from SQLite databases or `.xpt` files and provides options to return individual scores, USUBJID-specific z-scores, or averaged scores by study. The weight of each animal at the end of the dosing period was normalized by subtracting the baseline weight measured on the first day of dosing. Following this, the liver weight to body weight ratio was calculated for each animal. These liver-to-body weight ratios were then normalized using Z-scores, with comparisons made against the respective control group for each study
 
-## Function Parameters
-
 ### Function Parameters (Arguments)
 
 ### Inputs

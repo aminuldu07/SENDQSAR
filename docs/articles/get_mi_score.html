@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>Function Documentation for `get_mi_score` • SENDQSAR</title>
+<title>Documentation for `get_mi_score` Function  • SENDQSAR</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Function Documentation for `get_mi_score`">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Documentation for `get_mi_score` Function ">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -71,8 +71,11 @@
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
 
-      <h1>Function Documentation for `get_mi_score`</h1>
+      <h1>Documentation for `get_mi_score` Function </h1>
+                        <h4 data-toc-skip class="author">Md Aminul Islam
+Prodhan</h4>
             
+            <h4 data-toc-skip class="date">2025-01-02</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/aminuldu07/SENDQSAR/blob/HEAD/vignettes/get_mi_score.Rmd" class="external-link"><code>vignettes/get_mi_score.Rmd</code></a></small>
       <div class="d-none name"><code>get_mi_score.Rmd</code></div>
@@ -83,135 +86,284 @@
 <div class="section level2">
 <h2 id="purpose">Purpose<a class="anchor" aria-label="anchor" href="#purpose"></a>
 </h2>
-<p>Z-scores for the Microscopic Findings (histopathological findings)
-were derived based on both the incidence (frequency) and severity of
-liver-related lesions. Initially, a score was calculated purely from the
-severity of the findings, which was then further adjusted based on the
-incidence rate providing a more accurate reflection of the overall
-histopathological impact on liver.</p>
-<p>The <code>get_mi_score</code> function processes medical information
-(MI) data from clinical study databases. It calculates the MI scores,
-manages severity levels, and processes the data according to specified
-parameters.</p>
+<p>The <code>get_mi_score</code> function is designed to calculate
+Z-scores for Microscopic Findings (MI), specifically focusing on
+liver-related lesions. The Z-scores are derived from both the incidence
+(frequency) and severity of these histopathological findings. Initially,
+a score is calculated solely based on the severity of the findings,
+which is then adjusted by the incidence rate to provide a more accurate
+reflection of the overall histo-pathological impact on liver
+function..</p>
+<p>The <code>get_mi_score</code> function applies various
+transformations, manages severity levels, and performs necessary
+calculations to derive the Z-scores based on specified parameters.</p>
 <div class="section level3">
-<h3 id="parameters-explanation">Parameters Explanation<a class="anchor" aria-label="anchor" href="#parameters-explanation"></a>
+<h3 id="function-parameters-arguments">Function Parameters (Arguments)<a class="anchor" aria-label="anchor" href="#function-parameters-arguments"></a>
 </h3>
-<p>The <code>get_mi_score</code> function accepts the following
-parameters:</p>
-<ol style="list-style-type: decimal">
-<li>
-<strong><code>studyid</code></strong> (<code>character</code>,
-optional):
+<table class="table">
+<colgroup>
+<col width="17%">
+<col width="10%">
+<col width="7%">
+<col width="64%">
+</colgroup>
+<thead><tr class="header">
+<th><strong>Parameter</strong></th>
+<th><strong>Type</strong></th>
+<th><strong>Default</strong></th>
+<th><strong>Description</strong></th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td><code>studyid</code></td>
+<td>character</td>
+<td><code>NULL</code></td>
+<td>The STUDYID of the study for which the BW score is to be calculated.
+Required when <code>use_xpt_file = FALSE</code>. If
+<code>use_xpt_file = TRUE</code>, <code>studyid</code> is ignored, and
+the <code>.xpt</code> files of that study in the specified folder are
+analyzed.</td>
+</tr>
+<tr class="even">
+<td><code>path_db</code></td>
+<td>character</td>
+<td>-</td>
+<td>The file path to the database (SQLite or <code>.xpt</code>
+file).</td>
+</tr>
+<tr class="odd">
+<td><code>fake_study</code></td>
+<td>logical</td>
+<td><code>FALSE</code></td>
+<td>A flag to indicate if the study is fake or not and handle data
+accordingly.</td>
+</tr>
+<tr class="even">
+<td><code>use_xpt_file</code></td>
+<td>logical</td>
+<td><code>FALSE</code></td>
+<td>If <code>TRUE</code>, reads data from <code>.xpt</code> files.
+Otherwise, fetches data from the SQLite database.</td>
+</tr>
+<tr class="odd">
+<td><code>master_compiledata</code></td>
+<td>data.frame</td>
+<td><code>NULL</code></td>
+<td>If <code>master_compiledata</code> is not supplied (i.e.,
+<code>NULL</code>) , it is fetched using
+<code><a href="../reference/get_compile_data.html">get_compile_data()</a></code>.</td>
+</tr>
+<tr class="even">
+<td><code>return_individual_scores</code></td>
+<td>logical</td>
+<td><code>FALSE</code></td>
+<td>If <code>TRUE</code>, returns averaged z-score for each domain
+calculated from the scores of all subjects/animals
+(<code>USUBJID</code>).</td>
+</tr>
+<tr class="odd">
+<td><code>return_zscore_by_USUBJID</code></td>
+<td>logical</td>
+<td><code>FALSE</code></td>
+<td>If <code>TRUE</code>, returns Z-scores for each animal/subject
+(identified by <code>USUBJID</code>).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Key Points</strong>: - <strong>Mandatory Parameter</strong>:
+<code>path_db</code> is required for the function to work. -
+<strong>Logical Exclusivity</strong>: Both
+<code>return_individual_scores</code> and
+<code>return_zscore_by_USUBJID</code> cannot be <code>TRUE</code>
+simultaneously.</p>
+<div class="section level4">
+<h4 id="outputs">Outputs<a class="anchor" aria-label="anchor" href="#outputs"></a>
+</h4>
+<p>A <code>data.frame</code> containing the calculated Z-scores. The
+structure of the output depends on the provided parameters:</p>
 <ul>
-<li>The ID of the study from which to fetch data. If <code>NULL</code>,
-it will fetch data for all studies in the database.</li>
+<li>If <code>return_individual_scores = TRUE</code>: Returns averaged
+Z-scores for each of the domain per <code>studyid</code>.</li>
+<li>If <code>return_zscore_by_USUBJID = TRUE</code>: Returns Z-score for
+each animal/subject by <code>USUBJID</code> for each domain per
+<code>studyid</code>.</li>
+<li>Otherwise, a summarized BW Z-score for the specified
+<code>studyid</code>.</li>
 </ul>
-</li>
-<li>
-<strong><code>path_db</code></strong> (<code>character</code>):
-<ul>
-<li>The path to the SQLite database or folder containing XPT files. This
-is required to access the data.</li>
-</ul>
-</li>
-<li>
-<strong><code>fake_study</code></strong> (<code>logical</code>,
-optional, default = <code>FALSE</code>):
-<ul>
-<li>A flag to indicate whether to process a fake study dataset. If
-<code>TRUE</code>, the function may mock data retrieval.</li>
-</ul>
-</li>
-<li>
-<strong><code>use_xpt_file</code></strong> (<code>logical</code>,
-optional, default = <code>FALSE</code>):
-<ul>
-<li>A flag to determine if <code>.xpt</code> files should be used. If
-<code>TRUE</code>, the function will read XPT files from the provided
-path.</li>
-</ul>
-</li>
-<li>
-<strong><code>master_compiledata</code></strong>
-(<code>data.frame</code>, optional):
-<ul>
-<li>A dataframe that contains compiled study data. If <code>NULL</code>,
-the function will fetch this data from the database.</li>
-</ul>
-</li>
-<li>
-<strong><code>return_individual_scores</code></strong>
-(<code>logical</code>, optional, default = <code>FALSE</code>):
-<ul>
-<li>If <code>TRUE</code>, the function will return individual MI scores
-for each participant. Default is <code>FALSE</code>.</li>
-</ul>
-</li>
-<li>
-<strong><code>return_zscore_by_USUBJID</code></strong>
-(<code>logical</code>, optional, default = <code>FALSE</code>):
-<ul>
-<li>If <code>TRUE</code>, the function will return the Z-scores for each
-USUBJID. Default is <code>FALSE</code>.</li>
-</ul>
-</li>
-</ol>
+</div>
 </div>
 <div class="section level3">
-<h3 id="key-steps-in-the-function">Key Steps in the Function<a class="anchor" aria-label="anchor" href="#key-steps-in-the-function"></a>
+<h3 id="implementation-details">Implementation Details<a class="anchor" aria-label="anchor" href="#implementation-details"></a>
 </h3>
-<p>The function follows several key steps to process the MI data:</p>
-<ol style="list-style-type: decimal">
+<div class="section level4">
+<h4 id="data-preparation">Data Preparation<a class="anchor" aria-label="anchor" href="#data-preparation"></a>
+</h4>
+<ul>
 <li>
 <strong>Database Connection</strong>:
 <ul>
-<li>If <code>use_xpt_file</code> is <code>FALSE</code>, the function
-connects to an SQLite database to fetch the required domains
-(<code>mi</code> and <code>dm</code>). Otherwise, it reads XPT files
-from the specified directory.</li>
+<li>Connects to SQLite database using <code>DBI</code> if
+<code>use_xpt_file = FALSE</code>.</li>
+<li>If <code>use_xpt_file</code> = <code>TRUE</code>: Data is loaded
+from .xpt files located in the folder specified by path_db.</li>
 </ul>
 </li>
+</ul>
+</div>
+<div class="section level4">
+<h4 id="data-retrieval">Data Retrieval<a class="anchor" aria-label="anchor" href="#data-retrieval"></a>
+</h4>
+<p>The function retrieves the necessary data related to the specified
+studyid.The data retrieval process depends on whether some arguments is
+provided or NULL:</p>
+<ul>
 <li>
-<strong>Data Cleaning and Filtering</strong>:
+<strong>Compile Data</strong>:
+<ul>
+<li>If <code>master_compiledata</code> is not supplied, it is retrieved
+using <code><a href="../reference/get_compile_data.html">get_compile_data()</a></code>.</li>
+</ul>
+</li>
+</ul>
+<p>When <code>master_compiledata = NULL</code>,</p>
+<p>If <code>master_compiledata</code> is not provided, the function
+extracts data from the following SEND domains:</p>
+<ul>
+<li>
+<code>MI</code> (Microscopic Findings) : Provide the Microscopic
+Findings at the individual level.</li>
+<li>
+<code>BW</code> (Body Weight) : Provide the Body Weight measurements
+at the individual level.</li>
+<li>
+<code>DM</code> (Demographics): Supplies animal-level demographic
+details.</li>
+<li>
+<code>DS</code> (Disposition): Identifies recovery animals using the
+<code>DSDECOD</code> column.</li>
+<li>
+<code>PC</code> (Pharmacokinetics): Provide <code>USUBJID</code> of
+the TK animals for rats and mice study.</li>
+<li>
+<code>TX</code> (Treatment): Provide dose levels information such as
+“vehicle” or “HD.”</li>
+</ul>
+<p>When <code>master_compiledata is Provided</code>,</p>
+<p>If <code>master_compiledata</code> value is provided, this function
+retrieve the following domains:</p>
+<ul>
+<li>
+<code>MI</code> (Microscopic Findings) : Provide the Organ
+measurements at the individual level.</li>
+<li>
+<code>DM</code> (Demographics): Supplies animal-level demographic
+details.</li>
+</ul>
+</div>
+<div class="section level4">
+<h4 id="data-cleaning-and-filtering">Data Cleaning and Filtering<a class="anchor" aria-label="anchor" href="#data-cleaning-and-filtering"></a>
+</h4>
+<ul>
+<li>
+<strong>Filter and Merge</strong>:
 <ul>
 <li>The <code>MI</code> domain is filtered to include only relevant
-records, such as those with liver-related issues. Severity levels
-(<code>MISEV</code>) are standardized and missing values are
-replaced.</li>
+records, such as those with liver-related issues.</li>
+<li>Severity levels (<code>MISEV</code>) are standardized and missing
+values are replaced.</li>
 </ul>
 </li>
 <li>
 <strong>Severity Level Conversion</strong>:
 <ul>
-<li>Severity levels in <code>MISEV</code> are mapped to numerical values
-(e.g., “MILD” becomes 2, “SEVERE” becomes 5).</li>
+<li>Severity levels in <code>MISEV</code> are mapped to numerical
+values:</li>
+<li>“MILD” becomes 2,</li>
+<li>“MODERATE” becomes 3,</li>
+<li>“SEVERE” becomes 5.</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section level4">
+<h4 id="calculation-of-mi-scores">Calculation of MI Scores<a class="anchor" aria-label="anchor" href="#calculation-of-mi-scores"></a>
+</h4>
+<ul>
+<li>
+<strong>Incidence Calculation</strong>:
+<ul>
+<li>The function calculates the incidence per group for each sex
+category (<code>M</code>, <code>F</code>) and each treatment arm
+(<code>ARMCD</code>).</li>
+<li>It creates a table of findings and counts the incidence rate for
+each.</li>
+<li>For each treatment group, the function adjusts the incidence to
+remove vehicle baseline and handles negative values.</li>
 </ul>
 </li>
 <li>
-<strong>Data Merging</strong>:
+<strong>Severity Adjustment</strong>:
 <ul>
-<li>The function merges data from the <code>mi</code> domain with
-compiled study data, ensuring that only valid participants (those not
-marked as “recovery” or “tk”) are included.</li>
+<li>Based on the calculated incidence, severity scores are adjusted for
+each participant.</li>
+<li>If the incidence is greater than or equal to 0.75, it is mapped to a
+score of 5, and lower values are mapped to scores of 3, 2, 1, or 0 based
+on thresholds.</li>
 </ul>
 </li>
 <li>
-<strong>Calculation of MI Scores</strong>:
+<strong>Final MI Scores</strong>:
 <ul>
-<li>The MI scores are calculated based on the cleaned and merged data.
-If <code>return_individual_scores</code> is set to <code>TRUE</code>,
-the individual scores are returned.</li>
+<li>The final MI scores are calculated for each participant, based on
+the highest incidence observed across all findings.</li>
+<li>If <code>return_individual_scores</code> is <code>TRUE</code>,
+individual severity scores for each participant are returned.</li>
 </ul>
 </li>
+</ul>
+</div>
+<div class="section level4">
+<h4 id="handling-optional-parameters">Handling Optional Parameters<a class="anchor" aria-label="anchor" href="#handling-optional-parameters"></a>
+</h4>
+<ul>
+<li>If <code>return_individual_scores = TRUE</code>, Returns averaged
+Z-scores for each of the domain per <code>studyid</code>.</li>
+<li>If <code>return_zscore_by_USUBJID = TRUE</code>, Returns Z-score for
+each animal/subject by unique subject
+identifiers<code>USUBJID</code>.</li>
+</ul>
+</div>
+<div class="section level4">
+<h4 id="fake-study-handling">Fake Study Handling<a class="anchor" aria-label="anchor" href="#fake-study-handling"></a>
+</h4>
+<p>If <code>fake_study = TRUE</code>, special handling is applied for
+data sets generated by the <code>SENDsanitizer</code> package to account
+for their structure.</p>
+</div>
+<div class="section level4">
+<h4 id="output">Output<a class="anchor" aria-label="anchor" href="#output"></a>
+</h4>
+<p>A data frame containing the calculated Z-scores is returned. This may
+include summarized scores, individual scores, or Z-scores by
+<code>USUBJID</code>, based on the parameters provided.</p>
+</div>
+<div class="section level4">
+<h4 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a>
+</h4>
+<p>The function requires the following R packages:</p>
+<ul>
 <li>
-<strong>Final Compilation</strong>:
-<ul>
-<li>A final data frame containing the MI scores is generated and cleaned
-up. The function returns either the compiled MI score data or,
-optionally, Z-scores or individual participant scores.</li>
+<code>RSQLite</code>: To connect to the SQLite database.</li>
+<li>
+<code>haven</code> : To read <code>.xpt</code> file, if
+<code>use_xpt_file = TRUE</code>.</li>
 </ul>
-</li>
-</ol>
+<hr>
+<p>This implementation ensures flexibility in handling different input
+types and configurations while maintaining a consistent structure for
+the output.</p>
+<hr>
+</div>
 </div>
 <div class="section level3">
 <h3 id="example-usage">Example Usage<a class="anchor" aria-label="anchor" href="#example-usage"></a>
@@ -244,22 +396,6 @@ function:</p>
 <span><span class="co">#   path_db = "/path/to/database", </span></span>
 <span><span class="co">#   return_zscore_by_USUBJID = TRUE</span></span>
 <span><span class="co"># )</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="conclusion">Conclusion<a class="anchor" aria-label="anchor" href="#conclusion"></a>
-</h3>
-<p>The <code>get_mi_score</code> function is a versatile tool for
-processing and analyzing MI data from clinical study databases. By
-setting various parameters, users can tailor the output to meet specific
-needs, such as:</p>
-<ul>
-<li>Calculating MI scores based on severity levels.</li>
-<li>Returning individual scores or aggregated MI scores.</li>
-<li>Returning Z-scores for each participant.</li>
-<li>Handling data from either SQLite databases or XPT files.</li>
-</ul>
-<p>The function’s flexibility makes it a powerful resource for
-researchers and data analysts working with clinical study data.</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
