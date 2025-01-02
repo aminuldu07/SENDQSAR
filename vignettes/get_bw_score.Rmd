@@ -96,13 +96,15 @@ The adjusted weights are further normalized using the Z-score equation described
 ### Dependencies
 
 The function requires the following R packages:
+
 - `RSQLite`: To connect to the SQLite database.
 - `haven` : To read `.xpt` file,  if `use_xpt_file = TRUE`.
 
----
 
+***
 This implementation ensures flexibility in handling different input types and configurations while maintaining a consistent structure for the output.
 
+***
 ## Example Usage
 
 ```r
