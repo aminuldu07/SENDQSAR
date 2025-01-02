@@ -1,60 +1,108 @@
-
 ---
 title: "Documentation for `get_lb_score` Function"
+author: "Md Aminul Islam Prodhan"
+date: "`r Sys.Date()`"
 output: html_document
 ---
 
 ## Purpose
-For the laboratory test (LB) data, Z-scores were also calculated for six key enzymes commonly found in blood or serum that are indicative of liver function: Bilirubin, Albumin (ALB), Alanine Aminotransferase (ALT), Alkaline Phosphatase (ALP), Aspartate Aminotransferase (AST), and Gamma-Glutamyl Transferase (GGT). These enzymes serve as important biomarkers for detecting liver damage or dysfunction.
+The get_lb_score function is designed to calculate Z-scores for laboratory test (LB) data, focusing on six key enzymes indicative of liver function: Bilirubin (BILI), Albumin (ALB), Alanine Aminotransferase (ALT), Alkaline Phosphatase (ALP), Aspartate Aminotransferase (AST), and Gamma-Glutamyl Transferase (GGT). These biomarkers are critical for assessing liver health and detecting potential damage or dysfunction. The function processes lab data from clinical studies, leveraging information from a database or .xpt files, and applies various transformations and filtering steps to compute the Z-scores efficiently.n
 
-The `get_lb_score` function computes liver biomarker z-scores for clinical studies, utilizing data from a database or `.xpt` file. It processes lab data (`lb` domain) and calculates z-scores for several liver biomarkers (e.g., ALT, AST, ALP, GGT, BILI, ALB) based on study data, while performing several transformations and filtering operations to prepare the data.
-
-## Function Definition
-
-```r
-get_lb_score <- function(studyid = NULL,
-                         path_db,
-                         fake_study = FALSE,
-                         use_xpt_file = FALSE,
-                         master_compiledata = NULL,
-                         return_individual_scores = FALSE,
-                         return_zscore_by_USUBJID = FALSE) {
-  # Function body goes here
-}
-```
 
 ## Parameters
+| **Parameter**              | **Type**        | **Default** | **Description**                                                                                          |
+|----------------------------|-----------------|-------------|----------------------------------------------------------------------------------------------------------|
+| `studyid`                  | character       | `NULL`      | The STUDYID of the study for which the BW score is to be calculated. Required when `use_xpt_file = FALSE`. If `use_xpt_file = TRUE`, `studyid` is ignored, and the `.xpt` files of that study in the specified folder are analyzed.                                                                         |
+| `path_db`                  | character       | -           | The file path to the database (SQLite or `.xpt` file).                                                   |
+| `fake_study`               | logical         | `FALSE`     | A flag to indicate if the study is fake or not and handle data accordingly.                                                          |
+| `use_xpt_file`             | logical         | `FALSE`     | If `TRUE`, reads data from `.xpt` files. Otherwise, fetches data from the SQLite database.                                                          |
+| `master_compiledata`       | data.frame      | `NULL`      | If `master_compiledata` is not supplied (i.e., `NULL`) , it is fetched using `get_compile_data()`. |
+| `return_individual_scores` | logical         | `FALSE`     | If `TRUE`, returns averaged z-score for each domain calculated from the scores of all subjects/animals (`USUBJID`).                                                |
+| `return_zscore_by_USUBJID` | logical         | `FALSE`     | If `TRUE`, returns Z-scores for each animal/subject (identified by `USUBJID`).                                             |
 
-- `studyid` (character): The study ID to filter data for. Default is `NULL`.
-- `path_db` (character): The file path to the database (SQLite or `.xpt` file).
-- `fake_study` (logical): A flag to indicate if the study is fake or not. Default is `FALSE`.
-- `use_xpt_file` (logical): Whether to use `.xpt` file for data extraction. Default is `FALSE`.
-- `master_compiledata` (data.frame): The compile data frame that includes participant information. If `NULL`, the function will call `get_compile_data`.
-- `return_individual_scores` (logical): Whether to return individual z-scores for each biomarker. Default is `FALSE`.
-- `return_zscore_by_USUBJID` (logical): If `TRUE`, return z-scores by `USUBJID` (unique subject ID). Default is `FALSE`.
+**Key Points**:
+- **Mandatory Parameter**: `path_db` is required for the function to work.
+- **Logical Exclusivity**: Both `return_individual_scores` and `return_zscore_by_USUBJID` cannot be `TRUE` simultaneously.
 
-## Workflow
+### Outputs
 
-1. **Data Retrieval**:
-    - The function first fetches data from either the SQLite database or `.xpt` file depending on the value of `use_xpt_file`.
-    - The lab data (`lb` domain) is fetched for the specified `studyid`.
+A `data.frame` containing the calculated Z-scores. The structure of the output depends on the provided parameters:
 
-2. **Data Processing**:
-    - Various filtering operations are applied based on the biomarker and study conditions.
-    - The `LBSPEC` field is populated where necessary (e.g., "WHOLE BLOOD", "SERUM", "URINE").
+- If `return_individual_scores = TRUE`: Returns averaged Z-scores for each of the domain per `studyid`.
+- If `return_zscore_by_USUBJID = TRUE`: Returns Z-score for each animal/subject by `USUBJID` for each domain per `studyid`.
+- Otherwise, a summarized BW Z-score for the specified `studyid`.
 
-3. **z-Score Calculation**:
-    - For each liver biomarker (ALT, AST, ALP, GGT, BILI, ALB), the function computes a z-score using the formula:
-      \[
-      z = rac{{	ext{{LBSTRESN}} - 	ext{{mean}}_{	ext{{vehicle}}}}}{{	ext{{sd}}_{	ext{{vehicle}}}}}
-      \]
-    - The z-scores are averaged by `STUDYID` and classified into discrete categories (0, 1, 2, or 3) based on predefined thresholds.
+## Implementation Details
 
+
+### Data Preparation
+
+- **Database Connection**:
+  - Connects to SQLite database using `DBI` if `use_xpt_file = FALSE`.
+  - If `use_xpt_file` = `TRUE`: Data is loaded from .xpt files located in the folder specified by path_db.
+- **Compile Data**:
+  - If `master_compiledata` is not supplied, it is retrieved using `get_compile_data()`.
+- **Body Weight Scores**:
+  - If `bwzscore_BW` is not supplied, it is calculated using `get_bw_score()`.
+
+### Data Retrieval
+
+The function retrieves the necessary data related to the specified studyid. The data retrieval process depends on whether master_compiledata is provided or NULL:
+
+When `master_compiledata = NULL`, 
+
+If `master_compiledata` is not provided, the function extracts data from the following SEND domains:
+
+- `BW` (Body Weight) : Provide the Body Weight measurements at the individual level. 
+- `DM` (Demographics): Supplies animal-level demographic details. 
+- `DS` (Disposition): Identifies recovery animals using the `DSDECOD` column.
+- `PC` (Pharmacokinetics): Provide `USUBJID` of the  TK animals for rats and mice study. 
+- `TX` (Treatment): Provide  dose levels information such as "vehicle" or "HD."
+
+When `master_compiledata is Provided`, 
+
+If `master_compiledata` value is provided, this function retrieve the following domains:
+
+- `lb` (Laboratory Test Results) : Provide the Organ measurements at the individual level.
+
+### Liver-to-Body-Weight Calculations
+
+- **Calculation**:
+  - Computes the Z-scores for six enzymes in Laboratory Test Results (lb) domain. 
+  - Calculates z-scores for `lb` domain using vehicle arm statistics (mean and SD).
+  - Converts z-scores to absolute values.
+
+### Handling Optional Parameters
+   - If `return_individual_scores = TRUE`, Returns averaged Z-scores for each of the domain per `studyid`.
+   - If `return_zscore_by_USUBJID = TRUE`, Returns Z-score for each animal/subject by unique subject identifiers`USUBJID`.
+
+### Fake Study Handling  
+   If `fake_study = TRUE`, special handling is applied for data sets generated by the `SENDsanitizer` package to account for their structure.
+
+### Output Generation  
+   A data frame containing the requested scores is returned. This may include summarized scores, individual scores, or Z-scores by `USUBJID`, based on the parameters provided.
+   
+### Dependencies
+
+The function requires the following R packages:
+
+- `RSQLite`: To connect to the SQLite database.
+- `haven` : To read `.xpt` file,  if `use_xpt_file = TRUE`.
+
+
+***
+This implementation ensures flexibility in handling different input types and configurations while maintaining a consistent structure for the output.
+
+***
 ## Merging Results
 
 The individual z-scores for each biomarker are merged into a single data frame. The resulting data frame can be returned:
 - By `USUBJID` (unique subject ID), if `return_zscore_by_USUBJID` is `TRUE`.
 - By study (`STUDYID`), with the z-scores averaged across subjects in the study.
+
+
+
+
 
 ## Example Usage
 
@@ -71,3 +119,14 @@ individual_scores <- get_lb_score(studyid = "12345", path_db = "path_to_database
 # Example 4: Return z-scores by subject (USUBJID)
 subject_zscores <- get_lb_score(studyid = "12345", path_db = "path_to_database", return_zscore_by_USUBJID = TRUE)
 ```
+
+```r
+get_lb_score <- function(studyid = NULL,
+                         path_db,
+                         fake_study = FALSE,
+                         use_xpt_file = FALSE,
+                         master_compiledata = NULL,
+                         return_individual_scores = FALSE,
+                         return_zscore_by_USUBJID = FALSE) {
+  # Function body goes here
+}

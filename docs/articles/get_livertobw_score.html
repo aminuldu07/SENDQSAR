@@ -194,25 +194,25 @@ simultaneously.</p>
 <div class="section level3">
 <h3 id="outputs">Outputs<a class="anchor" aria-label="anchor" href="#outputs"></a>
 </h3>
+<p>A <code>data.frame</code> containing the calculated LiverToBW
+Z-scores. The structure of the output depends on the provided
+parameters:</p>
 <ul>
-<li>Data frame containing:
-<ul>
-<li>Liver:BW z-scores grouped by study
-(<code>return_individual_scores = TRUE</code>).</li>
-<li>Z-scores by <code>USUBJID</code>
-(<code>return_zscore_by_USUBJID = TRUE</code>).</li>
-<li>Averaged z-scores by study (default).</li>
+<li>If <code>return_individual_scores = TRUE</code>: Returns averaged
+Z-scores for each of the domain per <code>studyid</code>.</li>
+<li>If <code>return_zscore_by_USUBJID = TRUE</code>: Returns Z-score for
+each animal/subject by <code>USUBJID</code> for each domain per
+<code>studyid</code>.</li>
+<li>Otherwise, a summarized BW Z-score for the specified
+<code>studyid</code>.</li>
 </ul>
-</li>
-</ul>
-<hr>
 </div>
 </div>
 <div class="section level2">
-<h2 id="workflow">Workflow<a class="anchor" aria-label="anchor" href="#workflow"></a>
+<h2 id="implementation-details">Implementation Details<a class="anchor" aria-label="anchor" href="#implementation-details"></a>
 </h2>
 <div class="section level3">
-<h3 id="data-preparation">1. Data Preparation<a class="anchor" aria-label="anchor" href="#data-preparation"></a>
+<h3 id="data-preparation">Data Preparation<a class="anchor" aria-label="anchor" href="#data-preparation"></a>
 </h3>
 <ul>
 <li>
@@ -220,37 +220,63 @@ simultaneously.</p>
 <ul>
 <li>Connects to SQLite database using <code>DBI</code> if
 <code>use_xpt_file = FALSE</code>.</li>
-<li>Retrieves data for specified <code>studyid</code> using helper
-function <code>fetch_domain_data()</code>.</li>
+<li>If <code>use_xpt_file</code> = <code>TRUE</code>: Data is loaded
+from .xpt files located in the folder specified by path_db.</li>
 </ul>
 </li>
 <li>
 <strong>Compile Data</strong>:
 <ul>
-<li>If <code>master_compiledata</code> is not provided, it is retrieved
+<li>If <code>master_compiledata</code> is not supplied, it is retrieved
 using <code><a href="../reference/get_compile_data.html">get_compile_data()</a></code>.</li>
 </ul>
 </li>
 <li>
 <strong>Body Weight Scores</strong>:
 <ul>
-<li>If <code>bwzscore_BW</code> is not provided, it is calculated using
+<li>If <code>bwzscore_BW</code> is not supplied, it is calculated using
 <code><a href="../reference/get_bw_score.html">get_bw_score()</a></code>.</li>
 </ul>
 </li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="data-extraction">2. Data Extraction<a class="anchor" aria-label="anchor" href="#data-extraction"></a>
+<h3 id="data-retrieval">Data Retrieval<a class="anchor" aria-label="anchor" href="#data-retrieval"></a>
 </h3>
+<p>The function retrieves the necessary data related to the specified
+studyid. The data retrieval process depends on whether
+master_compiledata is provided or NULL:</p>
+<p>When <code>master_compiledata = NULL</code>,</p>
+<p>If <code>master_compiledata</code> is not provided, the function
+extracts data from the following SEND domains:</p>
 <ul>
-<li>Filters liver-specific data from the <code>OM</code> domain.</li>
-<li>Removes test and recovery animals based on
-<code>master_compiledata</code>.</li>
+<li>
+<code>BW</code> (Body Weight) : Provide the Body Weight measurements
+at the individual level.</li>
+<li>
+<code>DM</code> (Demographics): Supplies animal-level demographic
+details.</li>
+<li>
+<code>DS</code> (Disposition): Identifies recovery animals using the
+<code>DSDECOD</code> column.</li>
+<li>
+<code>PC</code> (Pharmacokinetics): Provide <code>USUBJID</code> of
+the TK animals for rats and mice study.</li>
+<li>
+<code>TX</code> (Treatment): Provide dose levels information such as
+“vehicle” or “HD.”</li>
+</ul>
+<p>When <code>master_compiledata is Provided</code>,</p>
+<p>If <code>master_compiledata</code> value is provided, this function
+retrieve the following domains:</p>
+<ul>
+<li>
+<code>OM</code> (Organ Measurements) : Provide the Organ
+measurements at the individual level.</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="liver-to-body-weight-calculations">3. Liver-to-Body-Weight Calculations<a class="anchor" aria-label="anchor" href="#liver-to-body-weight-calculations"></a>
+<h3 id="liver-to-body-weight-calculations">Liver-to-Body-Weight Calculations<a class="anchor" aria-label="anchor" href="#liver-to-body-weight-calculations"></a>
 </h3>
 <ul>
 <li>
@@ -266,35 +292,45 @@ statistics (mean and SD).</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="score-computation">4. Score Computation<a class="anchor" aria-label="anchor" href="#score-computation"></a>
+<h3 id="handling-optional-parameters">Handling Optional Parameters<a class="anchor" aria-label="anchor" href="#handling-optional-parameters"></a>
 </h3>
 <ul>
-<li>
-<strong>Mutual Exclusivity</strong>:
-<ul>
-<li>Validates that <code>return_individual_scores</code> and
-<code>return_zscore_by_USUBJID</code> are not both
-<code>TRUE</code>.</li>
-</ul>
-</li>
-<li>
-<strong>Score Types</strong>:
-<ul>
-<li>Individual study-level scores
-(<code>return_individual_scores = TRUE</code>).</li>
-<li>USUBJID-specific z-scores
-(<code>return_zscore_by_USUBJID = TRUE</code>).</li>
-<li>Default: Average z-scores by study.</li>
-</ul>
-</li>
+<li>If <code>return_individual_scores = TRUE</code>, Returns averaged
+Z-scores for each of the domain per <code>studyid</code>.</li>
+<li>If <code>return_zscore_by_USUBJID = TRUE</code>, Returns Z-score for
+each animal/subject by unique subject
+identifiers<code>USUBJID</code>.</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="output">5. Output<a class="anchor" aria-label="anchor" href="#output"></a>
+<h3 id="fake-study-handling">Fake Study Handling<a class="anchor" aria-label="anchor" href="#fake-study-handling"></a>
 </h3>
+<p>If <code>fake_study = TRUE</code>, special handling is applied for
+data sets generated by the <code>SENDsanitizer</code> package to account
+for their structure.</p>
+</div>
+<div class="section level3">
+<h3 id="output-generation">Output Generation<a class="anchor" aria-label="anchor" href="#output-generation"></a>
+</h3>
+<p>A data frame containing the requested scores is returned. This may
+include summarized scores, individual scores, or Z-scores by
+<code>USUBJID</code>, based on the parameters provided.</p>
+</div>
+<div class="section level3">
+<h3 id="dependencies">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies"></a>
+</h3>
+<p>The function requires the following R packages:</p>
 <ul>
-<li>Returns a data frame based on the selected output option.</li>
+<li>
+<code>RSQLite</code>: To connect to the SQLite database.</li>
+<li>
+<code>haven</code> : To read <code>.xpt</code> file, if
+<code>use_xpt_file = TRUE</code>.</li>
 </ul>
+<hr>
+<p>This implementation ensures flexibility in handling different input
+types and configurations while maintaining a consistent structure for
+the output.</p>
 <hr>
 </div>
 </div>
@@ -304,9 +340,9 @@ statistics (mean and SD).</li>
 <div class="section level3">
 <h3 id="example-1-default-averaged-scores">Example 1: Default Averaged Scores<a class="anchor" aria-label="anchor" href="#example-1-default-averaged-scores"></a>
 </h3>
-<p>```r path &lt;- “path_to_database” study_id &lt;- “STUDY123” result
-&lt;- get_livertobw_score(studyid = study_id, path_db = path)
-head(result)</p>
+<p>```r #path &lt;- “path_to_database” #study_id &lt;- “STUDY123”
+#result &lt;- get_livertobw_score(studyid = study_id, path_db = path)
+#head(result)</p>
 </div>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

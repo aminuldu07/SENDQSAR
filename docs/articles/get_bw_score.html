@@ -204,9 +204,15 @@ identifiers).</td>
 </tr>
 </tbody>
 </table>
+<p><strong>Key Points</strong>: - <strong>Mandatory Parameter</strong>:
+<code>path_db</code> is required for the function to work. -
+<strong>Logical Exclusivity</strong>: Both
+<code>return_individual_scores</code> and
+<code>return_zscore_by_USUBJID</code> cannot be <code>TRUE</code>
+simultaneously.</p>
 </div>
 <div class="section level2">
-<h2 id="return-value">Return Value<a class="anchor" aria-label="anchor" href="#return-value"></a>
+<h2 id="output">Output<a class="anchor" aria-label="anchor" href="#output"></a>
 </h2>
 <p>A <code>data.frame</code> containing the calculated BW Z-scores. The
 structure of the output depends on the provided parameters:</p>
