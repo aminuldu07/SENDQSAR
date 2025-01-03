@@ -2,9 +2,9 @@
 rm(list = ls())
 devtools::load_all(".")
 
-fake_SQL_lb_score <- get_lb_score(studyid = '28738',
-                                  path_db = 'C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/2023-2024_projects/FAKE_DATABASES/fake_merged_liver_not_liver.db',
-                                  fake_study = TRUE,
+fake_SQL_lb_score <- get_lb_score(studyid = '5003635',
+                                  path_db = "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/TestDB.db",
+                                  fake_study = FALSE,
                                   use_xpt_file = FALSE,
                                   master_compiledata = NULL,
                                   return_individual_scores = FALSE,

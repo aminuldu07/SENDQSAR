@@ -299,6 +299,11 @@ get_compile_data <- function(studyid = NULL,
    !(recovery_cleaned_CompileData$USUBJID %in% tK_animals_df$USUBJID),]
 
 
+
+    #Adding dose_ranking-------------------------------------------------------
+    #----------------GET maximum and minimum----dose_level---------------------
+    #--------------------------------------------------------------------------
+
     #.."vehicle" and "HD animals" selection "for"cleaned_CompileData"
 
     # tx table  filter by TXPARMCD
@@ -327,7 +332,6 @@ get_compile_data <- function(studyid = NULL,
            ) %>%
     dplyr::select(-is_split) # Remove the is_split column
 
-    #Adding dose_ranking
 
     # Initialize an empty data frame for dose_ranking
     dose_ranking <- data.frame()
@@ -335,36 +339,51 @@ get_compile_data <- function(studyid = NULL,
     dose_ranking_prob_study <- data.frame()
 
     if (TRUE) {
+      # Assign the input dataset 'clean_tx_expanded' to 'study_data' for processing
       study_data <- clean_tx_expanded
 
       # Check if all TXVAL values are NA for the STUDYID
       if (all(is.na(study_data$TXVAL))) {
+        # Append the study data to 'dose_ranking_prob_study' for problematic cases
         dose_ranking_prob_study <- rbind(dose_ranking_prob_study, study_data)
       }
       # Check if all SETCD values are the same for the STUDYID
       else if (dplyr::n_distinct(study_data$SETCD) == 1) {
+        # Append the study data to 'dose_ranking_prob_study' since SETCD is not diverse
         dose_ranking_prob_study <- rbind(dose_ranking_prob_study, study_data)
       } else {
-        # Process for lowest TXVAL
-        lowest_txval <- min(study_data$TXVAL, na.rm = TRUE)
+        # Find and process the lowest TXVAL (dose level) when data is valid
+        lowest_txval <- min(study_data$TXVAL, na.rm = TRUE) # Get the lowest TXVAL
+
+        # Filter rows where TXVAL equals the lowest value and sort by SETCD
         lowest_data <- study_data %>%
           dplyr::filter(TXVAL == lowest_txval) %>%
           dplyr::arrange(SETCD)
 
+        # If there is exactly one row with the lowest TXVAL, add it to 'dose_ranking'
         if (nrow(lowest_data) == 1) {
           dose_ranking <- rbind(dose_ranking, lowest_data)
 
         } else {
+          # Handle cases with multiple rows having the lowest TXVAL
+          # Prefer rows with 'old_row' state, selecting the first occurrence
           # Select the first old_row if available, else the first new_row
           selected_lowest <- dplyr::filter(lowest_data,
                                            row_state == "old_row") %>%
             dplyr::slice(1)
+
+          # If an 'old_row' exists, add it to 'dose_ranking'
           if (nrow(selected_lowest) > 0) {
             dose_ranking <- rbind(dose_ranking, selected_lowest)
+
           } else {
+
+            # If no 'old_row' exists, select the first 'new_row' instead
             selected_lowest <- dplyr::filter(lowest_data,
                                              row_state == "new_row") %>%
               dplyr::slice(1)
+
+            # Append the selected 'new_row' to 'dose_ranking'
             dose_ranking <- rbind(dose_ranking, selected_lowest)
           }
         }

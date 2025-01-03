@@ -65,7 +65,7 @@ get_liver_om_lb_mi_tox_score_list <- function (studyid_or_studyids = FALSE,
 if(output_individual_scores ) {
 
   # master bwzscore
-
+.
   # master liverToBW_df
   master_liverToBW <-  data.frame(STUDYID = NULL, avg_liverToBW_zscore = NULL)
 
@@ -483,6 +483,20 @@ for (studyid in studyid_or_studyids ){
     # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
     studyid <- if (use_xpt_file) NULL else studyid
 
+    if(all_lb_testcd_zscore) {
+
+      all_lb_TESTCD_score <- get_all_lb_TESTCD_zscore (studyid = "5003635",
+                                                    path_db = db_path,
+                                                    fake_study= FALSE,
+                                                    use_xpt_file = FALSE,
+                                                    master_compiledata = NULL,
+                                                    return_individual_scores = TRUE)
+
+
+    } else {
+
+
+
     if(output_individual_scores){
     master_lb_scores <- get_lb_score(studyid = studyid,
                                      path_db = path_db,
@@ -537,7 +551,9 @@ for (studyid in studyid_or_studyids ){
         #master_lbxx_list[[j]] <- lb_score_final_list
         #master_lb_score_six <- rbind(master_lb_score_six , averaged_LB_score)
 
-     }
+      }
+
+    }
 
   }, error = function(e) {
     # Handling errors of the secondary operation
