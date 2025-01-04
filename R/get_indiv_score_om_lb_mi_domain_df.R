@@ -47,12 +47,14 @@
 
 
 
-get_liver_om_lb_mi_tox_score_list <- function (studyid_or_studyids = FALSE,
+get_indiv_score_om_lb_mi_domain_df <- function (studyid_or_studyids = FALSE,
                                                path_db,
                                                fake_study = FALSE,
                                                use_xpt_file = FALSE,
+                                               all_lb_TESTCD_score = FALSE,
                                                output_individual_scores = FALSE,
-                                               output_zscore_by_USUBJID = FALSE ) {
+                                               output_zscore_by_USUBJID = FALSE
+                                               ) {
 
    # "multiple_xpt_folder" argument control the studyid/xpt folder directory
 
@@ -61,6 +63,10 @@ get_liver_om_lb_mi_tox_score_list <- function (studyid_or_studyids = FALSE,
     stop("Error: Both 'output_individual_scores' and 'output_zscore_by_USUBJID' cannot be TRUE at the same time.")
   }
 
+if (all_lb_TESTCD_score){
+  # CREATE A EMPTY DATA FRAME
+  all_TESTCD_score <- data.frame()
+}
 
 if(output_individual_scores ) {
 
@@ -483,6 +489,28 @@ for (studyid in studyid_or_studyids ){
     # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
     studyid <- if (use_xpt_file) NULL else studyid
 
+    if(all_lb_TESTCD_score) {
+
+      # Enforce mutual inclusivity: If both are "not TRUE, throw an error
+      if (output_individual_scores && output_zscore_by_USUBJID) {
+        stop("Error: Both 'output_individual_scores' and 'all_lb_TESTCD_score' must be TRUE at the same time.")
+      }
+
+      All_lb_TESTCD_score <- get_all_lb_TESTCD_zscore (studyid = studyid,
+                                                    path_db = path_db,
+                                                    fake_study= fake_study,
+                                                    use_xpt_file = use_xpt_file,
+                                                    master_compiledata = master_compiledata,
+                                                    return_individual_scores = TRUE)
+
+      All_lb_TESTCD_score <- as.data.frame(All_lb_TESTCD_score)
+
+      all_TESTCD_score <- dplyr::bind_rows(all_TESTCD_score ,  All_lb_TESTCD_score)
+
+    } else {
+
+
+
     if(output_individual_scores){
     master_lb_scores <- get_lb_score(studyid = studyid,
                                      path_db = path_db,
@@ -539,6 +567,8 @@ for (studyid in studyid_or_studyids ){
 
       }
 
+    }
+
   }, error = function(e) {
     # Handling errors of the secondary operation
     message("Error in LB zscoring: ", e$message)
@@ -574,6 +604,7 @@ for (studyid in studyid_or_studyids ){
      # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
      studyid <- if (use_xpt_file) NULL else studyid
 
+
      mi_score_final_list_df <- get_mi_score(studyid = studyid,
                                             path_db = path_db,
                                             fake_study = fake_study,
@@ -582,8 +613,18 @@ for (studyid in studyid_or_studyids ){
                                             return_individual_scores = TRUE,
                                             return_zscore_by_USUBJID = FALSE)
 
+     # Check if mi_score_final_list_df has zero rows
+     if (nrow(mi_score_final_list_df) == 0) {
+       # Add a placeholder row with STUDYID = studyid
+       placeholder_row <- data.frame(STUDYID = studyid)
+       master_mi_df <- dplyr::bind_rows(master_mi_df, placeholder_row)
+     } else {
+       # Append mi_score_final_list_df to master_mi_df
+       master_mi_df <- dplyr::bind_rows(master_mi_df, mi_score_final_list_df)
+     }
 
-     master_mi_df <- dplyr::bind_rows(master_mi_df, mi_score_final_list_df)
+     #master_mi_df <- dplyr::bind_rows(master_mi_df, mi_score_final_list_df)
+
 
     #master_mi_df <- dplyr::bind_rows(master_mi_df, mi_score_final_list_df)
 
@@ -656,13 +697,20 @@ for (studyid in studyid_or_studyids ){
     # Create MI_final_score with NA values
     #return(data.frame(STUDYID = NA, avg_MI_score = NA))
   })
-
+  # Print a message after processing the current studyid
+  print(paste("Current iteration for studyid", studyid, "is done."))
 }
-
+browser()
   #---------------------------------------------------------------------------
   #---------------------------------------------------------------------------
+  if (all_lb_TESTCD_score) {
 
-  if (output_individual_scores) {
+    # Perform the merge using full_join to keep all rows from each data frame
+    combined_lb_TESTCD_score <- master_liverToBW %>%
+      dplyr::full_join(all_TESTCD_score, by = "STUDYID") %>%
+      dplyr::full_join(master_mi_df, by = "STUDYID")
+
+    } else if (output_individual_scores) {
 
     # Perform the merge using full_join to keep all rows from each data frame
     combined_output_individual_scores <- master_liverToBW %>%
@@ -686,8 +734,8 @@ for (studyid in studyid_or_studyids ){
     final_output_zscore_by_USUBJID <- combined_df %>%
       dplyr::full_join( combined_mi_score, by = c("STUDYID", "USUBJID"))
 
-
-  } else {
+  #} else if (!output_individual_scores && !output_zscore_by_USUBJID) {
+  } else  {
 
     FOUR_Liver_Score_avg <- FOUR_Liver_Score_avg
 
@@ -696,10 +744,14 @@ for (studyid in studyid_or_studyids ){
 
   }
 
+
   #-------------return statement based on conditions---------------
+ if (all_lb_TESTCD_score ) {
+
+   return(combined_lb_TESTCD_score)
 
 
-   if (output_individual_scores) {
+  } else if (output_individual_scores) {
     # return(list(master_liverToBW = master_liverToBW,
     #           master_lb_score_six = master_lb_score_six,
     #           master_mi_df  = master_mi_df,
@@ -722,7 +774,7 @@ for (studyid in studyid_or_studyids ){
        #           MI_score_by_USUBJID_HD  = master_mi_score,
        #           Error_studies =  Error_studies,
        #           master_error_df = master_error_df))
-
+   #} else if (!output_individual_scores && !output_zscore_by_USUBJID ) {
    } else {
 
    return(FOUR_Liver_Score_avg)
