@@ -16,9 +16,9 @@ R_SQL_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = stu
                                                        path_db = path_db,
                                                        fake_study = FALSE,
                                                        use_xpt_file = FALSE,
-                                                       #multiple_xpt_folder = FALSE,
                                                        output_individual_scores = TRUE,
-                                                       output_zscore_by_USUBJID = FALSE)
+                                                       output_zscore_by_USUBJID = FALSE,
+                                                       all_lb_TESTCD_score = TRUE)
 
 # For multiple xpt folder with real data
 rm(list = ls())

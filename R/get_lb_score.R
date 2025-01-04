@@ -143,7 +143,7 @@ get_lb_score <- function(studyid = NULL,
       dplyr::filter(VISITDY == max(VISITDY, na.rm = TRUE)) %>%
       dplyr::ungroup()
 
-browser()
+#browser()
   # master_compiledata <- get_compile_data(studyid, path_db,fake_study = fake_study)
 
     #<><><><><>... Remove TK animals and Recovery animals......<><><><><><>.
