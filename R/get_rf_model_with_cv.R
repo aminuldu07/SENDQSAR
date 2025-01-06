@@ -6,6 +6,7 @@
 #' It optionally applies undersampling to handle class imbalance and supports custom settings for the number of predictors sampled at each split.
 #'
 #' @param Data Mandatory, data frame
+#' #' First column is `Target_Organ`, followed by columns with score values.
 #'   The input dataset, which must include a column named `Target_Organ` as the response variable.
 #' @param Undersample Optional, logical
 #'   If `TRUE`, balances the dataset by undersampling the majority class. Default is `FALSE`.

@@ -20,6 +20,7 @@
 #' - Reorders columns based on the sum of their values.
 #'
 #' @return A data frame with harmonized liver scores, optional rounding, and columns reordered based on their sums.
+#' First column is "STUDYID",  followed by columns with score values.
 #'
 #' @examples
 #' \dontrun{

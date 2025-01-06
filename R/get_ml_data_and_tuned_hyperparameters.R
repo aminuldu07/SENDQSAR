@@ -6,14 +6,15 @@
 #' error correction, and hyperparameter tuning.
 #'
 #' @param Data data.frame. Input data frame containing scores, typically named `scores_df`.
-#' @param studyid_metadata data.frame. Metadata containing `STUDYID` values, used for joining with `Data`.
+#' First column is "STUDYID", followed by columns with score values.
+#' @param studyid_metadata data.frame. Metadata containing `STUDYID` and `Target_Organ`.
 #' @param Impute logical. Indicates whether to impute missing values in the dataset using random forest imputation. Default is `FALSE`.
 #' @param Round logical. Specifies whether to round specific numerical columns according to predefined rules. Default is `FALSE`.
 #' @param reps integer. Number of repetitions for cross-validation. A value of `0` skips repetition.
 #' @param holdback numeric. Fraction of data to hold back for testing. A value of `1` performs leave-one-out cross-validation.
 #' @param Undersample logical. Indicates whether to undersample the training data to balance the target classes. Default is `FALSE`.
 #' @param hyperparameter_tuning logical. Specifies whether to perform hyperparameter tuning for the random forest model. Default is `FALSE`.
-#' @param error_correction_method character. Specifies the method for error correction. Can be `"Flip"`, `"Prune"`, or `NULL`. Default is `NULL`.
+#' @param error_correction_method character. Specifies the method for error correction. Can be `"Flip"`, `"Prune"`, or `None`. Default is `None`.
 #'
 #' @return
 #' A list containing:
@@ -53,9 +54,16 @@ get_ml_data_and_tuned_hyperparameters <- function(Data, # Data == "scores_df"
                                                   holdback, # either 1 or fraction value like 0.75 etc.
                                                   Undersample = FALSE,
                                                   hyperparameter_tuning = FALSE,
-                                                  error_correction_method = NULL) { # # Choose: "Flip" or "Prune" or "None"
+                                                  error_correction_method = "None") { #Default to "None";
+                                                                                       #options: "Flip", "Prune", "None"
 
   input_scores_df <- Data #input_scores_df <- scores_df
+
+  #----------------------------------------------------------------------------
+  # if "studyid_metadata" is NULL, we can make it using the "STUDYID" column
+  #----------------------------------------------------------------------------
+
+
 
 
   metadata_df <- studyid_metadata

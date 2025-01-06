@@ -638,10 +638,25 @@ z-scores.</li>
 (LB) results.</li>
 <li><code>get_mi_score</code> - Computes z-scores for microscopic
 findings (MI).</li>
-<li><code>get_liver_om_lb_mi_tox_score_list</code> - Combines z-scores
-of LB, MI, and liver-to-BW into a single data frame.</li>
-<li><code>get_col_harmonized_scores_df</code> - Harmonizes column names
-across studies.</li>
+<li><strong><code>get_liver_om_lb_mi_tox_score_list</code></strong>
+<ul>
+<li>Purpose: Combines z-scores of LB, MI, and liver-to-BW ratio into a
+single data frame.</li>
+<li>Workflow: Internally calls the following functions:
+<code>get_compile_data</code>, <code>get_bw_score</code>,
+<code>get_livertobw_zscore</code>,<code>get_lb_score</code>,
+<code>get_mi_score</code>.</li>
+<li>Output: A data frame with the first column as STUDYID and the
+remaining columns containing calculated scores for “Liver to BW ratio”,
+“LB” , and “MI” domains.</li>
+</ul></li>
+<li><strong><code>get_col_harmonized_scores_df</code></strong>
+<ul>
+<li>Harmonizes column names across the data frame created by the
+get_liver_om_lb_mi_tox_score_list function.</li>
+<li>The harmonization is required to get the consistent columns across
+the STUDYIDs.</li>
+</ul></li>
 </ul>
 <h3 id="machine-learning-preparation-and-modeling">Machine Learning
 Preparation and Modeling</h3>
