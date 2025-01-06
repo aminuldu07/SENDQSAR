@@ -27,12 +27,12 @@ This package facilitates developing Quantitative Structure-Activity Relationship
 - `f4` -`get_lb_score` - Calculates z-scores for laboratory test (LB) results.
 - `f5` -`get_mi_score` - Computes z-scores for microscopic findings (MI).
 
-- **`get_liver_om_lb_mi_tox_score_list`**
+- `f6` -**`get_liver_om_lb_mi_tox_score_list`**
   - Purpose: Combines z-scores of LB, MI, and liver-to-BW ratio  into a single data frame.
   - Workflow: Internally calls the following functions: `get_compile_data`, `get_bw_score`,  `get_livertobw_zscore`,`get_lb_score`,  `get_mi_score`. 
   - Output: A data frame with the first column as STUDYID and the remaining columns containing calculated scores for  "Liver to BW ratio", "LB" , and "MI" domains. 
   
-- **`get_col_harmonized_scores_df`**
+- `f7` -**`get_col_harmonized_scores_df`**
   -  Harmonizes column names across the data frame created by the `get_liver_om_lb_mi_tox_score_list` function.
   -  The harmonization is required to get consistent columns across the STUDYIDs. 
 

@@ -41,7 +41,7 @@ descriptors and create robust predictive models.
 - `f5` -`get_mi_score` - Computes z-scores for microscopic findings
   (MI).
 
-- **`get_liver_om_lb_mi_tox_score_list`**
+- `f6` -**`get_liver_om_lb_mi_tox_score_list`**
 
   - Purpose: Combines z-scores of LB, MI, and liver-to-BW ratio into a
     single data frame.
@@ -52,7 +52,7 @@ descriptors and create robust predictive models.
     remaining columns containing calculated scores for “Liver to BW
     ratio”, “LB” , and “MI” domains.
 
-- **`get_col_harmonized_scores_df`**
+- `f7` -**`get_col_harmonized_scores_df`**
 
   - Harmonizes column names across the data frame created by the
     `get_liver_om_lb_mi_tox_score_list` function.
