@@ -27,17 +27,19 @@ descriptors and create robust predictive models.
 
 ### Data Acquisition and Processing
 
-- `f1`-`get_compile_data` - Fetches data from the database specified by
+- `f1` -`get_compile_data` - Fetches data from the database specified by
   the database path into a structured data frame for analysis.
 
-- `f2`-`get_bw_score` - Calculates body weight (BW) z-scores for each
+- `f2` -`get_bw_score` - Calculates body weight (BW) z-scores for each
   animal.
 
-- `get_livertobw_zscore` - Computes liver-to-body weight z-scores.
+- `f3` -`get_livertobw_zscore` - Computes liver-to-body weight z-scores.
 
-- `get_lb_score` - Calculates z-scores for laboratory test (LB) results.
+- `f4` -`get_lb_score` - Calculates z-scores for laboratory test (LB)
+  results.
 
-- `get_mi_score` - Computes z-scores for microscopic findings (MI).
+- `f5` -`get_mi_score` - Computes z-scores for microscopic findings
+  (MI).
 
 - **`get_liver_om_lb_mi_tox_score_list`**
 
