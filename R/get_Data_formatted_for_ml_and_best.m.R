@@ -117,6 +117,11 @@ get_Data_formatted_for_ml_and_best.m <- function(path_db,
       }
     }
 
+  #-----------------------------------------------------------------------
+  # if studyid_metadata is not provided then use the provided data base to
+  # create a data frame with two columns "STUDYID" and "Target_Organ"
+
+  #-------------------------------------------------------------------------
 
   # process the database to get the "studyid_metadata"------------
   if(is.null(studyid_metadata)) {
@@ -161,13 +166,6 @@ get_Data_formatted_for_ml_and_best.m <- function(path_db,
 
     }
   }
-
-
-  #-----------------------------------------------------------------------
-  # if studyid_metadata is not provided then use the data frame to
-  # creae a data frame with two columns "STUDYID" and "Target_Organ"
-
-  #-------------------------------------------------------------------------
 
   # get_liver_om_lb_mi_tox_score_list(
   calculated_liver_scores <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = studyid_or_studyids,

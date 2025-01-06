@@ -63,7 +63,10 @@ get_histogram_barplot <- function(Data =NULL,
                            output_individual_scores = TRUE,
                            output_zscore_by_USUBJID = FALSE){
 
+  Data <- Data
 
+  studyid_metadata <- studyid_metadata
+browser()
   # Generate data if not provided
   if (is.null(Data)) {
 
@@ -94,25 +97,31 @@ get_histogram_barplot <- function(Data =NULL,
         # Close the database connection
         DBI::dbDisconnect(db_connection)
 
-        # get the studyids from the dm table
-        studyid_or_studyids <- as.vector(unique(dm$STUDYID)) # unique STUDYIDS from DM table
-
         # Filter the fake data for the "rat_studies"
         if(rat_studies){
 
+          #--------------------------------------------------------------------
+          #-----------we can set logic here for rat studies in "fake data"----
+          #--------------------------------------------------------------------
           studyid_or_studyids <- studyid_or_studyids
+
+        } else {
+
+          # get the studyids from the dm table
+        studyid_or_studyids <- as.vector(unique(dm$STUDYID)) # unique STUDYIDS from DM table
+
         }
 
-        #--------------------------------------------------------------------
-        #-----------we can set logic here for rat studies in "fake data"----
-        #--------------------------------------------------------------------
 
       } else {
-        # For the real data in sqlite database
+        # For the real data in SQLite database
         # filter for the repeat-dose and parallel studyids
 
-        studyid_or_studyids <- get_repeat_dose_parallel_studyids(path_db=path_db,
+        parallel_repeatdose_df <- get_repeat_dose_parallel_studyids(path_db=path_db,
                                                                  rat_studies = rat_studies)
+        # Now, filter the "studyid_or_studyids" for the studyids
+        # present in the "studyid_metadata
+        studyid_or_studyids <- parallel_repeatdose_df[parallel_repeatdose_df$STUDYID %in% studyid_metadata$STUDYID, ]
 
       }
     }
@@ -129,7 +138,11 @@ get_histogram_barplot <- function(Data =NULL,
     column_harmonized_liverscr_df <- get_col_harmonized_scores_df(liver_score_data_frame = calculated_liver_scores,
                                                                   Round = Round)
 
-    Data <- column_harmonized_liverscr_df
+    # Need to add the "Target_Organ" column to the Data
+
+    Data_target_organ <- dplyr::inner_join(studyid_metadata, column_harmonized_liverscr_df, by = "STUDYID")
+
+    Data <- Data_target_organ
     #---------------------------------------------------------------------
   }
 
@@ -151,14 +164,14 @@ get_histogram_barplot <- function(Data =NULL,
 
       Finding <- c(Finding, finding)
       LIVER <- c(LIVER, 'Y')
-      Value <- c(Value, mean(Data[which(Data$indst_TO == "Liver"), finding], na.rm = T))
+      Value <- c(Value, mean(Data[which(Data$Target_Organ == "Liver"), finding], na.rm = T))
 
       Finding <- c(Finding, finding)
       LIVER <- c(LIVER, 'N')
-      Value <- c(Value, mean(Data[which(Data$indst_TO != "Liver"), finding], na.rm = T))
+      Value <- c(Value, mean(Data[which(Data$Target_Organ != "Liver"), finding], na.rm = T))
 
     }
-
+browser()
     plotData <- as.data.frame(cbind(Finding, LIVER, Value))
     plotData$LIVER <- factor(plotData$LIVER)
     plotData$Finding <- factor(plotData$Finding)
