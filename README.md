@@ -27,10 +27,11 @@ descriptors and create robust predictive models.
 
 ### Data Acquisition and Processing
 
-- `get_compile_data` - Fetches data from the database specified by the
-  database path into a structured data frame for analysis.
+- `f1`-`get_compile_data` - Fetches data from the database specified by
+  the database path into a structured data frame for analysis.
 
-- `get_bw_score` - Calculates body weight (BW) z-scores for each animal.
+- `f2`-`get_bw_score` - Calculates body weight (BW) z-scores for each
+  animal.
 
 - `get_livertobw_zscore` - Computes liver-to-body weight z-scores.
 
