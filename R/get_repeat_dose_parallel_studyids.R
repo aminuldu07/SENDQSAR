@@ -7,19 +7,19 @@
 #' @param path_db A character string representing the file path to the SQLite database. This is a required parameter.
 #' @param rat_studies A logical flag indicating whether to filter the studies for rats only. Defaults to `FALSE`.
 #'
-#' @return A vector of study IDs that meet the specified criteria. This includes:
+#' @return A Data frame having the STUDYID that meet the specified criteria. This includes:
 #'   \itemize{
-#'     \item Study IDs that match both the parallel design and repeat-dose toxicity criteria.
-#'     \item Optionally, study IDs that match rat species if `rat_studies = TRUE`.
+#'     \item STUDYIDs that match both the parallel design and repeat-dose toxicity criteria.
+#'     \item Optionally, STUDYIDs that match rat species if `rat_studies = TRUE`.
 #'   }
 #'
 #' @examples
 #' \dontrun{
 #'   # Example without filtering for rat studies
-#'   study_ids <- get_repeat_dose_parallel_studyids(path_db = "path/to/database.sqlite")
+#'   parallel_repeat_dose_df <- get_repeat_dose_parallel_studyids(path_db = "path/to/database.sqlite")
 #'
 #'   # Example with filtering for rat studies
-#'   study_ids_rats <- get_repeat_dose_parallel_studyids(path_db = "path/to/database.sqlite", rat_studies = TRUE)
+#'   rat_parallel_repeat_dose_df <- get_repeat_dose_parallel_studyids(path_db = "path/to/database.sqlite", rat_studies = TRUE)
 #' }
 #'
 #' @export
@@ -62,10 +62,11 @@ parallel_repeat_dose_intersect <- intersect(parallel_StudyID$STUDYID,repeat_dose
 # converting "parallel_repeat_dose_intersect" to a data frame
 parallel_repeat_dose_intersec_df <- data.frame(STUDYID = parallel_repeat_dose_intersect)
 
-# convert to a vector( selected_studies should be always vector)
-parallel_repeat_dose_studyid_or_studyids <- as.vector(parallel_repeat_dose_intersec_df$STUDYID)
-
-studyid_or_studyids <- parallel_repeat_dose_studyid_or_studyids
+# # convert to a vector( selected_studies should be always vector)
+# parallel_repeat_dose_studyid_or_studyids <- as.vector(parallel_repeat_dose_intersec_df$STUDYID)
+#
+# studyid_or_studyids <- parallel_repeat_dose_studyid_or_studyids
+parallel_repeat_dose_df <- parallel_repeat_dose_intersec_df
 
 # Filter for the rat studies
 if (rat_studies){
@@ -76,11 +77,19 @@ if (rat_studies){
   # Filter the "rat_STUDYID_ts_species" for the PARALLEL STUDYIDs and repeat_dose_STUDYIDs
   rat_parallel_repeat_dose_df <- rat_STUDYID_ts_species[rat_STUDYID_ts_species$STUDYID %in% parallel_repeat_dose_intersec_df$STUDYID, ]
 
-  rat_parallel_repeat_dose_studyid_or_studyids <- as.vector(rat_parallel_repeat_dose_df$STUDYID)
-
-  studyid_or_studyids <- rat_parallel_repeat_dose_studyid_or_studyids
+  # rat_parallel_repeat_dose_studyid_or_studyids <- as.vector(rat_parallel_repeat_dose_df$STUDYID)
+  #
+  # studyid_or_studyids <- rat_parallel_repeat_dose_studyid_or_studyids
 }
 
-return(studyid_or_studyids)
+if(rat_studies) {
+
+  return(rat_parallel_repeat_dose_df)
+
+} else {
+
+  return(parallel_repeat_dose_df)
+
+}
 
 }
