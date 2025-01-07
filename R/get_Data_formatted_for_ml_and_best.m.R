@@ -53,18 +53,26 @@
 
 
 get_Data_formatted_for_ml_and_best.m <- function(path_db,
-                                      rat_studies=FALSE,
-                                      studyid_metadata=NULL,
-                                      fake_study = FALSE,
-                                      use_xpt_file = FALSE,
-                                      Round = FALSE,
-                                      Impute = FALSE,
-                                      reps,
-                                      holdback,
-                                      Undersample = FALSE,
-                                      hyperparameter_tuning = FALSE,
-                                      error_correction_method # = must be 'Flip' or "Prune' or 'None'
-                                      ){
+                                                  rat_studies=FALSE,
+                                                  studyid_metadata=NULL,
+                                                  fake_study = FALSE,
+                                                  use_xpt_file = FALSE,
+                                                  Round = FALSE,
+                                                  Impute = FALSE,
+                                                  reps,
+                                                  holdback,
+                                                  Undersample = FALSE,
+                                                  hyperparameter_tuning = FALSE,
+                                                  error_correction_method # = must be 'Flip' or "Prune' or 'None'
+                                                  ){
+
+
+  studyid_metadata <- studyid_metadata
+  #-----------------------------------------------------------------------
+  # if studyid_metadata is not provided then use the provided data base to
+  # create a data frame with two columns "STUDYID" and "Target_Organ"
+
+  #-------------------------------------------------------------------------
 
   # Process the database to retrieve the vector of "STUDYIDs"-------------
   if(use_xpt_file){
@@ -111,61 +119,62 @@ get_Data_formatted_for_ml_and_best.m <- function(path_db,
         # For the real data in sqlite database
         # filter for the repeat-dose and parallel studyids
 
-        studyid_or_studyids <- get_repeat_dose_parallel_studyids(path_db=path_db,
-                                                                 rat_studies = rat_studies)
+        # 'parallel_repeatdose_df' is a data frame with one column "STUDYID"
+        parallel_repeatdose_df <- get_repeat_dose_parallel_studyids(path_db=path_db,
+                                                                    rat_studies = rat_studies)
+
+        # Now, filter the "studyid_or_studyids" for the studyids
+        # present in the "studyid_metadata
+
+        studyid_or_studyids <- parallel_repeatdose_df[parallel_repeatdose_df$STUDYID %in% studyid_metadata$STUDYID,  ]
 
       }
     }
 
-  #-----------------------------------------------------------------------
-  # if studyid_metadata is not provided then use the provided data base to
-  # create a data frame with two columns "STUDYID" and "Target_Organ"
 
-  #-------------------------------------------------------------------------
-
-  # process the database to get the "studyid_metadata"------------
-  if(is.null(studyid_metadata)) {
-    if(fake_study) {
-      # Extract study ID metadata
-      studyid_metadata <- dm[, "STUDYID", drop=FALSE]
-
-      # Remove duplicates based on STUDYID
-      studyid_metadata <- studyid_metadata[!duplicated(studyid_metadata$STUDYID), , drop =FALSE]
-
-      # Add a new column for Target_Organ
-      studyid_metadata$Target_Organ <- NA
-
-      # assign "Target_Organ" column values randomly
-      # randomly 50% of the value is Liver and rest are not_Liver
-      set.seed(123)  # Set seed for reproducibility
-      rows_number <- nrow(studyid_metadata)  # Number of rows
-
-      # Randomly sample 50% for "Liver" and rest for "not_Liver"
-      studyid_metadata$Target_Organ <- sample(c("Liver", "not_Liver"), size = rows_number, replace = TRUE, prob = c(0.5, 0.5))
-
-      # View the result
-
-    } else {
-
-      # create "studyid_metadata" data frame from "studyid_or_studyids" vector
-      studyid_metadata <- data.frame(STUDYID = studyid_or_studyids)
-
-      # Remove duplicates based on STUDYID
-      studyid_metadata <- studyid_metadata[!duplicated(studyid_metadata$STUDYID), , drop = FALSE]
-
-      # Add a new column for Target_Organ
-      studyid_metadata$Target_Organ <- NA
-
-      # assign "Target_Organ" column values randomly
-      # randomly 50% of the value is Liver and rest are not_Liver
-      set.seed(123)  # Set seed for reproducibility
-      rows_number <- nrow(studyid_metadata)  # Number of rows
-
-      # Randomly sample 50% for "Liver" and rest for "not_Liver"
-      studyid_metadata$Target_Organ <- sample(c("Liver", "not_Liver"), size = rows_number, replace = TRUE, prob = c(0.5, 0.5))
-
-    }
-  }
+  # # process the database to get the "studyid_metadata"------------
+  # if(is.null(studyid_metadata)) {
+  #   if(fake_study) {
+  #     # Extract study ID metadata
+  #     studyid_metadata <- dm[, "STUDYID", drop=FALSE]
+  #
+  #     # Remove duplicates based on STUDYID
+  #     studyid_metadata <- studyid_metadata[!duplicated(studyid_metadata$STUDYID), , drop =FALSE]
+  #
+  #     # Add a new column for Target_Organ
+  #     studyid_metadata$Target_Organ <- NA
+  #
+  #     # assign "Target_Organ" column values randomly
+  #     # randomly 50% of the value is Liver and rest are not_Liver
+  #     set.seed(123)  # Set seed for reproducibility
+  #     rows_number <- nrow(studyid_metadata)  # Number of rows
+  #
+  #     # Randomly sample 50% for "Liver" and rest for "not_Liver"
+  #     studyid_metadata$Target_Organ <- sample(c("Liver", "not_Liver"), size = rows_number, replace = TRUE, prob = c(0.5, 0.5))
+  #
+  #     # View the result
+  #
+  #   } else {
+  #
+  #     # create "studyid_metadata" data frame from "studyid_or_studyids" vector
+  #     studyid_metadata <- data.frame(STUDYID = studyid_or_studyids)
+  #
+  #     # Remove duplicates based on STUDYID
+  #     studyid_metadata <- studyid_metadata[!duplicated(studyid_metadata$STUDYID), , drop = FALSE]
+  #
+  #     # Add a new column for Target_Organ
+  #     studyid_metadata$Target_Organ <- NA
+  #
+  #     # assign "Target_Organ" column values randomly
+  #     # randomly 50% of the value is Liver and rest are not_Liver
+  #     set.seed(123)  # Set seed for reproducibility
+  #     rows_number <- nrow(studyid_metadata)  # Number of rows
+  #
+  #     # Randomly sample 50% for "Liver" and rest for "not_Liver"
+  #     studyid_metadata$Target_Organ <- sample(c("Liver", "not_Liver"), size = rows_number, replace = TRUE, prob = c(0.5, 0.5))
+  #
+  #   }
+  # }
 
   # get_liver_om_lb_mi_tox_score_list(
   calculated_liver_scores <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = studyid_or_studyids,

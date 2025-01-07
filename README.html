@@ -623,7 +623,63 @@ evaluation.</li>
 <li><strong>Visualization Tools</strong>: Includes histograms, bar
 plots, and AUC curves for better data interpretation.</li>
 </ul>
-<h2 id="functions-overview">Functions Overview</h2>
+<h2 id="modular-functions-overview">Modular Functions Overview</h2>
+<ul>
+<li><p><strong>Core Functions</strong>:<br />
+Functions <code>f1</code> to <code>f12</code> are essential components,
+each designed to fulfill a specific role in the overall
+process.</p></li>
+<li><p><strong>Function Dependencies</strong>:</p>
+<ul>
+<li><strong>Function <code>f6</code></strong>: Aggregates outputs from
+<code>f1</code>, <code>f2</code>, <code>f3</code>, <code>f4</code>, and
+<code>f5</code> to produce a data frame.</li>
+<li><strong>Function <code>f7</code></strong>: Utilizes the output from
+<code>f6</code> to generate a new data frame.</li>
+<li><strong>Function <code>f8</code></strong>: Processes the output from
+<code>f7</code> to create another data frame.</li>
+<li><strong>Function <code>f9</code></strong>: Leverages the output from
+<code>f8</code> to generate the <code>random forest</code> performance
+matrix.</li>
+</ul></li>
+<li><p><strong>Random Forest Model Building</strong>:<br />
+To build a <code>random forest model</code> using the function
+<code>get_rf_model_with_cv</code> (referred to as <code>f9</code>), the
+following functions must be executed sequentially to prepare the
+<code>Data</code> argument:<br />
+<code>f1</code>, <code>f2</code>, <code>f3</code>, <code>f4</code>,
+<code>f5</code>, <code>f6</code>, <code>f7</code>, and
+<code>f8</code>.<br />
+Alternatively, the <strong>composite function</strong> <code>f18</code>
+can be used to directly generate the <code>Data</code>
+argument.</p></li>
+<li><p>Functions <code>f10</code>, <code>f11</code>, and
+<code>f12</code> require an input named <code>Data</code>, which is a
+data frame. To create <code>Data</code>, functions <code>f1</code>,
+<code>f2</code>, <code>f3</code>, <code>f4</code>, <code>f5</code>,
+<code>f6</code>, <code>f7</code>, and <code>f8</code> must be called
+sequentially, or alternatively, the <strong>Composite</strong> function
+<code>f18</code> can be used to generate <code>Data</code>
+argument.</p></li>
+<li><p>Detailed descriptions of each function are available in the
+“Articles” section of the <a href="https://aminuldu07.github.io/SENDQSAR/">GitHub-hosted
+website</a>.</p></li>
+</ul>
+<h2 id="composite-functions-overview">Composite Functions Overview</h2>
+<ul>
+<li>Composite functions are created by combining several
+<code>Modular</code> functions to form more complex operations.</li>
+<li>Functions <code>f13</code>, <code>f14</code>, and <code>f15</code>
+are examples of composite functions.</li>
+<li>Function <code>f18</code> is designed to create a
+<code>machine learning-ready</code> data frame by calling the
+<code>f1</code> to <code>f8</code> modular functions (a total of 8
+functions). <code>f18</code> has a optional argument to do hyper
+parameter tuning.</li>
+</ul>
+<h3 id="visualization-functions">Visualization functions</h3>
+<p>-<code>f13</code>, <code>f14</code>, and <code>f15</code> for
+visualization.</p>
 <h3 id="data-acquisition-and-processing">Data Acquisition and
 Processing</h3>
 <ul>
@@ -663,44 +719,69 @@ STUDYIDs.</li>
 <h3 id="machine-learning-preparation-and-modeling">Machine Learning
 Preparation and Modeling</h3>
 <ul>
-<li><strong><code>get_ml_data_and_tuned_hyperparameters</code></strong>
+<li><code>f8</code>
+-<strong><code>get_ml_data_and_tuned_hyperparameters</code></strong>
 <ul>
 <li>Prepares data and tunes hyper parameters for machine learning.</li>
 <li>The input is output data frame from
 <code>get_col_harmonized_scores_df</code>.</li>
 </ul></li>
-<li><strong><code>get_rf_model_with_cv</code></strong>
+<li><code>f9</code> -<strong><code>get_rf_model_with_cv</code></strong>
 <ul>
 <li>Builds a random forest model with cross-validation and outputs
 performance metrics.</li>
 <li>The input is output data frame from
 <code>get_ml_data_and_tuned_hyperparameters</code>.</li>
 </ul></li>
-<li><code>get_zone_exclusioned_rf_model_with_cv</code> - Introduces an
+<li>`<code>f10</code>
+-<code>get_zone_exclusioned_rf_model_with_cv</code> - Introduces an
 indeterminate zone for improved classification accuracy.</li>
-<li><code>get_imp_features_from_rf_model_with_cv</code> - Computes
-feature importance for model interpretation.</li>
-<li><code>get_auc_curve_with_rf_model</code> - Generates AUC curves to
-evaluate model performance.</li>
+<li><code>f11</code>
+-<code>get_imp_features_from_rf_model_with_cv</code> - Computes feature
+importance for model interpretation.</li>
+<li><code>f12</code> -<code>get_auc_curve_with_rf_model</code> -
+Generates AUC curves to evaluate model performance.</li>
+</ul>
+<h3 id="helper-functions">Helper functions</h3>
+<ul>
+<li><code>h1</code> -<code>get_treatment_group_&amp;_dose</code> -
+Retrieve treatment groups from the <code>tx</code> domain</li>
+<li><code>h2</code>
+-<strong><code>get_repeat_dose_parallel_studyids</code></strong>
+<ul>
+<li>Retrieves <code>STUDYID</code>s from the SEND database that
+correspond to both repeat dose and parallel study designs.</li>
+<li>There is an optional argument, <code>rat_studies</code>, that allows
+further filtering to retrieve only “rat” species studies.</li>
+</ul></li>
 </ul>
 <h3 id="visualization-and-reporting">Visualization and Reporting</h3>
 <ul>
-<li><code>get_histogram_barplot</code> - Creates bar plots for target
-variable classes.</li>
-<li><code>get_reprtree_from_rf_model</code> - Builds representative
-decision trees for interpretability.</li>
-<li><code>get_prediction_plot</code> - Visualizes prediction
-probabilities with histograms.</li>
+<li><code>f13</code> -<code>get_histogram_barplot</code> - Creates bar
+plots for target variable classes.</li>
+<li><code>f14</code> -<code>get_reprtree_from_rf_model</code> - Builds
+representative decision trees for interpretability.</li>
+<li><code>f15</code> -<code>get_prediction_plot</code> - Visualizes
+prediction probabilities with histograms.</li>
 </ul>
 <h3 id="automated-pipelines">Automated Pipelines</h3>
 <ul>
-<li><code>get_Data_formatted_for_ml_and_best.m</code> - Formats data for
-machine learning pipelines.</li>
-<li><code>get_rf_input_param_list_output_cv_imp</code> - Automates
-preprocessing, modeling, and evaluation in one step.</li>
-<li><code>get_zone_exclusioned_rf_model_cv_imp</code> - Similar to the
-above function, but excludes uncertain predictions based on
-thresholds.</li>
+<li><code>f16</code> -<code>get_Data_formatted_for_ml_and_best.m</code>
+- Formats data for machine learning pipelines.</li>
+<li><code>f17</code> -<code>get_rf_input_param_list_output_cv_imp</code>
+- Automates pre-processing, modeling, and evaluation in one step.</li>
+<li><code>f18</code> -<code>get_zone_exclusioned_rf_model_cv_imp</code>
+- Similar to the above function, but excludes uncertain predictions
+based on thresholds.</li>
+</ul>
+<h3 id="functions-in-development">Functions in Development</h3>
+<ul>
+<li><code>fx1</code> - <code>get_all_LB_TESTCD_score</code> - Based on
+<code>get_lb_score</code>. This funciton calculates the score for each
+of the LBTESTCD</li>
+<li><code>fx2</code> - <code>get_indiv_score_om_lb_mi_domain_df</code> -
+Calculate and returns <code>Liver To BW ratio</code>, all TESTCD
+<code>LB</code> score, and all <code>MI</code> score</li>
 </ul>
 <h2 id="workflow">Workflow</h2>
 <ol style="list-style-type: decimal">

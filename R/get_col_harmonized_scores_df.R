@@ -37,7 +37,7 @@ get_col_harmonized_scores_df <- function(liver_score_data_frame, Round = FALSE) 
 get_col_harmonized_scores_df <- function(liver_score_data_frame,
                                          Round = FALSE){
 #write.csv(Data, 'mergedData.csv', row.names = F)
-
+browser()
   ###-----------column harmonization of "liver_scores"-------------
   liver_scores <- liver_score_data_frame
   # Replace spaces and commas in column names with dots
@@ -64,18 +64,71 @@ get_col_harmonized_scores_df <- function(liver_score_data_frame,
 
   fn2replace <- fn2replace[-removeIndex]
 
+  #--------------------------------------------------------------------------
   #Harmonize Synonym Columns
+  # for (finding in fn2replace) {
+  #   # Find synonyms matching the current finding
+  #   synonyms <- grep(finding, f2replace, ignore.case = T, value = T)
+  #
+  #   # Process each synonym
+  #   for (synonym in synonyms) {
+  #     index <- which(liver_scores[[synonym]] > 0)
+  #
+  #     # Harmonize values for matching indices
+  #     for (i in index) {
+  #       if (liver_scores[[synonym]][i] > liver_scores[[finding]][i]) {
+  #         liver_scores[[finding]][i] <- liver_scores[[synonym]][i]
+  #       }
+  #     }
+  #   }
+  # }
+ #---------------------------------------------------------------------------
+  browser()
+  # Harmonize Synonym Columns
   for (finding in fn2replace) {
-    synonyms <- grep(finding, f2replace, ignore.case = T, value = T)
+
+    # Find synonyms matching the current finding
+    synonyms <- grep(finding, f2replace, ignore.case = TRUE, value = TRUE)
+
+    # If no synonyms are found, move to the next iteration
+    if (length(synonyms) == 0) {
+      next
+    }
+
+    # Process each synonym
     for (synonym in synonyms) {
+      # Check if columns exist in liver_scores to avoid errors
+      if (!(synonym %in% names(liver_scores)) || !(finding %in% names(liver_scores))) {
+        warning(paste("Missing columns for:", synonym, "or", finding))
+        next
+      }
+
+      # Find indices where the synonym has positive values
       index <- which(liver_scores[[synonym]] > 0)
+
+      # Harmonize values for matching indices
       for (i in index) {
+        # Check index bounds to avoid errors
+        if (i > length(liver_scores[[finding]]) || i > length(liver_scores[[synonym]])) {
+          warning("Index out of bounds for", finding, "or", synonym)
+          next
+        }
+
+        # Update finding values if synonym values are greater
         if (liver_scores[[synonym]][i] > liver_scores[[finding]][i]) {
           liver_scores[[finding]][i] <- liver_scores[[synonym]][i]
         }
       }
     }
   }
+
+  # Return the modified or original liver_scores data frame
+  #return(liver_scores)
+
+
+
+#------------------------------------------------------------------------
+
 
   #Remove Synonym Columns
   liver_scores <- liver_scores[,-findings2replaceIndex]

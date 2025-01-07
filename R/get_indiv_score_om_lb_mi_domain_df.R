@@ -700,7 +700,7 @@ for (studyid in studyid_or_studyids ){
   # Print a message after processing the current studyid
   print(paste("Current iteration for studyid", studyid, "is done."))
 }
-browser()
+
   #---------------------------------------------------------------------------
   #---------------------------------------------------------------------------
   if (all_lb_TESTCD_score) {

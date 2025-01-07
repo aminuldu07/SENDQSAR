@@ -76,6 +76,8 @@ if (rat_studies){
                              WHERE TSPARMCD = 'SPECIES' AND UPPER(TSVAL) LIKE '%RAT%'", queryParams = NULL)
   # Filter the "rat_STUDYID_ts_species" for the PARALLEL STUDYIDs and repeat_dose_STUDYIDs
   rat_parallel_repeat_dose_df <- rat_STUDYID_ts_species[rat_STUDYID_ts_species$STUDYID %in% parallel_repeat_dose_intersec_df$STUDYID, ]
+  # select the "STUDYID" column only
+  rat_parallel_repeat_dose_df  <- rat_parallel_repeat_dose_df[, "STUDYID", drop = FALSE]
 
   # rat_parallel_repeat_dose_studyid_or_studyids <- as.vector(rat_parallel_repeat_dose_df$STUDYID)
   #

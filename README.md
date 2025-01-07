@@ -23,7 +23,54 @@ descriptors and create robust predictive models.
 - **Visualization Tools**: Includes histograms, bar plots, and AUC
   curves for better data interpretation.
 
-## Functions Overview
+## Modular Functions Overview
+
+- **Core Functions**:  
+  Functions `f1` to `f12` are essential components, each designed to
+  fulfill a specific role in the overall process.
+
+- **Function Dependencies**:
+
+  - **Function `f6`**: Aggregates outputs from `f1`, `f2`, `f3`, `f4`,
+    and `f5` to produce a data frame.  
+  - **Function `f7`**: Utilizes the output from `f6` to generate a new
+    data frame.  
+  - **Function `f8`**: Processes the output from `f7` to create another
+    data frame.  
+  - **Function `f9`**: Leverages the output from `f8` to generate the
+    `random forest` performance matrix.
+
+- **Random Forest Model Building**:  
+  To build a `random forest model` using the function
+  `get_rf_model_with_cv` (referred to as `f9`), the following functions
+  must be executed sequentially to prepare the `Data` argument:  
+  `f1`, `f2`, `f3`, `f4`, `f5`, `f6`, `f7`, and `f8`.  
+  Alternatively, the **composite function** `f18` can be used to
+  directly generate the `Data` argument.
+
+- Functions `f10`, `f11`, and `f12` require an input named `Data`, which
+  is a data frame. To create `Data`, functions `f1`, `f2`, `f3`, `f4`,
+  `f5`, `f6`, `f7`, and `f8` must be called sequentially, or
+  alternatively, the **Composite** function `f18` can be used to
+  generate `Data` argument.
+
+- Detailed descriptions of each function are available in the “Articles”
+  section of the [GitHub-hosted
+  website](https://aminuldu07.github.io/SENDQSAR/).
+
+## Composite Functions Overview
+
+- Composite functions are created by combining several `Modular`
+  functions to form more complex operations.
+- Functions `f13`, `f14`, and `f15` are examples of composite functions.
+- Function `f18` is designed to create a `machine learning-ready` data
+  frame by calling the `f1` to `f8` modular functions (a total of 8
+  functions). `f18` has a optional argument to do hyper parameter
+  tuning.
+
+### Visualization functions
+
+\-`f13`, `f14`, and `f15` for visualization.
 
 ### Data Acquisition and Processing
 
@@ -61,38 +108,55 @@ descriptors and create robust predictive models.
 
 ### Machine Learning Preparation and Modeling
 
-- **`get_ml_data_and_tuned_hyperparameters`**
+- `f8` -**`get_ml_data_and_tuned_hyperparameters`**
   - Prepares data and tunes hyper parameters for machine learning.
   - The input is output data frame from `get_col_harmonized_scores_df`.
-- **`get_rf_model_with_cv`**
+- `f9` -**`get_rf_model_with_cv`**
   - Builds a random forest model with cross-validation and outputs
     performance metrics.
   - The input is output data frame from
     `get_ml_data_and_tuned_hyperparameters`.
-- `get_zone_exclusioned_rf_model_with_cv` - Introduces an indeterminate
-  zone for improved classification accuracy.
-- `get_imp_features_from_rf_model_with_cv` - Computes feature importance
-  for model interpretation.
-- `get_auc_curve_with_rf_model` - Generates AUC curves to evaluate model
-  performance.
+- \``f10` -`get_zone_exclusioned_rf_model_with_cv` - Introduces an
+  indeterminate zone for improved classification accuracy.
+- `f11` -`get_imp_features_from_rf_model_with_cv` - Computes feature
+  importance for model interpretation.
+- `f12` -`get_auc_curve_with_rf_model` - Generates AUC curves to
+  evaluate model performance.
+
+### Helper functions
+
+- `h1` -`get_treatment_group_&_dose` - Retrieve treatment groups from
+  the `tx` domain
+- `h2` -**`get_repeat_dose_parallel_studyids`**
+  - Retrieves `STUDYID`s from the SEND database that correspond to both
+    repeat dose and parallel study designs.
+  - There is an optional argument, `rat_studies`, that allows further
+    filtering to retrieve only “rat” species studies.
 
 ### Visualization and Reporting
 
-- `get_histogram_barplot` - Creates bar plots for target variable
+- `f13` -`get_histogram_barplot` - Creates bar plots for target variable
   classes.
-- `get_reprtree_from_rf_model` - Builds representative decision trees
-  for interpretability.
-- `get_prediction_plot` - Visualizes prediction probabilities with
-  histograms.
+- `f14` -`get_reprtree_from_rf_model` - Builds representative decision
+  trees for interpretability.
+- `f15` -`get_prediction_plot` - Visualizes prediction probabilities
+  with histograms.
 
 ### Automated Pipelines
 
-- `get_Data_formatted_for_ml_and_best.m` - Formats data for machine
-  learning pipelines.
-- `get_rf_input_param_list_output_cv_imp` - Automates preprocessing,
-  modeling, and evaluation in one step.
-- `get_zone_exclusioned_rf_model_cv_imp` - Similar to the above
+- `f16` -`get_Data_formatted_for_ml_and_best.m` - Formats data for
+  machine learning pipelines.
+- `f17` -`get_rf_input_param_list_output_cv_imp` - Automates
+  pre-processing, modeling, and evaluation in one step.
+- `f18` -`get_zone_exclusioned_rf_model_cv_imp` - Similar to the above
   function, but excludes uncertain predictions based on thresholds.
+
+### Functions in Development
+
+- `fx1` - `get_all_LB_TESTCD_score` - Based on `get_lb_score`. This
+  funciton calculates the score for each of the LBTESTCD
+- `fx2` - `get_indiv_score_om_lb_mi_domain_df` - Calculate and returns
+  `Liver To BW ratio`, all TESTCD `LB` score, and all `MI` score
 
 ## Workflow
 

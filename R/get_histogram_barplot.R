@@ -53,20 +53,20 @@
 
 
 get_histogram_barplot <- function(Data =NULL,
-                           generateBarPlot= FALSE,
-                           path_db=FALSE,
-                           rat_studies=FALSE,
-                           studyid_metadata,
-                           fake_study = FALSE,
-                           use_xpt_file = FALSE,
-                           Round = FALSE,
-                           output_individual_scores = TRUE,
-                           output_zscore_by_USUBJID = FALSE){
+                                  generateBarPlot= FALSE,
+                                  path_db=FALSE,
+                                  rat_studies=FALSE,
+                                  studyid_metadata,
+                                  fake_study = FALSE,
+                                  use_xpt_file = FALSE,
+                                  Round = FALSE,
+                                  output_individual_scores = TRUE,
+                                  utput_zscore_by_USUBJID = FALSE){
 
   Data <- Data
 
   studyid_metadata <- studyid_metadata
-browser()
+
   # Generate data if not provided
   if (is.null(Data)) {
 
@@ -117,11 +117,13 @@ browser()
         # For the real data in SQLite database
         # filter for the repeat-dose and parallel studyids
 
+        # 'parallel_repeatdose_df' is a data frame with one column "STUDYID"
         parallel_repeatdose_df <- get_repeat_dose_parallel_studyids(path_db=path_db,
-                                                                 rat_studies = rat_studies)
+                                                                    rat_studies = rat_studies)
         # Now, filter the "studyid_or_studyids" for the studyids
         # present in the "studyid_metadata
-        studyid_or_studyids <- parallel_repeatdose_df[parallel_repeatdose_df$STUDYID %in% studyid_metadata$STUDYID, ]
+
+        studyid_or_studyids <- parallel_repeatdose_df[parallel_repeatdose_df$STUDYID %in% studyid_metadata$STUDYID,  ]
 
       }
     }
@@ -171,7 +173,7 @@ browser()
       Value <- c(Value, mean(Data[which(Data$Target_Organ != "Liver"), finding], na.rm = T))
 
     }
-browser()
+
     plotData <- as.data.frame(cbind(Finding, LIVER, Value))
     plotData$LIVER <- factor(plotData$LIVER)
     plotData$Finding <- factor(plotData$Finding)
