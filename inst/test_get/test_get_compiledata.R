@@ -1,9 +1,10 @@
 rm(list = ls())
+#library(SENDQSAR)
 
 ##### Aminul islam prodhan
 
 #setwd("C:/Users/mdaminulisla.prodhan/OneDrive - FDA/2023-2024_projects/send-summarizer")
-devtools::load_all(".")
+devtools::load_all()
 
 ##### compile_data_----------------------------
 R_SQL_compile_data <- get_compile_data(studyid='5003635',

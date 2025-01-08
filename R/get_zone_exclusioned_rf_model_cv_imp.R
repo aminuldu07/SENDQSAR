@@ -57,7 +57,7 @@
 
 
 
-get_rf_model_output_cv_imp <- function(scores_df=NULL,
+get_rf_model_output_cv_imp <- function(scores_data_df,
                                       Undersample = FALSE,
                                       best.m = NULL, # any numeric value or call function to get it
                                       testReps, # testRps must be at least 2;
@@ -66,7 +66,7 @@ get_rf_model_output_cv_imp <- function(scores_df=NULL,
                                       Type,
                                       nTopImportance) {
 
-  rfData <- scores_df
+  rfData <- scores_data_df
     #---------------------------------------------------------------------
     # Initialize model performance metric trackers------------------------
     #---------------------------------------------------------------------

@@ -63,7 +63,7 @@
 #' @import caret
 
 
-get_zone_exclusioned_rf_model_with_cv <- function(Data=NULL, #scores_df
+get_zone_exclusioned_rf_model_with_cv <- function(scores_data_df, #scores_df
                                       Undersample = FALSE,
                                       best.m = NULL, # any numeric value or call function to get it
                                       testReps, # testRps must be at least 2;
@@ -71,7 +71,7 @@ get_zone_exclusioned_rf_model_with_cv <- function(Data=NULL, #scores_df
                                       indeterminateLower,
                                       Type) {
 
-    rfData <- Data #rfData <- scores_df
+    rfData <- scores_data_df #rfData <- scores_df
     #---------------------------------------------------------------------
     # Initialize model performance metric trackers------------------------
     #---------------------------------------------------------------------

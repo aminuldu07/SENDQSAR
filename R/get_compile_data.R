@@ -39,7 +39,7 @@ get_compile_data <- function(studyid = NULL,
                              path_db,
                              fake_study = FALSE,
                              use_xpt_file = FALSE) {
-
+browser()
   studyid <- as.character(studyid)
   path <- path_db
 

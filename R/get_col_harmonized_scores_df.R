@@ -34,10 +34,14 @@ get_col_harmonized_scores_df <- function(liver_score_data_frame, Round = FALSE) 
 }
 
 
+
+
+
 get_col_harmonized_scores_df <- function(liver_score_data_frame,
                                          Round = FALSE){
-#write.csv(Data, 'mergedData.csv', row.names = F)
-browser()
+
+  #write.csv(Data, 'mergedData.csv', row.names = F)
+
   ###-----------column harmonization of "liver_scores"-------------
   liver_scores <- liver_score_data_frame
   # Replace spaces and commas in column names with dots
@@ -45,6 +49,11 @@ browser()
   colnames(liver_scores) <- gsub(',', '.', colnames(liver_scores))
   colnames(liver_scores) <- gsub('/', '.', colnames(liver_scores))
 
+  # Standardize column names in 'liver_scores' by replacing invalid characters (e.g., spaces, +, -, /) with dots (.)
+  # and ensuring all names are syntactically valid and unique for safe access in R.
+  colnames(liver_scores) <- make.names(colnames(liver_scores))
+
+  # Replace all NA (missing) values in the 'liver_scores' data frame with '0'
   liver_scores[is.na(liver_scores)] <- 0
 
   #Identify Columns with Periods
@@ -83,7 +92,7 @@ browser()
   #   }
   # }
  #---------------------------------------------------------------------------
-  browser()
+
   # Harmonize Synonym Columns
   for (finding in fn2replace) {
 

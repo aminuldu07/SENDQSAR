@@ -179,7 +179,7 @@ get_all_TESTCD_rf_input_param_list_output_cv_imp <- function(path_db,
 
 
 
-  indiv_rfData_and_best_m <- get_ml_data_and_tuned_hyperparameters( scores_df = indiv_column_harmonized_liverscr_df,
+  indiv_rfData_and_best_m <- get_ml_data_and_tuned_hyperparameters( Data = indiv_column_harmonized_liverscr_df,
                                                             studyid_metadata = studyid_metadata,
                                                             Impute = Impute,
                                                             Round = Round,
@@ -191,27 +191,40 @@ get_all_TESTCD_rf_input_param_list_output_cv_imp <- function(path_db,
 
 
 
-  rfData <- rfData_and_best_m[["rfData"]]
+  rfData <- indiv_rfData_and_best_m [["rfData"]]
 
   # best.m input handling------------------------------------------------
   if(is.null(best.m)){
-    best.m <- rfData_and_best_m[["best.m"]]
+    best.m <- indiv_rfData_and_best_m [["best.m"]]
     } else {
     best.m <- best.m
   }
 
 
-  train_and_evaluate_rf_model <- get_rf_model_with_cv (scores_data_df = rfData,
+  # train_and_evaluate_rf_model <- get_rf_model_with_cv (scores_data_df = rfData,
+  #                                                    Undersample = Undersample,
+  #                                                     best.m = best.m ,
+  #                                                     testReps = testReps,
+  #                                                     indeterminateUpper = indeterminateUpper,
+  #                                                     indeterminateLower = indeterminateLower,
+  #                                                      Type = Type ,
+  #                                                      nTopImportance =  nTopImportance)
+
+indiv_train_and_evaluate_rf_model <- get_rf_model_with_cv (scores_data_df = rfData,
                                                      Undersample = Undersample,
-                                                      best.m = best.m ,
-                                                      testReps = testReps,
-                                                      indeterminateUpper = indeterminateUpper,
-                                                      indeterminateLower = indeterminateLower,
-                                                       Type = Type ,
-                                                       nTopImportance =  nTopImportance)
+                                                     best.m = best.m ,
+                                                     testReps = testReps,
+                                                     Type = Type)
 
 
 
-return(train_and_evaluate_rf_model)
+rf_model_performance <- get_zone_exclusioned_rf_model_with_cv (scores_data_df =rfData, #scores_df
+                                                              Undersample = Undersample,
+                                                              best.m = best.m , # any numeric value or call function to get it
+                                                              testReps=testReps, # testRps must be at least 2;
+                                                              indeterminateUpper=indeterminateUpper,
+                                                              indeterminateLower=indeterminateLower,
+                                                              Type=Type)
+return(rf_model_performance)
 
 }
