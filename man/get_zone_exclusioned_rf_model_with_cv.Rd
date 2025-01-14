@@ -5,7 +5,7 @@
 \title{Random Forest Model with Cross-validation and Exclusion}
 \usage{
 get_zone_exclusioned_rf_model_with_cv(
-  Data = NULL,
+  scores_data_df,
   Undersample = FALSE,
   best.m = NULL,
   testReps,
@@ -15,9 +15,6 @@ get_zone_exclusioned_rf_model_with_cv(
 )
 }
 \arguments{
-\item{Data}{A data frame containing the features and the target variable \code{Target_Organ}
-to train the Random Forest model on.}
-
 \item{Undersample}{A logical value indicating whether to perform undersampling to
 balance the classes in the training data. Defaults to \code{FALSE}.}
 
@@ -38,6 +35,9 @@ probabilities within this range are marked as indeterminate.}
 
 \item{Type}{An integer indicating the type of feature importance to use in the
 Random Forest model. Typically, \code{1} for "Mean Decrease Accuracy" or \code{2} for "Mean Decrease Gini".}
+
+\item{Data}{A data frame containing the features and the target variable \code{Target_Organ}
+to train the Random Forest model on.}
 }
 \value{
 A list containing two components:

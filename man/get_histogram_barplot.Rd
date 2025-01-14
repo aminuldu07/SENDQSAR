@@ -14,7 +14,7 @@ get_histogram_barplot(
   use_xpt_file = FALSE,
   Round = FALSE,
   output_individual_scores = TRUE,
-  output_zscore_by_USUBJID = FALSE
+  utput_zscore_by_USUBJID = FALSE
 )
 }
 \arguments{

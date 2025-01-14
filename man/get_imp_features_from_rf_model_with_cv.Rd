@@ -5,7 +5,7 @@
 \title{Get Important Features from Random Forest Model with Cross-Validation}
 \usage{
 get_imp_features_from_rf_model_with_cv(
-  Data = NULL,
+  scores_data_df,
   Undersample = FALSE,
   best.m = NULL,
   testReps,
@@ -14,8 +14,6 @@ get_imp_features_from_rf_model_with_cv(
 )
 }
 \arguments{
-\item{Data}{A data frame containing the training data (rows as samples, columns as features). The first column is assumed to be the target variable.}
-
 \item{Undersample}{A logical value indicating whether to apply under-sampling to balance the classes in the training data. Default is \code{FALSE}.}
 
 \item{best.m}{A numeric value representing the number of variables to consider at each split of the Random Forest model (or a function to determine this). Default is \code{NULL}.}
@@ -25,6 +23,8 @@ get_imp_features_from_rf_model_with_cv(
 \item{Type}{A numeric value indicating the type of importance to be calculated. \code{1} for Mean Decrease Accuracy and \code{2} for Mean Decrease Gini.}
 
 \item{nTopImportance}{A numeric value indicating the number of top important features to return based on their importance scores.}
+
+\item{Data}{A data frame containing the training data (rows as samples, columns as features). The first column is assumed to be the target variable.}
 }
 \value{
 A list containing:

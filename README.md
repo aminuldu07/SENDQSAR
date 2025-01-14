@@ -1,8 +1,8 @@
 SENDQSAR
 ================
 
-- [SENDQSAR: QSAR Modeling with SEND
-  Database](#sendqsar-qsar-modeling-with-send-database)
+- [SENDQSAR: A `R Package` for `QSAR Modeling` with
+  `SEND Database`](#sendqsar-a-r-package-for-qsar-modeling-with-send-database)
   - [About](#about)
   - [Features](#features)
   - [Workflow](#workflow)
@@ -16,7 +16,7 @@ SENDQSAR
   - [License](#license)
   - [Contact](#contact)
 
-# SENDQSAR: QSAR Modeling with SEND Database
+# SENDQSAR: A `R Package` for `QSAR Modeling` with `SEND Database`
 
 ## About
 
@@ -44,14 +44,17 @@ SENDQSAR
 
 ## Workflow
 
-- **Input Database Path**: Provide the database path containing
-  nonclinical study results for each STUDYID.
+- **Input Database Path**: Provide the path for database or `.xpt` files
+  containing nonclinical study data in `SEND` format.
 - **Data Pre processing**: Use functions `f1` to `f8` to clean,
-  harmonize, and prepare data.
-- **Model Building**: Employ machine learning functions (`f9` to `f18`)
-  for training, validation, and evaluation.
+  harmonize, and prepare data for Machine Learning (ML).
+- **Model Building**: Employ ML functions (`f9` to `f18`) for ML model
+  training and evaluation.
 - **Visualization**: Generate plots and performance metrics for better
-  interpretation.
+  interpretation (`f12` to `f15`).
+- **Automated Pipelines**: Use functions `f15` to `f18` to perform the
+  above workflows in A single step by providing the database path and a
+  `.csv` file containing the label (TOXIC/NON-TOXIC) of the `STUDYID`.
 
 ## Modular Functions Overview
 
@@ -87,21 +90,29 @@ SENDQSAR
 
 - **Machine Learning Model Building and Performance Evaluation**:
 
-  - `f9`: `get_rf_model_with_cv` - Builds a random forest model with
-    cross-validation (depends on `f8`).
+  - **Model Training**
+    - `f9`: `get_rf_model_with_cv`
+      - Builds a random forest model with cross-validation (depends on
+        `f8`).
+  - **Improved Classification Accuracy**
+    - `f10`: `get_zone_exclusioned_rf_model_with_cv`
+      - Enhances classification accuracy by excluding uncertain
+        predictions (depends on `f8`).
+  - **Feature Importance**
+    - `f11`: `get_imp_features_from_rf_model_with_cv`
+      - Computes feature importance for model interpretation.
+  - **Model Performance Visualization**
+    - `f12`: `get_auc_curve_with_rf_model`
+      - Generates AUC curves to evaluate model performance.
 
-  - `f10`: `get_zone_exclusioned_rf_model_with_cv` - Enhances
-    classification accuracy by excluding uncertain predictions (depends
-    on `f8`).
+#### Notes for MOdular Functions
 
-  - `f11`: `get_imp_features_from_rf_model_with_cv` - Computes feature
-    importance for model interpretation.
-
-  - `f12`: `get_auc_curve_with_rf_model`- Generates AUC curves to
-    evaluate model performance.
-
-- **N.B** :
-
+- **Data Preparation**
+  - Functions `f1` to `f8` must be executed sequentially to prepare the
+    `Data` argument required by these functions.  
+  - Alternatively, the **composite function** `f18` can be used to
+    directly generate the `Data` argument, combining the functionality
+    of `f1` to `f8`.
   - For `f9`, `f10`, `f11`, and `f12`, Functions `f1`, `f2`, `f3`, `f4`,
     `f5`, `f6`, `f7`, and `f8`must be executed sequentially to prepare
     the `Data` argument. Alternatively, the **composite function** `f18`

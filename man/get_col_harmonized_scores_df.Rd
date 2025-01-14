@@ -15,6 +15,7 @@ If TRUE, certain liver-related columns are floored and capped, and histology-rel
 }
 \value{
 A data frame with harmonized liver scores, optional rounding, and columns reordered based on their sums.
+First column is "STUDYID",  followed by columns with score values.
 }
 \description{
 This function harmonizes liver score data by cleaning column names,

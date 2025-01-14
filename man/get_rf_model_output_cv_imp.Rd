@@ -5,7 +5,7 @@
 \title{Perform Cross-Validation with Random Forest and Feature Importance Calculation}
 \usage{
 get_rf_model_output_cv_imp(
-  scores_df = NULL,
+  scores_data_df,
   Undersample = FALSE,
   best.m = NULL,
   testReps,
@@ -16,8 +16,6 @@ get_rf_model_output_cv_imp(
 )
 }
 \arguments{
-\item{scores_df}{A data frame containing the features and target variable for training and testing the model.}
-
 \item{Undersample}{A logical flag indicating whether to apply undersampling to the training data. Defaults to \code{FALSE}.}
 
 \item{best.m}{A numeric value representing the number of features to sample for the Random Forest model, or \code{NULL} to calculate it automatically.}
@@ -31,6 +29,8 @@ get_rf_model_output_cv_imp(
 \item{Type}{An integer specifying the type of importance to compute. \code{1} for MeanDecreaseAccuracy, \code{2} for MeanDecreaseGini.}
 
 \item{nTopImportance}{An integer specifying the number of top features to display based on their importance scores.}
+
+\item{scores_df}{A data frame containing the features and target variable for training and testing the model.}
 }
 \value{
 A list with the following elements:

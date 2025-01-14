@@ -39,7 +39,7 @@ get_compile_data <- function(studyid = NULL,
                              path_db,
                              fake_study = FALSE,
                              use_xpt_file = FALSE) {
-browser()
+
   studyid <- as.character(studyid)
   path <- path_db
 
@@ -445,7 +445,7 @@ browser()
                                                    "DOSE_RANKING",
                                                    "SETCD")]
 
-    # Rename the "DOSE_RANKING" column to ARMCD
+      # Rename the "DOSE_RANKING" column to ARMCD
     # Rename "DOSE_RANKING" to "ARMCD" in master_compiledata
     master_compiledata <- master_compiledata1 %>%
       dplyr::rename(ARMCD = DOSE_RANKING)

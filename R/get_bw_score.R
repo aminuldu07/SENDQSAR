@@ -48,6 +48,11 @@ get_bw_score <- function(studyid = NULL,
                          return_individual_scores = FALSE,
                          return_zscore_by_USUBJID = FALSE) {
 
+  # Enforce mutual exclusivity: If both are TRUE, throw an error or handle it
+  if (return_individual_scores && return_zscore_by_USUBJID) {
+    stop("Error: Both 'return_individual_scores' and 'return_zscore_by_USUBJID' cannot be TRUE at the same time.")
+  }
+
   studyid <- as.character(studyid)
   path <- path_db
 
@@ -355,11 +360,6 @@ if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
 
     as.data.frame(HD_BWzScore)
 
-
-    # Enforce mutual exclusivity: If both are TRUE, throw an error or handle it
-    if (return_individual_scores && return_zscore_by_USUBJID) {
-      stop("Error: Both 'return_individual_scores' and 'return_zscore_by_USUBJID' cannot be TRUE at the same time.")
-    }
 
   if (return_individual_scores){
 

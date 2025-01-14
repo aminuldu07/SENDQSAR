@@ -13,13 +13,14 @@ get_ml_data_and_tuned_hyperparameters(
   holdback,
   Undersample = FALSE,
   hyperparameter_tuning = FALSE,
-  error_correction_method = NULL
+  error_correction_method = "None"
 )
 }
 \arguments{
-\item{Data}{data.frame. Input data frame containing scores, typically named \code{scores_df}.}
+\item{Data}{data.frame. Input data frame containing scores, typically named \code{scores_df}.
+First column is "STUDYID", followed by columns with score values.}
 
-\item{studyid_metadata}{data.frame. Metadata containing \code{STUDYID} values, used for joining with \code{Data}.}
+\item{studyid_metadata}{data.frame. Metadata containing \code{STUDYID} and \code{Target_Organ}.}
 
 \item{Impute}{logical. Indicates whether to impute missing values in the dataset using random forest imputation. Default is \code{FALSE}.}
 
@@ -33,7 +34,7 @@ get_ml_data_and_tuned_hyperparameters(
 
 \item{hyperparameter_tuning}{logical. Specifies whether to perform hyperparameter tuning for the random forest model. Default is \code{FALSE}.}
 
-\item{error_correction_method}{character. Specifies the method for error correction. Can be \code{"Flip"}, \code{"Prune"}, or \code{NULL}. Default is \code{NULL}.}
+\item{error_correction_method}{character. Specifies the method for error correction. Can be \code{"Flip"}, \code{"Prune"}, or \code{None}. Default is \code{None}.}
 }
 \value{
 A list containing:

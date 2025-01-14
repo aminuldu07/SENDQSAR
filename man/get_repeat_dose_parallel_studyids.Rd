@@ -12,10 +12,10 @@ get_repeat_dose_parallel_studyids(path_db, rat_studies = FALSE)
 \item{rat_studies}{A logical flag indicating whether to filter the studies for rats only. Defaults to \code{FALSE}.}
 }
 \value{
-A vector of study IDs that meet the specified criteria. This includes:
+A Data frame having the STUDYID that meet the specified criteria. This includes:
 \itemize{
-\item Study IDs that match both the parallel design and repeat-dose toxicity criteria.
-\item Optionally, study IDs that match rat species if \code{rat_studies = TRUE}.
+\item STUDYIDs that match both the parallel design and repeat-dose toxicity criteria.
+\item Optionally, STUDYIDs that match rat species if \code{rat_studies = TRUE}.
 }
 }
 \description{
@@ -25,10 +25,10 @@ It optionally filters the studies for rat species.
 \examples{
 \dontrun{
   # Example without filtering for rat studies
-  study_ids <- get_repeat_dose_parallel_studyids(path_db = "path/to/database.sqlite")
+  parallel_repeat_dose_df <- get_repeat_dose_parallel_studyids(path_db = "path/to/database.sqlite")
 
   # Example with filtering for rat studies
-  study_ids_rats <- get_repeat_dose_parallel_studyids(path_db = "path/to/database.sqlite", rat_studies = TRUE)
+  rat_parallel_repeat_dose_df <- get_repeat_dose_parallel_studyids(path_db = "path/to/database.sqlite", rat_studies = TRUE)
 }
 
 }

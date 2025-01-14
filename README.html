@@ -603,8 +603,9 @@ padding-top: 0px;
 
 <h1 id="sendqsar">SENDQSAR</h1>
 <ul>
-<li><a href="#sendqsar-qsar-modeling-with-send-database">SENDQSAR: QSAR
-Modeling with SEND Database</a>
+<li><a href="#sendqsar-a-r-package-for-qsar-modeling-with-send-database">SENDQSAR:
+A <code>R Package</code> for <code>QSAR Modeling</code> with
+<code>SEND Database</code></a>
 <ul>
 <li><a href="#about">About</a></li>
 <li><a href="#features">Features</a></li>
@@ -622,8 +623,9 @@ Development</a></li>
 <li><a href="#contact">Contact</a></li>
 </ul></li>
 </ul>
-<h1 id="sendqsar-qsar-modeling-with-send-database">SENDQSAR: QSAR
-Modeling with SEND Database</h1>
+<h1 id="sendqsar-a-r-package-for-qsar-modeling-with-send-database">SENDQSAR:
+A <code>R Package</code> for <code>QSAR Modeling</code> with
+<code>SEND Database</code></h1>
 <h2 id="about">About</h2>
 <ul>
 <li>This package facilitates developing Quantitative Structure-Activity
@@ -652,15 +654,22 @@ interpretation.</li>
 </ul>
 <h2 id="workflow">Workflow</h2>
 <ul>
-<li><strong>Input Database Path</strong>: Provide the database path
-containing nonclinical study results for each STUDYID.</li>
+<li><strong>Input Database Path</strong>: Provide the path for database
+or <code>.xpt</code> files containing nonclinical study data in
+<code>SEND</code> format.</li>
 <li><strong>Data Pre processing</strong>: Use functions <code>f1</code>
-to <code>f8</code> to clean, harmonize, and prepare data.</li>
-<li><strong>Model Building</strong>: Employ machine learning functions
-(<code>f9</code> to <code>f18</code>) for training, validation, and
+to <code>f8</code> to clean, harmonize, and prepare data for Machine
+Learning (ML).</li>
+<li><strong>Model Building</strong>: Employ ML functions
+(<code>f9</code> to <code>f18</code>) for ML model training and
 evaluation.</li>
 <li><strong>Visualization</strong>: Generate plots and performance
-metrics for better interpretation.</li>
+metrics for better interpretation (<code>f12</code> to
+<code>f15</code>).</li>
+<li><strong>Automated Pipelines</strong>: Use functions <code>f15</code>
+to <code>f18</code> to perform the above workflows in A single step by
+providing the database path and a <code>.csv</code> file containing the
+label (TOXIC/NON-TOXIC) of the <code>STUDYID</code>.</li>
 </ul>
 <h2 id="modular-functions-overview">Modular Functions Overview</h2>
 <ul>
@@ -701,21 +710,50 @@ tunes hyper parameters for machine learning (depends on
 <li><p><strong>Machine Learning Model Building and Performance
 Evaluation</strong>:</p>
 <ul>
-<li><p><code>f9</code>: <code>get_rf_model_with_cv</code> - Builds a
-random forest model with cross-validation (depends on
-<code>f8</code>).</p></li>
-<li><p><code>f10</code>:
-<code>get_zone_exclusioned_rf_model_with_cv</code> - Enhances
-classification accuracy by excluding uncertain predictions (depends on
-<code>f8</code>).</p></li>
-<li><p><code>f11</code>:
-<code>get_imp_features_from_rf_model_with_cv</code> - Computes feature
-importance for model interpretation.</p></li>
-<li><p><code>f12</code>: <code>get_auc_curve_with_rf_model</code>-
-Generates AUC curves to evaluate model performance.</p></li>
-</ul></li>
-<li><p><strong>N.B</strong> :</p>
+<li><strong>Model Training</strong>
 <ul>
+<li><code>f9</code>: <code>get_rf_model_with_cv</code>
+<ul>
+<li>Builds a random forest model with cross-validation (depends on
+<code>f8</code>).</li>
+</ul></li>
+</ul></li>
+<li><strong>Improved Classification Accuracy</strong>
+<ul>
+<li><code>f10</code>: <code>get_zone_exclusioned_rf_model_with_cv</code>
+<ul>
+<li>Enhances classification accuracy by excluding uncertain predictions
+(depends on <code>f8</code>).</li>
+</ul></li>
+</ul></li>
+<li><strong>Feature Importance</strong>
+<ul>
+<li><code>f11</code>:
+<code>get_imp_features_from_rf_model_with_cv</code>
+<ul>
+<li>Computes feature importance for model interpretation.</li>
+</ul></li>
+</ul></li>
+<li><strong>Model Performance Visualization</strong>
+<ul>
+<li><code>f12</code>: <code>get_auc_curve_with_rf_model</code>
+<ul>
+<li>Generates AUC curves to evaluate model performance.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<h4 id="notes-for-modular-functions">Notes for MOdular Functions</h4>
+<ul>
+<li><strong>Data Preparation</strong>
+<ul>
+<li>Functions <code>f1</code> to <code>f8</code> must be executed
+sequentially to prepare the <code>Data</code> argument required by these
+functions.</li>
+<li>Alternatively, the <strong>composite function</strong>
+<code>f18</code> can be used to directly generate the <code>Data</code>
+argument, combining the functionality of <code>f1</code> to
+<code>f8</code>.</li>
 <li>For <code>f9</code>, <code>f10</code>, <code>f11</code>, and
 <code>f12</code>, Functions <code>f1</code>, <code>f2</code>,
 <code>f3</code>, <code>f4</code>, <code>f5</code>, <code>f6</code>,

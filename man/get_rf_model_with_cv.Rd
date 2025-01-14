@@ -4,12 +4,15 @@
 \alias{get_rf_model_with_cv}
 \title{Random Forest with Cross-Validation}
 \usage{
-get_rf_model_with_cv(Data, Undersample = FALSE, best.m = NULL, testReps, Type)
+get_rf_model_with_cv(
+  scores_data_df,
+  Undersample = FALSE,
+  best.m = NULL,
+  testReps,
+  Type
+)
 }
 \arguments{
-\item{Data}{Mandatory, data frame
-The input dataset, which must include a column named \code{Target_Organ} as the response variable.}
-
 \item{Undersample}{Optional, logical
 If \code{TRUE}, balances the dataset by undersampling the majority class. Default is \code{FALSE}.}
 
@@ -21,6 +24,10 @@ The number of cross-validation repetitions. Must be at least 2.}
 
 \item{Type}{Mandatory, numeric
 Specifies the importance metric type: \code{1} for Mean Decrease Accuracy or \code{2} for Gini.}
+
+\item{Data}{Mandatory, data frame
+#' First column is \code{Target_Organ}, followed by columns with score values.
+The input dataset, which must include a column named \code{Target_Organ} as the response variable.}
 }
 \value{
 A list with the following elements:
