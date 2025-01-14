@@ -663,6 +663,9 @@ for (studyid in studyid_or_studyids ){
   #---------------------------------------------------------------------------
 
   if (output_individual_scores) {
+    print(head(master_liverToBW))
+    print(head(master_lb_score_six))
+    print(head(master_mi_df))
 
     # Perform the merge using full_join to keep all rows from each data frame
     combined_output_individual_scores <- master_liverToBW %>%
