@@ -45,10 +45,10 @@ Imports:
     glue,
     matrixStats,
     magrittr,
-    haven
+    haven,
+    reprtree
 Remotes: 
     araastat/reprtree
-   
 Suggests: 
     knitr,
     rmarkdown,
