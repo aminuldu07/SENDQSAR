@@ -660,8 +660,14 @@ for (studyid in studyid_or_studyids ){
 }
 
   print(head(master_liverToBW))
-  print(head(master_lb_score_six))
-  print(head(master_mi_df))
+
+  # Print to see the dataframe
+  if(output_individual_scores){
+    print(head(master_lb_score_six))
+    print(head(master_mi_df))
+
+  }
+
 
   #---------------------------------------------------------------------------
   #---------------------------------------------------------------------------
