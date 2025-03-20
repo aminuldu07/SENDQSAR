@@ -265,6 +265,12 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
     # Check the data types of the columns before conversion
     #str(mi_CompileData)
 
+    # Check if the number of column is equal to 6
+    if (ncol(final_working_compile_data_afer_normal) == 6) {
+      stop("Error: MI domain does not have any finding.")
+    }
+
+
     #####-------------------- check the number~~~~~~~~~~~~~~~~~~~~~~~~~
 
     # Convert columns 7 to the last column  of mi_CompileData to numeric
@@ -278,10 +284,6 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
 
     # Here Check the number of columns in mi_CompileData
 
-    # Check if the number of column is equal to 6
-    if (ncol(mi_CompileData) == 6) {
-      stop("Error: MI domain does not have any finding.")
-    }
 
     # if mi_CompileData has finding meaning has more that six column.
 
