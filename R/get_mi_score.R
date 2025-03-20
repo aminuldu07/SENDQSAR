@@ -192,6 +192,14 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
     MIData_cleaned <- tk_recovery_less_MIData_with_ARMCD
     MIData_cleaned_copy <- MIData_cleaned
 
+    # Check the ARMCD column of the "MIData_cleaned"
+    if (all(MIData_cleaned$ARMCD == "VEHICLE" |
+            MIData_cleaned$ARMCD == "vehicle" |
+            MIData_cleaned$ARMCD == "Vehicle")) {
+      stop("Error: The ARMCD column contains only 'VEHICLE' indicating no
+           MI findings are available for score calculation for this STUDYID.")
+    }
+
     # cat("MIData_cleaned : \n", toString(head(MIData_cleaned)), "\nDimensions:",
     #     paste(dim(MIData_cleaned), collapse = 'x'), "\n") .
 
@@ -269,6 +277,13 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
     print_mi_CompileData <- mi_CompileData
 
     # Here Check the number of columns in mi_CompileData
+
+    # Check if the number of column is equal to 6
+    if (ncol(mi_CompileData) == 6) {
+      stop("Error: MI domain does not have any finding.")
+    }
+
+    # if mi_CompileData has finding meaning has more that six column.
 
     if (ncol(mi_CompileData) > 6) {
       #Calculate Incidence per group for MI Data
@@ -465,6 +480,7 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
         ScoredData_subset_HD[, 7:ncol(ScoredData_subset_HD)],
         function(x) as.numeric(as.character(x))
       )
+
 
       # Check the number of columns
       num_cols_ScoredData_subset_HD <- ncol(ScoredData_subset_HD)
