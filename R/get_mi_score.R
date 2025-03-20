@@ -234,7 +234,7 @@ cat("The dimension of 'mi' domain is:", dim(mi), "\n")
 
 
 
-    # # Reshape the data (pivot the dataframe) # "2170017" has perls prussiona blue ==0 but after decast 1.
+    # # Reshape the data (pivot the dataframe)
     MIData_cleaned_SColmn <- reshape2::dcast(MIData_cleaned_SColmn_fDecasting, USUBJID ~ MISTRESC, value.var = "MISEV")
     #MIData_cleaned_SColmn_data_t <- data.table::dcast(MIData_cleaned_SColmn_fDecasting, USUBJID ~ MISTRESC, value.var = "MISEV")
     #MIData_cleaned_SColmn_tidyr <- tidyr::pivot_wider(MIData_cleaned_SColmn_fDecasting, names_from = MISTRESC, values_from = MISEV)
