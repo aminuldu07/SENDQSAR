@@ -407,6 +407,7 @@ for (studyid in studyid_or_studyids ){
       # Use the study_identifier as the list index
       master_liverToBW[[as.character(liverTOBW_study_identifier)]] <- liverTOBW_zscore_by_USUBJID_HD
 
+
       } else {
 
       # Set 'studyid' to NULL if using an XPT file, otherwise keep the original value.
@@ -659,7 +660,7 @@ for (studyid in studyid_or_studyids ){
 
 }
 
-  print(head(master_liverToBW))
+    #### print(head(master_liverToBW))
 
   # Print to see the dataframe
   if(output_individual_scores){
