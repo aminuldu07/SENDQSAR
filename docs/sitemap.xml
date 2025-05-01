@@ -31,6 +31,8 @@
 <url><loc>https://aminuldu07.github.io/SENDQSAR/authors.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/index.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/LICENSE-text.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_all_lb_TESTCD_zscore.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_all_TESTCD_rf_input_param_list_output_cv_imp.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_auc_curve_with_rf_model.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_bw_score.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_col_harmonized_scores_df.html</loc></url>
@@ -38,6 +40,7 @@
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_Data_formatted_for_ml_and_best.m.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_histogram_barplot.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_imp_features_from_rf_model_with_cv.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_indiv_score_om_lb_mi_domain_df.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_lb_score.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_livertobw_score.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_liver_om_lb_mi_tox_score_list.html</loc></url>
@@ -49,6 +52,7 @@
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_rf_input_param_list_output_cv_imp.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_rf_model_output_cv_imp.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_rf_model_with_cv.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_treatment_group_amin.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_zone_exclusioned_rf_model_with_cv.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/index.html</loc></url>
 </urlset>

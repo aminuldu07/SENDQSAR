@@ -72,7 +72,7 @@ importance rankings after a specified number of test repetitions.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_rf_model_output_cv_imp</span><span class="op">(</span></span>
-<span>  scores_df <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">scores_data_df</span>,</span>
 <span>  Undersample <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  best.m <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">testReps</span>,</span>
@@ -87,11 +87,7 @@ importance rankings after a specified number of test repetitions.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-scores-df">scores_df<a class="anchor" aria-label="anchor" href="#arg-scores-df"></a></dt>
-<dd><p>A data frame containing the features and target variable for training and testing the model.</p></dd>
-
-
-<dt id="arg-undersample">Undersample<a class="anchor" aria-label="anchor" href="#arg-undersample"></a></dt>
+<dl><dt id="arg-undersample">Undersample<a class="anchor" aria-label="anchor" href="#arg-undersample"></a></dt>
 <dd><p>A logical flag indicating whether to apply undersampling to the training data. Defaults to <code>FALSE</code>.</p></dd>
 
 
@@ -117,6 +113,10 @@ importance rankings after a specified number of test repetitions.</p>
 
 <dt id="arg-ntopimportance">nTopImportance<a class="anchor" aria-label="anchor" href="#arg-ntopimportance"></a></dt>
 <dd><p>An integer specifying the number of top features to display based on their importance scores.</p></dd>
+
+
+<dt id="arg-scores-df">scores_df<a class="anchor" aria-label="anchor" href="#arg-scores-df"></a></dt>
+<dd><p>A data frame containing the features and target variable for training and testing the model.</p></dd>
 
 </dl></div>
     <div class="section level2">

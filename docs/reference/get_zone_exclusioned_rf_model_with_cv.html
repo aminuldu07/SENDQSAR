@@ -72,7 +72,7 @@ predictions and provides an aggregated performance summary across multiple test 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_zone_exclusioned_rf_model_with_cv</span><span class="op">(</span></span>
-<span>  Data <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">scores_data_df</span>,</span>
 <span>  Undersample <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  best.m <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">testReps</span>,</span>
@@ -86,12 +86,7 @@ predictions and provides an aggregated performance summary across multiple test 
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-data">Data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>A data frame containing the features and the target variable <code>Target_Organ</code>
-to train the Random Forest model on.</p></dd>
-
-
-<dt id="arg-undersample">Undersample<a class="anchor" aria-label="anchor" href="#arg-undersample"></a></dt>
+<dl><dt id="arg-undersample">Undersample<a class="anchor" aria-label="anchor" href="#arg-undersample"></a></dt>
 <dd><p>A logical value indicating whether to perform undersampling to
 balance the classes in the training data. Defaults to <code>FALSE</code>.</p></dd>
 
@@ -122,6 +117,11 @@ probabilities within this range are marked as indeterminate.</p></dd>
 <dt id="arg-type">Type<a class="anchor" aria-label="anchor" href="#arg-type"></a></dt>
 <dd><p>An integer indicating the type of feature importance to use in the
 Random Forest model. Typically, <code>1</code> for "Mean Decrease Accuracy" or <code>2</code> for "Mean Decrease Gini".</p></dd>
+
+
+<dt id="arg-data">Data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
+<dd><p>A data frame containing the features and the target variable <code>Target_Organ</code>
+to train the Random Forest model on.</p></dd>
 
 </dl></div>
     <div class="section level2">

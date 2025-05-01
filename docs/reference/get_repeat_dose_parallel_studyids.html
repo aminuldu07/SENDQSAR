@@ -79,18 +79,18 @@ It optionally filters the studies for rat species.</p>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A vector of study IDs that meet the specified criteria. This includes:</p><ul><li><p>Study IDs that match both the parallel design and repeat-dose toxicity criteria.</p></li>
-<li><p>Optionally, study IDs that match rat species if <code>rat_studies = TRUE</code>.</p></li>
+    <p>A Data frame having the STUDYID that meet the specified criteria. This includes:</p><ul><li><p>STUDYIDs that match both the parallel design and repeat-dose toxicity criteria.</p></li>
+<li><p>Optionally, STUDYIDs that match rat species if <code>rat_studies = TRUE</code>.</p></li>
 </ul></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
 <span class="r-in"><span>  <span class="co"># Example without filtering for rat studies</span></span></span>
-<span class="r-in"><span>  <span class="va">study_ids</span> <span class="op">&lt;-</span> <span class="fu">get_repeat_dose_parallel_studyids</span><span class="op">(</span>path_db <span class="op">=</span> <span class="st">"path/to/database.sqlite"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">parallel_repeat_dose_df</span> <span class="op">&lt;-</span> <span class="fu">get_repeat_dose_parallel_studyids</span><span class="op">(</span>path_db <span class="op">=</span> <span class="st">"path/to/database.sqlite"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co"># Example with filtering for rat studies</span></span></span>
-<span class="r-in"><span>  <span class="va">study_ids_rats</span> <span class="op">&lt;-</span> <span class="fu">get_repeat_dose_parallel_studyids</span><span class="op">(</span>path_db <span class="op">=</span> <span class="st">"path/to/database.sqlite"</span>, rat_studies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">rat_parallel_repeat_dose_df</span> <span class="op">&lt;-</span> <span class="fu">get_repeat_dose_parallel_studyids</span><span class="op">(</span>path_db <span class="op">=</span> <span class="st">"path/to/database.sqlite"</span>, rat_studies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
