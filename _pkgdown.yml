@@ -1,0 +1,71 @@
+url: https://aminuldu07.github.io/SENDQSAR/
+template:
+    bootswatch: zephyr
+    bootstrap: 5
+    bslib:
+      primary: "#414b51"
+      # primary: "#497f9c"
+      pkgdown-nav-height: 100px
+navbar:
+  structure:
+    left:
+    - intro
+    - reference
+    - articles
+    # - resources
+    right: github
+  components:
+    reference:
+      text: Reference
+      href: reference/index.html
+    github:
+      icon: fab fa-github fa-lg
+      href: https://github.com/aminuldu07/SENDQSAR
+      aria-label: github
+    articles:
+      text: Articles
+      menu:
+      - text: Introduction
+        href: articles/Introduction.html
+      - text: get_compile_data
+        href: articles/get_compile_data.html
+      - text: get_bw_score
+        href: articles/get_bw_score.html
+      - text: get_livertobw_score
+        href: articles/get_livertobw_score.html
+      - text: get_lb_score
+        href: articles/get_lb_score.html
+      - text: get_mi_score
+        href: articles/get_mi_score.html
+      - text: get_liver_om_lb_mi_tox_score_list
+        href: articles/get_liver_om_lb_mi_tox_score_list.html
+      - text: get_col_harmonized_scores_df
+        href: articles/get_col_harmonized_scores_df.html
+      - text: get_ml_data_and_tuned_hyperparameters
+        href: articles/get_ml_data_and_tuned_hyperparameters.html
+      - text: get_rf_model_with_cv
+        href: articles/get_rf_model_with_cv.html
+      - text: get_zone_exclusioned_rf_model_with_cv
+        href: articles/get_zone_exclusioned_rf_model_with_cv.html
+      - text: get_imp_features_from_rf_model_with_cv
+        href: articles/get_imp_features_from_rf_model_with_cv.html
+      - text: get_auc_curve_with_rf_model
+        href: articles/get_auc_curve_with_rf_model.html
+      - text: get_histogram_barplot
+        href: articles/get_histogram_barplot.html
+      - text: get_reprtree_from_rf_model
+        href: articles/get_reprtree_from_rf_model.html
+      - text: get_prediction_plot
+        href: articles/get_prediction_plot.html
+      - text: get_Data_formatted_for_ml_and_best.m
+        href: articles/get_Data_formatted_for_ml_and_best.m.html
+      - text: get_rf_input_param_list_output_cv_imp
+        href: articles/get_rf_input_param_list_output_cv_imp.html
+      - text: get_zone_exclusioned_rf_model_cv_imp
+        href: articles/get_zone_exclusioned_rf_model_cv_imp.html
+      - text: get_repeat_dose_parallel_studyids
+        href: articles/get_repeat_dose_parallel_studyids.html
+
+    # resources:
+    #     text: Resources
+    #     href: https://github.com/phuse-org/toxSummary/wiki

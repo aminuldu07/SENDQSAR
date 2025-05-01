@@ -1,0 +1,114 @@
+---
+title: "Function Documentation: `get_liver_om_lb_mi_tox_score_list`"
+author: "Md Aminul Islam Prodhan"
+date: "2024-12-31"
+output: html_document
+---
+
+## Function Overview
+
+The `get_liver_om_lb_mi_tox_score_list` function calculates a series of liver organ toxicity scores, body weight z-scores, and other relevant metrics for a set of studies or XPT files. It outputs results based on user preferences for individual scores, z-scores by USUBJID, or averaged scores for multiple studies. This function also manages data flow through several steps, including fetching and processing data, calculating scores, and managing error handling.
+
+### Function Signature
+
+```r
+get_liver_om_lb_mi_tox_score_list(
+  studyid_or_studyids = FALSE,
+  path_db,
+  fake_study = FALSE,
+  use_xpt_file = FALSE,
+  output_individual_scores = FALSE,
+  output_zscore_by_USUBJID = FALSE
+)
+```
+## Function Overview
+
+`get_liver_om_lb_mi_tox_score_list` is an R function designed to process liver toxicity scores from one or more studies. The function calculates several scores related to liver toxicity and body weight, including:
+
+- **Body Weight Z-Score (BWZSCORE_avg)**
+- **Liver Organ to Body Weight Z-Score (liverToBW_avg)**
+- **LB Score (LB_score_avg)**
+- **MI Score (MI_score_avg)**
+
+The function can output individual scores, z-scores by USUBJID, or averaged scores. It also includes error handling to capture and record any issues during processing.
+
+## Arguments
+
+- `studyid_or_studyids` (Character vector or a single study ID): 
+  A character vector containing one or more study IDs to process. If multiple studies are provided, the function processes each study sequentially.
+
+- `path_db` (Character): 
+  Path to the database or directory containing the data files.
+
+- `fake_study` (Logical, default: `FALSE`): 
+  A boolean flag indicating if the study data is simulated (`TRUE`) or real (`FALSE`).
+
+- `use_xpt_file` (Logical, default: `FALSE`): 
+  A boolean flag indicating whether to use an XPT file for the study data. Default is `FALSE`.
+
+- `output_individual_scores` (Logical, default: `FALSE`): 
+  A boolean flag indicating whether individual scores should be returned. Default is `FALSE`.
+
+- `output_zscore_by_USUBJID` (Logical, default: `FALSE`): 
+  A boolean flag indicating whether to output z-scores by `USUBJID`. Default is `FALSE`.
+
+## Details
+
+The function iterates over each study ID or XPT folder and processes the data to calculate various toxicity scores. Key calculation blocks include:
+
+- **Fetching Master Compile Data**: 
+  The function calls `get_compile_data` to retrieve the primary data for each study.
+
+- **Body Weight Z-Score Calculation**: 
+  Using the `get_bw_score` function, the body weight z-scores are calculated either individually or averaged.
+
+- **Liver Organ to Body Weight Z-Score Calculation**: 
+  Using the `get_livertobw_score` function, liver toxicity scores related to body weight are calculated.
+
+- **LB Score Calculation**: 
+  The `get_lb_score` function is used to calculate LB scores.
+
+- **MI Score Calculation**: 
+  The `get_mi_score` function is used for MI score calculation.
+
+## Key Calculation Blocks
+
+1. **Fetching Master Compile Data**:  
+   This block calls the `get_compile_data` function to retrieve the primary data for each study. This data is essential for subsequent calculations.
+
+2. **Body Weight Z-Score Calculation**:  
+   The body weight z-scores are calculated using the `get_bw_score` function, and the result is either returned as individual scores or averaged scores.
+
+3. **Liver Organ to Body Weight Z-Score Calculation**:  
+   The liver organ-to-body weight z-scores are calculated using the `get_livertobw_score` function.
+
+4. **LB Score Calculation**:  
+   The `get_lb_score` function is called to calculate the LB score for each study.
+
+5. **MI Score Calculation**:  
+   The function calculates the MI score using the `get_mi_score` function.
+
+## Error Handling
+
+Each calculation block is wrapped in a `tryCatch` statement to handle any errors encountered during execution. If any block fails, the study ID is added to an error list, and the function continues processing the next study.
+
+## Return Value
+
+The function returns different outputs based on the flags passed:
+
+- If `output_individual_scores = TRUE`: The function returns a combined data frame with individual scores for each study.
+  
+- If `output_zscore_by_USUBJID = TRUE`: The function returns a data frame with z-scores by `USUBJID` for each study.
+
+- If neither flag is set, the function returns a data frame with averaged scores for each study.
+
+## Example 1: Get Averaged Scores for a Single Study
+
+In this example, we call the `get_liver_om_lb_mi_tox_score_list` function to retrieve averaged scores for a single study. The `studyid_or_studyids` argument is set to a single study ID, and the `path_db` argument points to the location of the database.
+
+```{r}
+#result <- get_liver_om_lb_mi_tox_score_list(
+  #studyid_or_studyids = "Study_001",
+  #path_db = "path/to/database"
+#)
+```

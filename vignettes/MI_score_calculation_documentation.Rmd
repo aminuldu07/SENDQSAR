@@ -1,0 +1,16 @@
+---
+title: "Microscopic Findings (MI) Domain Zscore Calculation"
+output: html_document
+date: Oct-07-2024
+author: Md Aminul Islam Prodhan
+toc: false
+---
+
+
+
+
+MI Zscore calculation details are coming
+
+
+
+

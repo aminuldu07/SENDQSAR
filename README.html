@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style type="text/css">
+@font-face {
+font-family: octicons-link;
+src: url(data:font/woff;charset=utf-8;base64,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) format('woff');
+}
+body {
+-webkit-text-size-adjust: 100%;
+text-size-adjust: 100%;
+color: #333;
+font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+font-size: 16px;
+line-height: 1.6;
+word-wrap: break-word;
+}
+a {
+background-color: transparent;
+}
+a:active,
+a:hover {
+outline: 0;
+}
+strong {
+font-weight: bold;
+}
+h1 {
+font-size: 2em;
+margin: 0.67em 0;
+}
+img {
+border: 0;
+}
+hr {
+box-sizing: content-box;
+height: 0;
+}
+pre {
+overflow: auto;
+}
+code,
+kbd,
+pre {
+font-family: monospace, monospace;
+font-size: 1em;
+}
+input {
+color: inherit;
+font: inherit;
+margin: 0;
+}
+html input[disabled] {
+cursor: default;
+}
+input {
+line-height: normal;
+}
+input[type="checkbox"] {
+box-sizing: border-box;
+padding: 0;
+}
+table {
+border-collapse: collapse;
+border-spacing: 0;
+}
+td,
+th {
+padding: 0;
+}
+* {
+box-sizing: border-box;
+}
+input {
+font: 13px / 1.4 Helvetica, arial, nimbussansl, liberationsans, freesans, clean, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+a {
+color: #4078c0;
+text-decoration: none;
+}
+a:hover,
+a:active {
+text-decoration: underline;
+}
+hr {
+height: 0;
+margin: 15px 0;
+overflow: hidden;
+background: transparent;
+border: 0;
+border-bottom: 1px solid #ddd;
+}
+hr:before {
+display: table;
+content: "";
+}
+hr:after {
+display: table;
+clear: both;
+content: "";
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+margin-top: 15px;
+margin-bottom: 15px;
+line-height: 1.1;
+}
+h1 {
+font-size: 30px;
+}
+h2 {
+font-size: 21px;
+}
+h3 {
+font-size: 16px;
+}
+h4 {
+font-size: 14px;
+}
+h5 {
+font-size: 12px;
+}
+h6 {
+font-size: 11px;
+}
+blockquote {
+margin: 0;
+}
+ul,
+ol {
+padding: 0;
+margin-top: 0;
+margin-bottom: 0;
+}
+ol ol,
+ul ol {
+list-style-type: lower-roman;
+}
+ul ul ol,
+ul ol ol,
+ol ul ol,
+ol ol ol {
+list-style-type: lower-alpha;
+}
+dd {
+margin-left: 0;
+}
+code {
+font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+font-size: 12px;
+}
+pre {
+margin-top: 0;
+margin-bottom: 0;
+font: 12px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+}
+.select::-ms-expand {
+opacity: 0;
+}
+.octicon {
+font: normal normal normal 16px/1 octicons-link;
+display: inline-block;
+text-decoration: none;
+text-rendering: auto;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+-webkit-user-select: none;
+-moz-user-select: none;
+-ms-user-select: none;
+user-select: none;
+}
+.octicon-link:before {
+content: '\f05c';
+}
+.markdown-body:before {
+display: table;
+content: "";
+}
+.markdown-body:after {
+display: table;
+clear: both;
+content: "";
+}
+.markdown-body>*:first-child {
+margin-top: 0 !important;
+}
+.markdown-body>*:last-child {
+margin-bottom: 0 !important;
+}
+a:not([href]) {
+color: inherit;
+text-decoration: none;
+}
+.anchor {
+display: inline-block;
+padding-right: 2px;
+margin-left: -18px;
+}
+.anchor:focus {
+outline: none;
+}
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+margin-top: 1em;
+margin-bottom: 16px;
+font-weight: bold;
+line-height: 1.4;
+}
+h1 .octicon-link,
+h2 .octicon-link,
+h3 .octicon-link,
+h4 .octicon-link,
+h5 .octicon-link,
+h6 .octicon-link {
+color: #000;
+vertical-align: middle;
+visibility: hidden;
+}
+h1:hover .anchor,
+h2:hover .anchor,
+h3:hover .anchor,
+h4:hover .anchor,
+h5:hover .anchor,
+h6:hover .anchor {
+text-decoration: none;
+}
+h1:hover .anchor .octicon-link,
+h2:hover .anchor .octicon-link,
+h3:hover .anchor .octicon-link,
+h4:hover .anchor .octicon-link,
+h5:hover .anchor .octicon-link,
+h6:hover .anchor .octicon-link {
+visibility: visible;
+}
+h1 {
+padding-bottom: 0.3em;
+font-size: 2.25em;
+line-height: 1.2;
+border-bottom: 1px solid #eee;
+}
+h1 .anchor {
+line-height: 1;
+}
+h2 {
+padding-bottom: 0.3em;
+font-size: 1.75em;
+line-height: 1.225;
+border-bottom: 1px solid #eee;
+}
+h2 .anchor {
+line-height: 1;
+}
+h3 {
+font-size: 1.5em;
+line-height: 1.43;
+}
+h3 .anchor {
+line-height: 1.2;
+}
+h4 {
+font-size: 1.25em;
+}
+h4 .anchor {
+line-height: 1.2;
+}
+h5 {
+font-size: 1em;
+}
+h5 .anchor {
+line-height: 1.1;
+}
+h6 {
+font-size: 1em;
+color: #777;
+}
+h6 .anchor {
+line-height: 1.1;
+}
+p,
+blockquote,
+ul,
+ol,
+dl,
+table,
+pre {
+margin-top: 0;
+margin-bottom: 16px;
+}
+hr {
+height: 4px;
+padding: 0;
+margin: 16px 0;
+background-color: #e7e7e7;
+border: 0 none;
+}
+ul,
+ol {
+padding-left: 2em;
+}
+ul ul,
+ul ol,
+ol ol,
+ol ul {
+margin-top: 0;
+margin-bottom: 0;
+}
+li>p {
+margin-top: 16px;
+}
+dl {
+padding: 0;
+}
+dl dt {
+padding: 0;
+margin-top: 16px;
+font-size: 1em;
+font-style: italic;
+font-weight: bold;
+}
+dl dd {
+padding: 0 16px;
+margin-bottom: 16px;
+}
+blockquote {
+padding: 0 15px;
+color: #777;
+border-left: 4px solid #ddd;
+}
+blockquote>:first-child {
+margin-top: 0;
+}
+blockquote>:last-child {
+margin-bottom: 0;
+}
+table {
+display: block;
+width: 100%;
+overflow: auto;
+word-break: normal;
+word-break: keep-all;
+}
+table th {
+font-weight: bold;
+}
+table th,
+table td {
+padding: 6px 13px;
+border: 1px solid #ddd;
+}
+table tr {
+background-color: #fff;
+border-top: 1px solid #ccc;
+}
+table tr:nth-child(2n) {
+background-color: #f8f8f8;
+}
+img {
+max-width: 100%;
+box-sizing: content-box;
+background-color: #fff;
+}
+code {
+padding: 0;
+padding-top: 0.2em;
+padding-bottom: 0.2em;
+margin: 0;
+font-size: 85%;
+background-color: rgba(0,0,0,0.04);
+border-radius: 3px;
+}
+code:before,
+code:after {
+letter-spacing: -0.2em;
+content: "\00a0";
+}
+pre>code {
+padding: 0;
+margin: 0;
+font-size: 100%;
+word-break: normal;
+white-space: pre;
+background: transparent;
+border: 0;
+}
+.highlight {
+margin-bottom: 16px;
+}
+.highlight pre,
+pre {
+padding: 16px;
+overflow: auto;
+font-size: 85%;
+line-height: 1.45;
+background-color: #f7f7f7;
+border-radius: 3px;
+}
+.highlight pre {
+margin-bottom: 0;
+word-break: normal;
+}
+pre {
+word-wrap: normal;
+}
+pre code {
+display: inline;
+max-width: initial;
+padding: 0;
+margin: 0;
+overflow: initial;
+line-height: inherit;
+word-wrap: normal;
+background-color: transparent;
+border: 0;
+}
+pre code:before,
+pre code:after {
+content: normal;
+}
+kbd {
+display: inline-block;
+padding: 3px 5px;
+font-size: 11px;
+line-height: 10px;
+color: #555;
+vertical-align: middle;
+background-color: #fcfcfc;
+border: solid 1px #ccc;
+border-bottom-color: #bbb;
+border-radius: 3px;
+box-shadow: inset 0 -1px 0 #bbb;
+}
+.pl-c {
+color: #969896;
+}
+.pl-c1,
+.pl-s .pl-v {
+color: #0086b3;
+}
+.pl-e,
+.pl-en {
+color: #795da3;
+}
+.pl-s .pl-s1,
+.pl-smi {
+color: #333;
+}
+.pl-ent {
+color: #63a35c;
+}
+.pl-k {
+color: #a71d5d;
+}
+.pl-pds,
+.pl-s,
+.pl-s .pl-pse .pl-s1,
+.pl-sr,
+.pl-sr .pl-cce,
+.pl-sr .pl-sra,
+.pl-sr .pl-sre {
+color: #183691;
+}
+.pl-v {
+color: #ed6a43;
+}
+.pl-id {
+color: #b52a1d;
+}
+.pl-ii {
+background-color: #b52a1d;
+color: #f8f8f8;
+}
+.pl-sr .pl-cce {
+color: #63a35c;
+font-weight: bold;
+}
+.pl-ml {
+color: #693a17;
+}
+.pl-mh,
+.pl-mh .pl-en,
+.pl-ms {
+color: #1d3e81;
+font-weight: bold;
+}
+.pl-mq {
+color: #008080;
+}
+.pl-mi {
+color: #333;
+font-style: italic;
+}
+.pl-mb {
+color: #333;
+font-weight: bold;
+}
+.pl-md {
+background-color: #ffecec;
+color: #bd2c00;
+}
+.pl-mi1 {
+background-color: #eaffea;
+color: #55a532;
+}
+.pl-mdr {
+color: #795da3;
+font-weight: bold;
+}
+.pl-mo {
+color: #1d3e81;
+}
+kbd {
+display: inline-block;
+padding: 3px 5px;
+font: 11px Consolas, "Liberation Mono", Menlo, Courier, monospace;
+line-height: 10px;
+color: #555;
+vertical-align: middle;
+background-color: #fcfcfc;
+border: solid 1px #ccc;
+border-bottom-color: #bbb;
+border-radius: 3px;
+box-shadow: inset 0 -1px 0 #bbb;
+}
+.task-list-item {
+list-style-type: none;
+}
+.task-list-item+.task-list-item {
+margin-top: 3px;
+}
+.task-list-item input {
+margin: 0 0.35em 0.25em -1.6em;
+vertical-align: middle;
+}
+:checked+.radio-label {
+z-index: 1;
+position: relative;
+border-color: #4078c0;
+}
+.sourceLine {
+display: inline-block;
+}
+code .kw { color: #000000; }
+code .dt { color: #ed6a43; }
+code .dv { color: #009999; }
+code .bn { color: #009999; }
+code .fl { color: #009999; }
+code .ch { color: #009999; }
+code .st { color: #183691; }
+code .co { color: #969896; }
+code .ot { color: #0086b3; }
+code .al { color: #a61717; }
+code .fu { color: #63a35c; }
+code .er { color: #a61717; background-color: #e3d2d2; }
+code .wa { color: #000000; }
+code .cn { color: #008080; }
+code .sc { color: #008080; }
+code .vs { color: #183691; }
+code .ss { color: #183691; }
+code .im { color: #000000; }
+code .va {color: #008080; }
+code .cf { color: #000000; }
+code .op { color: #000000; }
+code .bu { color: #000000; }
+code .ex { color: #000000; }
+code .pp { color: #999999; }
+code .at { color: #008080; }
+code .do { color: #969896; }
+code .an { color: #008080; }
+code .cv { color: #008080; }
+code .in { color: #008080; }
+</style>
+<style>
+body {
+box-sizing: border-box;
+min-width: 200px;
+max-width: 980px;
+margin: 0 auto;
+padding: 45px;
+padding-top: 0px;
+}
+</style>
+
+
+</head>
+
+<body>
+
+<h1 id="sendqsar">SENDQSAR</h1>
+<ul>
+<li><a href="#sendqsar-a-r-package-for-qsar-modeling-with-send-database">SENDQSAR:
+A <code>R Package</code> for <code>QSAR Modeling</code> with
+<code>SEND Database</code></a>
+<ul>
+<li><a href="#about">About</a></li>
+<li><a href="#features">Features</a></li>
+<li><a href="#workflow">Workflow</a></li>
+<li><a href="#modular-functions-overview">Modular Functions
+Overview</a></li>
+<li><a href="#helper-functions">Helper Functions</a></li>
+<li><a href="#functions-in-development">Functions in
+Development</a></li>
+<li><a href="#dependencies">Dependencies</a></li>
+<li><a href="#installation">Installation</a></li>
+<li><a href="#examples">Examples</a></li>
+<li><a href="#contribution">Contribution</a></li>
+<li><a href="#license">License</a></li>
+<li><a href="#contact">Contact</a></li>
+</ul></li>
+</ul>
+<h1 id="sendqsar-a-r-package-for-qsar-modeling-with-send-database">SENDQSAR:
+A <code>R Package</code> for <code>QSAR Modeling</code> with
+<code>SEND Database</code></h1>
+<h2 id="about">About</h2>
+<ul>
+<li>This package facilitates developing Quantitative Structure-Activity
+Relationship (QSAR) models using the SEND database. It streamlines data
+acquisition, pre-processing, organ wise toxicity score calculation,
+descriptor calculation, and model evaluation, enabling researchers to
+efficiently explore molecular descriptors and create robust predictive
+models.</li>
+<li>Detailed descriptions of each function are available in the
+“Articles” section of the <a href="https://aminuldu07.github.io/SENDQSAR/">GitHub-hosted
+website</a>.</li>
+</ul>
+<h2 id="features">Features</h2>
+<ul>
+<li><strong>Automated Data Processing</strong>: Simplifies data
+acquisition and pre-processing steps.</li>
+<li><strong>Comprehensive Analysis</strong>: Provides z-score
+calculations for various parameters such as body weight, liver-to-body
+weight ratio, and laboratory tests.</li>
+<li><strong>Machine Learning Integration</strong>: Supports
+classification modeling, hyperparameter tuning, and performance
+evaluation.</li>
+<li><strong>Visualization Tools</strong>: Includes but not limited to
+histograms, bar plots, and AUC curves for better data
+interpretation.</li>
+</ul>
+<h2 id="workflow">Workflow</h2>
+<ul>
+<li><strong>Input Database Path</strong>: Provide the path for database
+or <code>.xpt</code> files containing nonclinical study data in
+<code>SEND</code> format.</li>
+<li><strong>Data Pre processing</strong>: Use functions <code>f1</code>
+to <code>f8</code> to clean, harmonize, and prepare data for Machine
+Learning (ML).</li>
+<li><strong>Model Building</strong>: Employ ML functions
+(<code>f9</code> to <code>f18</code>) for ML model training and
+evaluation.</li>
+<li><strong>Visualization</strong>: Generate plots and performance
+metrics for better interpretation (<code>f12</code> to
+<code>f15</code>).</li>
+<li><strong>Automated Pipelines</strong>: Use functions <code>f15</code>
+to <code>f18</code> to perform the above workflows in A single step by
+providing the database path and a <code>.csv</code> file containing the
+label (TOXIC/NON-TOXIC) of the <code>STUDYID</code>.</li>
+</ul>
+<h2 id="modular-functions-overview">Modular Functions Overview</h2>
+<ul>
+<li><p><strong>Liver Toxicity Score Calculation for Individual
+<code>STUDYID</code></strong> :</p>
+<ul>
+<li><code>f1</code>: <code>get_compile_data</code> - Fetches structured
+data from the specified database path.</li>
+<li><code>f2</code>: <code>get_bw_score</code> - Calculates body weight
+z-scores for each animal (depends on <code>f1</code>).</li>
+<li><code>f3</code>: <code>get_livertobw_zscore</code> - Computes
+liver-to-body weight z-scores(depends on <code>f1</code>).</li>
+<li><code>f4</code>: <code>get_lb_score</code> - Calculates z-scores for
+laboratory test results(depends on <code>f1</code>).</li>
+<li><code>f5</code>: <code>get_mi_score</code> - Computes z-scores for
+microscopic findings(depends on <code>f1</code>).</li>
+</ul></li>
+<li><p><strong>Liver Toxicity Score Calculation and Aggregation for
+Multiple <code>STUDYID</code></strong>:</p>
+<ul>
+<li><code>f6</code>: <code>get_liver_om_lb_mi_tox_score_list</code>
+<ul>
+<li>Combines z-scores for LB, MI, and liver-to-BW ratio into a single
+data frame.</li>
+<li>Internally calls <code>f1</code> to <code>f5</code>.</li>
+</ul></li>
+</ul></li>
+<li><p><strong>Machine Learning Data Preparation</strong>:</p>
+<ul>
+<li><p><code>f7</code>: <code>get_col_harmonized_scores_df</code> -
+Harmonizes column names across columns for consistency from the data
+frame (depends on <code>f6</code>).</p></li>
+<li><p><code>f8</code>:
+<code>get_ml_data_and_tuned_hyperparameters</code> - Prepares data and
+tunes hyper parameters for machine learning (depends on
+<code>f7</code>).</p></li>
+</ul></li>
+<li><p><strong>Machine Learning Model Building and Performance
+Evaluation</strong>:</p>
+<ul>
+<li><strong>Model Training</strong>
+<ul>
+<li><code>f9</code>: <code>get_rf_model_with_cv</code>
+<ul>
+<li>Builds a random forest model with cross-validation (depends on
+<code>f8</code>).</li>
+</ul></li>
+</ul></li>
+<li><strong>Improved Classification Accuracy</strong>
+<ul>
+<li><code>f10</code>: <code>get_zone_exclusioned_rf_model_with_cv</code>
+<ul>
+<li>Enhances classification accuracy by excluding uncertain predictions
+(depends on <code>f8</code>).</li>
+</ul></li>
+</ul></li>
+<li><strong>Feature Importance</strong>
+<ul>
+<li><code>f11</code>:
+<code>get_imp_features_from_rf_model_with_cv</code>
+<ul>
+<li>Computes feature importance for model interpretation.</li>
+</ul></li>
+</ul></li>
+<li><strong>Model Performance Visualization</strong>
+<ul>
+<li><code>f12</code>: <code>get_auc_curve_with_rf_model</code>
+<ul>
+<li>Generates AUC curves to evaluate model performance.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+</ul>
+<h4 id="notes-for-modular-functions">Notes for MOdular Functions</h4>
+<ul>
+<li><strong>Data Preparation</strong>
+<ul>
+<li>Functions <code>f1</code> to <code>f8</code> must be executed
+sequentially to prepare the <code>Data</code> argument required by these
+functions.</li>
+<li>Alternatively, the <strong>composite function</strong>
+<code>f18</code> can be used to directly generate the <code>Data</code>
+argument, combining the functionality of <code>f1</code> to
+<code>f8</code>.</li>
+<li>For <code>f9</code>, <code>f10</code>, <code>f11</code>, and
+<code>f12</code>, Functions <code>f1</code>, <code>f2</code>,
+<code>f3</code>, <code>f4</code>, <code>f5</code>, <code>f6</code>,
+<code>f7</code>, and <code>f8</code>must be executed sequentially to
+prepare the <code>Data</code> argument. Alternatively, the
+<strong>composite function</strong> <code>f18</code> can be used to
+directly generate the <code>Data</code> argument.</li>
+</ul></li>
+</ul>
+<hr />
+<h3 id="composite-functions-overview">Composite Functions Overview</h3>
+<ul>
+<li><p>Combine multiple modular functions for complex
+operations.</p></li>
+<li><p><strong>Visualization and Reporting</strong> :</p>
+<ul>
+<li><code>f13</code>: <code>get_histogram_barplot</code> - Creates bar
+plots for target variable classes (depends on functions <code>f1</code>
+to <code>f8</code>).</li>
+<li><code>f14</code>: <code>get_reprtree_from_rf_model</code> - Builds
+representative decision trees (depends on functions <code>f1</code> to
+<code>f8</code>)..</li>
+<li><code>f15</code>: <code>get_prediction_plot</code> - Visualizes
+prediction probabilities with histograms(depends on functions
+<code>f1</code> to <code>f8</code>)..</li>
+</ul></li>
+</ul>
+<h3 id="automated-pipelines">Automated Pipelines</h3>
+<ul>
+<li><code>f16</code>: <code>get_Data_formatted_for_ml_and_best.m</code>
+<ul>
+<li>Creates machine learning-ready data by executing <code>f1</code> to
+<code>f8</code> -Formats data for ML pipelines.</li>
+<li>Provide the same result as <code>f8</code> by merging functionality
+of functions from <code>f1</code> to <code>f7</code></li>
+</ul></li>
+<li><code>f17</code>: <code>get_rf_input_param_list_output_cv_imp</code>
+<ul>
+<li>Automates pre-processing, modeling, and evaluation.</li>
+<li>Provide the same result as <code>f9</code> by merging functionality
+of functions from <code>f1</code> to <code>f8</code></li>
+</ul></li>
+<li><code>f18</code>: <code>get_zone_exclusioned_rf_model_cv_imp</code>
+<ul>
+<li>Similar to <code>f17</code> but excludes uncertain predictions.</li>
+<li>Provide the same result as <code>f10</code> by merging functionality
+of functions from <code>f1</code> to <code>f8</code></li>
+<li>Optional argument for hyperparameter tuning.</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="helper-functions">Helper Functions</h2>
+<ul>
+<li><code>h1</code>: <code>get_treatment_group_&amp;_dose</code> -
+Retrieve treatment groups from the <code>tx</code> domain.</li>
+<li><code>h2</code>:
+-<strong><code>get_repeat_dose_parallel_studyids</code></strong>
+<ul>
+<li>Retrieves <code>STUDYID</code>s for repeat dose and parallel study
+designs.</li>
+<li>Optional filtering for “rat” species studies.</li>
+</ul></li>
+</ul>
+<hr />
+<h2 id="functions-in-development">Functions in Development</h2>
+<ul>
+<li><code>fid1</code>: <code>get_all_LB_TESTCD_score</code> - Calculates
+scores for each <code>LBTESTCD</code> based on
+<code>get_lb_score</code>.</li>
+<li><code>fid2</code>: <code>get_indiv_score_om_lb_mi_domain_df</code> -
+Returns domain-specific scores including liver-to-BW ratio, LB, and MI
+scores.</li>
+</ul>
+<hr />
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li><code>randomForest</code></li>
+<li><code>ROCR</code></li>
+<li><code>ggplot2</code></li>
+<li><code>reprtree</code></li>
+</ul>
+<h2 id="installation">Installation</h2>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># Install from GitHub</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>devtools<span class="sc">::</span><span class="fu">install_github</span>(<span class="st">&quot;aminuldu07/SENDQSAR&quot;</span>)</span></code></pre></div>
+<h2 id="examples">Examples</h2>
+<h3 id="example-1-basic-data-compilation">Example 1: Basic Data
+Compilation</h3>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a><span class="fu">library</span>(SENDQSAR)</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>data <span class="ot">&lt;-</span> <span class="fu">get_compile_data</span>(<span class="st">&quot;/path/to/database&quot;</span>)</span></code></pre></div>
+<h3 id="example-2-z-score-calculation">Example 2: Z-Score
+Calculation</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>bw_scores <span class="ot">&lt;-</span> <span class="fu">get_bw_score</span>(data)</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>liver_scores <span class="ot">&lt;-</span> <span class="fu">get_livertobw_zscore</span>(data)</span></code></pre></div>
+<h3 id="example-3-machine-learning-model">Example 3: Machine Learning
+Model</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>model <span class="ot">&lt;-</span> <span class="fu">get_rf_model_with_cv</span>(data, <span class="at">n_repeats=</span><span class="dv">10</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="fu">print</span>(model<span class="sc">$</span>confusion_matrix)</span></code></pre></div>
+<h3 id="example-4-visualization">Example 4: Visualization</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">get_histogram_barplot</span>(data, <span class="at">target_col=</span><span class="st">&quot;target_variable&quot;</span>)</span></code></pre></div>
+<h2 id="contribution">Contribution</h2>
+<p>Contributions are welcome! Feel free to submit issues or pull
+requests via GitHub.</p>
+<h2 id="license">License</h2>
+<p>This project is licensed under the MIT License - see the LICENSE file
+for details.</p>
+<h2 id="contact">Contact</h2>
+<p>For more information, visit the project GitHub Page or contact <a href="mailto:email@example.com">email@example.com</a>.</p>
+
+</body>
+</html>

@@ -1,0 +1,155 @@
+---
+title: "Documentation for `get_mi_score` Function "
+author: "Md Aminul Islam Prodhan"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+# Purpose
+The `get_mi_score` function is designed to calculate Z-scores for Microscopic Findings (MI), specifically focusing on liver-related lesions. The Z-scores are derived from both the incidence (frequency) and severity of these histopathological findings. Initially, a score is calculated solely based on the severity of the findings, which is then adjusted by the incidence rate to provide a more accurate reflection of the overall histo-pathological impact on liver function.. 
+
+The `get_mi_score` function applies various transformations, manages severity levels, and performs necessary calculations to derive the Z-scores based on specified parameters.
+
+## Function Parameters (Arguments)
+
+
+| **Parameter**              | **Type**        | **Default** | **Description**                                                                                          |
+|----------------------------|-----------------|-------------|----------------------------------------------------------------------------------------------------------|
+| `studyid`                  | character       | `NULL`      | The STUDYID of the study for which the BW score is to be calculated. Required when `use_xpt_file = FALSE`. If `use_xpt_file = TRUE`, `studyid` is ignored, and the `.xpt` files of that study in the specified folder are analyzed.                                                                         |
+| `path_db`                  | character       | -           | The file path to the database (SQLite or `.xpt` file).                                                   |
+| `fake_study`               | logical         | `FALSE`     | A flag to indicate if the study is fake or not and handle data accordingly.                                                          |
+| `use_xpt_file`             | logical         | `FALSE`     | If `TRUE`, reads data from `.xpt` files. Otherwise, fetches data from the SQLite database.                                                          |
+| `master_compiledata`       | data.frame      | `NULL`      | If `master_compiledata` is not supplied (i.e., `NULL`) , it is fetched using `get_compile_data()`. |
+| `return_individual_scores` | logical         | `FALSE`     | If `TRUE`, returns averaged z-score for each domain calculated from the scores of all subjects/animals (`USUBJID`).                                                |
+| `return_zscore_by_USUBJID` | logical         | `FALSE`     | If `TRUE`, returns Z-scores for each animal/subject (identified by `USUBJID`).                                             |
+
+**Key Points**:
+- **Mandatory Parameter**: `path_db` is required for the function to work.
+- **Logical Exclusivity**: Both `return_individual_scores` and `return_zscore_by_USUBJID` cannot be `TRUE` simultaneously.
+
+### Outputs
+
+A `data.frame` containing the calculated Z-scores. The structure of the output depends on the provided parameters:
+
+- If `return_individual_scores = TRUE`: Returns averaged Z-scores for each of the domain per `studyid`.
+- If `return_zscore_by_USUBJID = TRUE`: Returns Z-score for each animal/subject by `USUBJID` for each domain per `studyid`.
+- Otherwise, a summarized BW Z-score for the specified `studyid`.
+
+
+## Implementation Details
+
+### Data Preparation
+
+- **Database Connection**:
+  - Connects to SQLite database using `DBI` if `use_xpt_file = FALSE`.
+  - If `use_xpt_file` = `TRUE`: Data is loaded from .xpt files located in the folder specified by path_db.
+  
+### Data Retrieval
+
+The function retrieves the necessary data related to the specified studyid.The data retrieval process depends on whether some arguments is provided or NULL:
+
+- **Compile Data**:
+  - If `master_compiledata` is not supplied, it is retrieved using `get_compile_data()`.
+
+When `master_compiledata = NULL`, 
+
+If `master_compiledata` is not provided, the function extracts data from the following SEND domains:
+
+- `MI` (Microscopic Findings) : Provide the Microscopic Findings at the individual level.
+- `BW` (Body Weight) : Provide the Body Weight measurements at the individual level. 
+- `DM` (Demographics): Supplies animal-level demographic details. 
+- `DS` (Disposition): Identifies recovery animals using the `DSDECOD` column.
+- `PC` (Pharmacokinetics): Provide `USUBJID` of the  TK animals for rats and mice study. 
+- `TX` (Treatment): Provide  dose levels information such as "vehicle" or "HD."
+
+When `master_compiledata is Provided`, 
+
+If `master_compiledata` value is provided, this function retrieve the following domains:
+
+- `MI` (Microscopic Findings) : Provide the Organ measurements at the individual level.
+- `DM` (Demographics): Supplies animal-level demographic details. 
+
+
+### Data Cleaning and Filtering
+
+- **Filter and Merge**:
+   - The `MI` domain is filtered to include only relevant records, such as those with liver-related issues.
+   - Severity levels (`MISEV`) are standardized and missing values are replaced.
+
+- **Severity Level Conversion**: 
+   - Severity levels in `MISEV` are mapped to numerical values:
+    - "MILD" becomes 2, 
+    - "MODERATE" becomes 3, 
+    - "SEVERE" becomes 5.
+
+### Calculation of MI Scores
+
+- **Incidence Calculation**:
+  - The function calculates the incidence per group for each sex category (`M`, `F`) and each treatment arm (`ARMCD`). 
+  - It creates a table of findings and counts the incidence rate for each.
+  - For each treatment group, the function adjusts the incidence to remove vehicle baseline and handles negative values.
+
+- **Severity Adjustment**:
+  - Based on the calculated incidence, severity scores are adjusted for each participant. 
+  - If the incidence is greater than or equal to 0.75, it is mapped to a score of 5, and lower values are mapped to scores of 3, 2, 1, or 0 based on thresholds.
+
+- **Final MI Scores**:
+  - The final MI scores are calculated for each participant, based on the highest incidence observed across all findings.
+  - If `return_individual_scores` is `TRUE`, individual severity scores for each participant are returned.
+
+
+### Handling Optional Parameters
+   - If `return_individual_scores = TRUE`, Returns averaged Z-scores for each of the domain per `studyid`.
+   - If `return_zscore_by_USUBJID = TRUE`, Returns Z-score for each animal/subject by unique subject identifiers`USUBJID`.
+
+### Fake Study Handling  
+   If `fake_study = TRUE`, special handling is applied for data sets generated by the `SENDsanitizer` package to account for their structure.
+
+### Output  
+   A data frame containing the calculated Z-scores is returned. This may include summarized scores, individual scores, or Z-scores by `USUBJID`, based on the parameters provided.
+   
+### Dependencies
+
+The function requires the following R packages:
+
+- `RSQLite`: To connect to the SQLite database.
+- `haven` : To read `.xpt` file,  if `use_xpt_file = TRUE`.
+
+
+***
+This implementation ensures flexibility in handling different input types and configurations while maintaining a consistent structure for the output.
+
+***
+
+
+## Example Usage
+
+Here is an example of how to use the `get_mi_score` function:
+
+```{r}
+# Example 1: Basic usage with default parameters
+# mi_scores <- get_mi_score(
+#   studyid = "12345", 
+#   path_db = "/path/to/database"
+# )
+# 
+# # Example 2: Using XPT files instead of a database
+# mi_scores_xpt <- get_mi_score(
+#   path_db = "/path/to/xpt/files", 
+#   use_xpt_file = TRUE
+# )
+# 
+# # Example 3: Return individual scores
+# mi_individual_scores <- get_mi_score(
+#   studyid = "12345", 
+#   path_db = "/path/to/database",
+#   return_individual_scores = TRUE
+# )
+# 
+# # Example 4: Return Z-scores for each participant
+# mi_zscores <- get_mi_score(
+#   studyid = "12345", 
+#   path_db = "/path/to/database", 
+#   return_zscore_by_USUBJID = TRUE
+# )
+```

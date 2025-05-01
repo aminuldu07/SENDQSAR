@@ -1,0 +1,119 @@
+---
+title: "Documentation for `get_lb_score` Function"
+author: "Md Aminul Islam Prodhan"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## Purpose
+The `get_lb_score` function is designed to calculate Z-scores for Laboratory Test results(LB) data, focusing on six key enzymes indicative of liver function: Bilirubin (BILI), Albumin (ALB), Alanine Aminotransferase (ALT), Alkaline Phosphatase (ALP), Aspartate Aminotransferase (AST), and Gamma-Glutamyl Transferase (GGT). These biomarkers are critical for assessing liver health and detecting potential damage or dysfunction. The function processes lab data from clinical studies, leveraging information from a database or .xpt files, and applies various transformations and filtering steps to compute the Z-scores efficiently.
+
+
+## Function Parameters (Arguments)
+
+| **Parameter**              | **Type**        | **Default** | **Description**                                                                                          |
+|----------------------------|-----------------|-------------|----------------------------------------------------------------------------------------------------------|
+| `studyid`                  | character       | `NULL`      | The STUDYID of the study for which the BW score is to be calculated. Required when `use_xpt_file = FALSE`. If `use_xpt_file = TRUE`, `studyid` is ignored, and the `.xpt` files of that study in the specified folder are analyzed.                                                                         |
+| `path_db`                  | character       | -           | The file path to the database (SQLite or `.xpt` file).                                                   |
+| `fake_study`               | logical         | `FALSE`     | A flag to indicate if the study is fake or not and handle data accordingly.                                                          |
+| `use_xpt_file`             | logical         | `FALSE`     | If `TRUE`, reads data from `.xpt` files. Otherwise, fetches data from the SQLite database.                                                          |
+| `master_compiledata`       | data.frame      | `NULL`      | If `master_compiledata` is not supplied (i.e., `NULL`) , it is fetched using `get_compile_data()`. |
+| `return_individual_scores` | logical         | `FALSE`     | If `TRUE`, returns averaged z-score for each domain calculated from the scores of all subjects/animals (`USUBJID`).                                                |
+| `return_zscore_by_USUBJID` | logical         | `FALSE`     | If `TRUE`, returns Z-scores for each animal/subject (identified by `USUBJID`).                                             |
+
+**Key Points**:
+- **Mandatory Parameter**: `path_db` is required for the function to work.
+- **Logical Exclusivity**: Both `return_individual_scores` and `return_zscore_by_USUBJID` cannot be `TRUE` simultaneously.
+
+### Outputs
+
+A `data.frame` containing the calculated Z-scores. The structure of the output depends on the provided parameters:
+
+- If `return_individual_scores = TRUE`: Returns averaged Z-scores for each of the domain per `studyid`.
+- If `return_zscore_by_USUBJID = TRUE`: Returns Z-score for each animal/subject by `USUBJID` for each domain per `studyid`.
+- Otherwise, a summarized BW Z-score for the specified `studyid`.
+
+
+## Implementation Details
+
+
+### Data Preparation
+
+- **Database Connection**:
+  - Connects to SQLite database using `DBI` if `use_xpt_file = FALSE`.
+  - If `use_xpt_file` = `TRUE`: Data is loaded from .xpt files located in the folder specified by path_db.
+
+
+### Data Retrieval
+
+The function retrieves the necessary data related to the specified studyid.
+The data retrieval process depends on whether some arguments is provided or NULL:
+
+- **Compile Data**:
+  - If `master_compiledata` is not supplied, it is retrieved using `get_compile_data()`.
+
+When `master_compiledata = NULL`, 
+
+If `master_compiledata` is not provided, the function extracts data from the following SEND domains:
+
+- `BW` (Body Weight) : Provide the Body Weight measurements at the individual level. 
+- `DM` (Demographics): Supplies animal-level demographic details. 
+- `DS` (Disposition): Identifies recovery animals using the `DSDECOD` column.
+- `PC` (Pharmacokinetics): Provide `USUBJID` of the  TK animals for rats and mice study. 
+- `TX` (Treatment): Provide  dose levels information such as "vehicle" or "HD."
+
+When `master_compiledata is Provided`, 
+
+If `master_compiledata` value is provided, this function retrieve the following domains:
+
+- `lb` (Laboratory Test Results) : Provide the Organ measurements at the individual level.
+
+
+###  Laboratory Test Results(LB) Z-score calculation
+
+- **Calculation**:
+  - Computes the Z-scores for six enzymes in Laboratory Test Results (lb) domain. 
+  - Calculates z-scores for `lb` domain using vehicle arm statistics (mean and SD).
+  - Converts z-scores to absolute values.
+
+### Handling Optional Parameters
+   - If `return_individual_scores = TRUE`, Returns averaged Z-scores for each of the domain per `studyid`.
+   - If `return_zscore_by_USUBJID = TRUE`, Returns Z-score for each animal/subject by unique subject identifiers`USUBJID`.
+
+### Fake Study Handling  
+   If `fake_study = TRUE`, special handling is applied for data sets generated by the `SENDsanitizer` package to account for their structure.
+
+### Output   
+   A data frame containing the calculated Z-scores is returned. This may include summarized scores, individual scores, or Z-scores by `USUBJID`, based on the parameters provided.
+   
+
+### Dependencies
+
+The function requires the following R packages:
+
+- `RSQLite`: To connect to the SQLite database.
+- `haven` : To read `.xpt` file,  if `use_xpt_file = TRUE`.
+
+
+***
+This implementation ensures flexibility in handling different input types and configurations while maintaining a consistent structure for the output.
+
+***
+
+## Example Usage
+
+```r
+# Example 1: Run the function with a given study ID and database path
+result <- get_lb_score(studyid = "12345", path_db = "path_to_database")
+
+# Example 2: Use the function with .xpt file instead of SQLite database
+result_xpt <- get_lb_score(studyid = "12345", path_db = "path_to_xpt_file", use_xpt_file = TRUE)
+
+# Example 3: Return individual biomarker z-scores
+individual_scores <- get_lb_score(studyid = "12345", path_db = "path_to_database", return_individual_scores = TRUE)
+
+# Example 4: Return z-scores by subject (USUBJID)
+subject_zscores <- get_lb_score(studyid = "12345", path_db = "path_to_database", return_zscore_by_USUBJID = TRUE)
+```
+
+

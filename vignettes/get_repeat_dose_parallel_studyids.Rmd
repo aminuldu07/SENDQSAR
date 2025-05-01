@@ -1,0 +1,55 @@
+---
+title: "Documentation for `get_repeat_dose_parallel_studyids` Function"
+output: html_document
+---
+
+# Function Purpose
+
+The `get_repeat_dose_parallel_studyids` function is designed to retrieve study IDs from a database that correspond to parallel-design studies involving repeat-dose toxicity. It filters the studies based on the specified design and whether the species involved are rats.
+
+# Input Parameters
+
+The function accepts the following parameters:
+
+| **Parameter**             | **Description**                                                                                          | **Default Value** |
+|---------------------------|----------------------------------------------------------------------------------------------------------|-------------------|
+| `path_db`                 | The file path to the SQLite database. It must be provided as a valid string.                             | **Required**      |
+| `rat_studies`             | A logical flag indicating whether to filter the studies for rats only. Defaults to `FALSE`.              | `FALSE`           |
+
+# Output
+
+The function returns a vector of study IDs that meet the specified criteria. The returned vector contains the following:
+
+- **Study IDs**: A list of study IDs that match both the parallel design and repeat-dose toxicity criteria (and rat species, if specified).
+
+# Key Steps
+
+1. **Database Existence Check**:  
+   The function first checks if the database file exists at the provided path. If not, an error is raised.
+
+2. **Database Connection**:  
+   The database connection is established using the `sendigR` package. A connection to the database is initialized using `sendigR::initEnvironment()`.
+
+3. **Retrieve Parallel Study IDs**:  
+   The function uses `sendigR::getStudiesSDESIGN()` to retrieve all study IDs associated with the parallel design.
+
+4. **Retrieve Repeat-Dose Studies**:  
+   A SQL query is executed via `sendigR::genericQuery()` to fetch study IDs that are associated with repeat-dose toxicity. This query looks for studies with specific `TSPARMCD` values related to repeat-dose toxicity.
+
+5. **Intersect Parallel and Repeat-Dose Studies**:  
+   The study IDs obtained from the parallel design and the repeat-dose toxicity studies are intersected to identify common study IDs.
+
+6. **Optionally Filter for Rat Studies**:  
+   If `rat_studies = TRUE`, the function retrieves study IDs that involve rats as the species. This is done by querying the `SPECIES` field in the database and filtering based on the presence of "RAT".
+
+7. **Return Study IDs**:  
+   The final result is a vector of study IDs that meet the filter conditions, including parallel design, repeat-dose toxicity, and optionally, rat species.
+
+# Example Usage
+
+```r
+# Example without filtering for rat studies
+study_ids <- get_repeat_dose_parallel_studyids(path_db = "path/to/database.sqlite")
+
+# Example with filtering for rat studies
+study_ids_rats <- get_repeat_dose_parallel_studyids(path_db = "path/to/database.sqlite", rat_studies = TRUE)

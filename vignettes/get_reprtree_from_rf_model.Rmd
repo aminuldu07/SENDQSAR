@@ -1,0 +1,74 @@
+---
+title: "get_reprtree_from_rf_model Function Documentation"
+author: "Your Name"
+date: "2024-12-31"
+output: html_document
+---
+
+## Purpose
+
+The `get_reprtree_from_rf_model` function is designed to train a Random Forest model on a provided dataset and generate a representation tree (ReprTree) from the trained model. The function supports various configurations for data preprocessing, model hyperparameters, and sampling strategies, including random undersampling. Additionally, it allows for error correction and hyperparameter tuning.
+
+## Input Parameters
+
+The following table describes the input parameters for the `get_reprtree_from_rf_model` function:
+
+| Parameter               | Description                                                                                                                                                  | Type               | Default Value     |
+|-------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|-------------------|
+| `Data`                  | A dataset to train the Random Forest model. If NULL, data is fetched using the `get_Data_formatted_for_ml_and_best.m` function.                              | Data frame         | NULL              |
+| `path_db`               | The path to the database used for fetching or processing the data.                                                                                           | Character string   | -                 |
+| `rat_studies`           | A flag indicating whether rat studies are used.                                                                                                               | Boolean (TRUE/FALSE) | FALSE             |
+| `studyid_metadata`      | Metadata related to study IDs.                                                                                                                                 | Data frame         | NULL              |
+| `fake_study`            | A flag indicating whether to use fake study data.                                                                                                            | Boolean (TRUE/FALSE) | FALSE             |
+| `use_xpt_file`          | A flag to indicate whether to use the XPT file format for data input.                                                                                         | Boolean (TRUE/FALSE) | FALSE             |
+| `Round`                 | A flag to round the data before processing.                                                                                                                  | Boolean (TRUE/FALSE) | FALSE             |
+| `Impute`                | A flag to specify whether to impute missing values in the data.                                                                                                | Boolean (TRUE/FALSE) | FALSE             |
+| `reps`                  | The number of repetitions to perform for cross-validation or resampling.                                                                                     | Integer            | -                 |
+| `holdback`              | The fraction of data to hold back for testing.                                                                                                               | Numeric            | -                 |
+| `Undersample`           | A flag indicating whether undersampling should be applied to balance the dataset.                                                                             | Boolean (TRUE/FALSE) | FALSE             |
+| `hyperparameter_tuning` | A flag indicating whether hyperparameter tuning should be performed.                                                                                        | Boolean (TRUE/FALSE) | FALSE             |
+| `error_correction_method` | The method for error correction; valid options are `'Flip'`, `'Prune'`, or `'None'`.                                                                         | Character string   | -                 |
+
+## Output
+
+The function generates a representation tree (ReprTree) from the trained Random Forest model and visualizes the first tree (k=5) from the model.
+
+- A plot of the first tree from the Random Forest is displayed.
+- The representation tree object is generated but not explicitly returned.
+
+## Key Steps
+
+1. **Data Preparation:**
+   - If the `Data` parameter is `NULL`, the function calls `get_Data_formatted_for_ml_and_best.m` to prepare the data for modeling.
+   - Data is split into training and testing sets (70% for training and 30% for testing).
+   - If undersampling is enabled (`Undersample = TRUE`), positive and negative samples are balanced in the training set by undersampling the majority class.
+
+2. **Model Training:**
+   - A Random Forest model is trained using the `randomForest` function. The target variable is `Target_Organ`, and the model uses the best hyperparameter (`best.m`) determined beforehand.
+   - The number of trees in the forest is set to 500, and proximity calculations are enabled.
+
+3. **ReprTree Generation:**
+   - A ReprTree is generated using the `reprtree::ReprTree` function, which creates a representation of the trained Random Forest model.
+   - The first tree (k=5) is plotted using `reprtree::plot.getTree`.
+
+4. **Visualization:**
+   - The first tree in the Random Forest model is visualized using the `reprtree::plot.getTree` function.
+
+## Example Usage
+
+```r
+get_reprtree_from_rf_model(
+  Data = my_data,
+  path_db = "path/to/database",
+  rat_studies = TRUE,
+  studyid_metadata = my_metadata,
+  fake_study = FALSE,
+  use_xpt_file = TRUE,
+  Round = TRUE,
+  Impute = TRUE,
+  reps = 5,
+  holdback = 0.3,
+  Undersample = TRUE,
+  hyperparameter_tuning = FALSE,
+  error_correction_method = "Flip"
+)

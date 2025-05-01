@@ -1,0 +1,57 @@
+---
+title: "Documentation for `get_histogram_barplot` function"
+output: html_document
+---
+
+## Purpose
+
+The `get_histogram_barplot` function is designed to generate a bar plot displaying liver-related scores, based on data either provided directly or fetched from an SQLite database. It calculates mean values for specific findings, compares liver-related and non-liver-related groups, and produces either a plot or a processed data frame depending on the function’s parameters.
+
+## Input Parameters
+
+The function accepts the following parameters:
+
+| **Parameter**                   | **Type**           | **Description**                                                                                                                                     |
+|----------------------------------|--------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Data`                           | `data.frame`, optional | A data frame containing liver-related scores. If `NULL`, the function will attempt to generate or fetch data from a database or file.                |
+| `generateBarPlot`                | `logical`, default = `FALSE` | Flag indicating whether to generate a bar plot. If `TRUE`, a bar plot is generated; otherwise, the function returns a data frame.                   |
+| `path_db`                        | `character`, optional | Path to the SQLite database if data needs to be fetched from it. Required if `use_xpt_file` is `FALSE` or `fake_study` is `FALSE`.                  |
+| `rat_studies`                    | `logical`, default = `FALSE` | Flag to specify whether to filter for rat studies when fetching data from the database.                                                             |
+| `studyid_metadata`               | `data.frame`, required | Metadata associated with the study IDs. Needed when `fake_study` is `FALSE` and real data is fetched.                                               |
+| `fake_study`                     | `logical`, default = `FALSE` | If `TRUE`, the function simulates study data instead of fetching it from a database.                                                                |
+| `use_xpt_file`                   | `logical`, default = `FALSE` | If `TRUE`, the function will use an XPT file to fetch data, instead of relying on the database.                                                     |
+| `Round`                          | `logical`, default = `FALSE` | Whether to round the liver scores. If `TRUE`, scores are rounded.                                                                                  |
+| `output_individual_scores`       | `logical`, default = `TRUE` | Whether to output individual scores or aggregated ones.                                                                                            |
+| `output_zscore_by_USUBJID`       | `logical`, default = `FALSE` | Whether to output z-scores by USUBJID (unique subject identifier).                                                                                |
+
+## Output
+
+- If `generateBarPlot = TRUE`: The function returns a `ggplot2` bar plot object displaying the average scores for liver-related findings versus non-liver-related findings.
+  
+- If `generateBarPlot = FALSE`: The function returns a `data.frame` (`plotData`) containing the calculated values for each finding, with columns for the finding, liver status (`LIVER`), and mean values (`Value`).
+
+## Key Steps
+
+1. **Data Generation/Fallback**:
+   - If no data is provided, the function attempts to fetch the data from an SQLite database or use a fake study dataset.
+   - It fetches study data from the `dm` domain of the database if `fake_study = FALSE`. The study IDs are then extracted, filtered for liver-related studies, and used for subsequent score calculations.
+
+2. **Data Harmonization**:
+   - The `get_liver_om_lb_mi_tox_score_list` function calculates liver scores for the provided study IDs.
+   - The resulting data is harmonized using `get_col_harmonized_scores_df` to ensure consistency in the output data frame.
+
+3. **Plot Generation**:
+   - If `generateBarPlot = TRUE`, the function iterates over the findings and computes the average liver-related score (`Liver` status) for each finding.
+   - It then generates a `ggplot2` bar plot with the findings on the x-axis, the average values on the y-axis, and distinct colors representing liver vs. non-liver status.
+
+4. **Error Handling**:
+   - The function checks whether the `Data` parameter is a valid data frame. If not, an error is thrown.
+
+## Example Usage
+
+```r
+# Example with fake study data, generating a bar plot
+get_histogram_barplot(generateBarPlot = TRUE, fake_study = TRUE)
+
+# Example with real study data, without generating a plot
+data <- get_histogram_barplot(generateBarPlot = FALSE, fake_study = FALSE, path_db = "path/to/db")

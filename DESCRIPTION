@@ -1,0 +1,60 @@
+Package: SENDQSAR
+Title: Building a Quantitative Structure-Activity Relationship 
+       model leveraging SEND Database
+Version: 0.0.0.9000
+Authors@R: 
+    c(person(given = "Md Aminul Islam", 
+           family = "Prodhan", 
+           email = "aminuldu07@gmail.com", 
+           role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-8707-0049")),
+           person("Kevin", 
+           "Snyder", 
+           email= "kevin.snyder@fda.hhs.gov", 
+           role = c("aut"))
+           )
+Author: Md Aminul Islam Prodhan <aminuldu07@gmail.com>           
+Maintainer: Md Aminul Islam Prodhan <aminuldu07@gmail.com>
+Description: This package offers a comprehensive framework for developing 
+ Quantitative Structure-Activity Relationship (QSAR) models using the 
+ SEND (Standard for Exchange of Nonclinical Data) database. It streamlines 
+ the process of data acquisition, preprocessing, descriptor calculation,
+ model training, and evaluation. With built-in tools for feature selection
+ and visualization, users can easily delve into molecular descriptors
+ and generate robust predictive models. Ideal for researchers aiming to
+ understand chemical behavior and biological activity, this package simplifies
+ complex modeling tasks while ensuring reproducibility and interpretability.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.2
+Imports: 
+    sendigR,
+    RSQLite,
+    caret,
+    data.table,
+    DBI,
+    fs,
+    dplyr,
+    randomForest,
+    reshape2,
+    ROCR,
+    stringr,
+    tidyr,
+    ggplot2,
+    glue,
+    matrixStats,
+    magrittr,
+    haven,
+    reprtree
+Remotes: 
+    araastat/reprtree
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    usethis
+Config/testthat/edition: 3
+URL: https://aminuldu07.github.io/SENDQSAR/, https://github.com/aminuldu07/SENDQSAR
+BugReports: https://github.com/aminuldu07/SENDQSAR/issues
+VignetteBuilder: knitr

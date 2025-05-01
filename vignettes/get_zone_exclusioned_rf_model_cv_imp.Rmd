@@ -1,0 +1,97 @@
+---
+title: "Random Forest Model with Cross-Validation and Feature Importance"
+author: "Md Aminul Islam Prodhan"
+output: html_document
+---
+
+## Function Purpose
+
+The `get_rf_model_output_cv_imp` function is designed to perform cross-validation on a Random Forest model, track performance metrics (such as sensitivity, specificity, accuracy), handle indeterminate predictions, and compute feature importance based on either Gini or Accuracy. This function outputs performance summaries and feature importance rankings after a specified number of test repetitions.
+
+## Input Parameters
+
+The function takes several input parameters that control the model's training process, validation, and feature importance calculations. Below is a table describing each parameter:
+
+| **Parameter**           | **Type**           | **Description**                                                                                                                                                    |
+|-------------------------|--------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `scores_df`             | `data.frame`       | A data frame containing the features and target variable for training and testing the model.                                                                       |
+| `Undersample`           | `logical`          | A flag indicating whether to apply undersampling to the training data. Defaults to `FALSE`.                                                                        |
+| `best.m`                | `numeric` / `NULL` | A numeric value representing the number of features to sample for the Random Forest model, or `NULL` to calculate it automatically.                                 |
+| `testReps`              | `integer`          | The number of repetitions for cross-validation. This should be at least 2.                                                                                         |
+| `indeterminateUpper`    | `numeric`          | The upper threshold for considering a prediction as indeterminate (e.g., a probability below this value is deemed indeterminate).                                     |
+| `indeterminateLower`    | `numeric`          | The lower threshold for considering a prediction as indeterminate (e.g., a probability above this value is deemed indeterminate).                                    |
+| `Type`                  | `integer`          | The type of importance to compute (`1` for MeanDecreaseAccuracy, `2` for MeanDecreaseGini).                                                                       |
+| `nTopImportance`        | `integer`          | The number of top features to display based on their importance scores.                                                                                           |
+
+## Output
+
+The function returns a list containing the following elements:
+
+- **`performance_metrics`**: A vector of aggregated performance metrics (e.g., sensitivity, specificity, accuracy, etc.).
+- **`feature_importance`**: A matrix containing the importance of the top `nTopImportance` features, ordered by their importance score.
+- **`raw_results`**: A list containing raw results for debugging or further analysis, including sensitivity, specificity, accuracy, and Gini scores across all test repetitions.
+
+## Key Steps
+
+### 1. Data Preparation
+
+The input data is prepared by creating a copy of `scores_df` called `rfTestData`, which is then initialized with `NA` values to hold predictions from each test repetition. The column names are simplified to numeric identifiers.
+
+### 2. Cross-Validation
+
+The function iterates through `testReps` repetitions to perform cross-validation:
+
+- The dataset is split into training and testing sets in each iteration.
+- If `Undersample` is set to `TRUE`, the training set is undersampled to balance the class distribution.
+- A Random Forest model is trained on the training data.
+- Predictions are made on the test data and stored in `rfTestData`.
+
+### 3. Handling Indeterminate Predictions
+
+During each repetition, predictions with probabilities between the `indeterminateUpper` and `indeterminateLower` thresholds are considered indeterminate. These predictions are replaced with `NA`, and the proportion of indeterminate predictions is tracked.
+
+### 4. Performance Metrics
+
+For each test repetition, the function computes a confusion matrix using the `caret` package and extracts various performance metrics, including:
+
+- Sensitivity
+- Specificity
+- Positive Predictive Value (PPV)
+- Negative Predictive Value (NPV)
+- Prevalence
+- Accuracy
+
+These metrics are stored and aggregated across all test repetitions to provide an overall performance summary.
+
+### 5. Feature Importance
+
+The feature importance is computed using the `randomForest::importance()` function. The importance scores are aggregated over all repetitions, and the top `nTopImportance` features are identified and returned.
+
+### 6. Return Results
+
+The function returns a list containing:
+
+- Aggregated performance metrics
+- Top `nTopImportance` features ranked by their importance score
+- Raw results for further analysis (e.g., confusion matrix outputs)
+
+## Example Usage
+
+```r
+# Example usage of the function
+result <- get_rf_model_output_cv_imp(
+  scores_df = your_data,
+  Undersample = FALSE,
+  best.m = 3,
+  testReps = 5,
+  indeterminateUpper = 0.8,
+  indeterminateLower = 0.2,
+  Type = 1,
+  nTopImportance = 10
+)
+
+# View performance metrics
+print(result$performance_metrics)
+
+# View top features by importance
+print(result$feature_importance)

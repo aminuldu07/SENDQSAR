@@ -1,0 +1,62 @@
+---
+title: "Function Documentation: get_col_harmonized_scores_df"
+output: html_document
+---
+
+## Function: `get_col_harmonized_scores_df`
+
+### Description
+
+This function takes a data frame containing liver score data, harmonizes the column names, handles missing values, and performs optional rounding of specific score columns. It aims to standardize and clean the data for further analysis by:
+- Replacing spaces, commas, and slashes in column names with dots.
+- Handling missing values by replacing them with zero.
+- Harmonizing columns with similar meanings (synonyms).
+- Removing unwanted columns.
+- Optionally rounding columns related to liver scores and histology scores.
+
+### Parameters
+
+- `liver_score_data_frame` (data.frame): A data frame containing liver score data with column names that may need harmonization.
+- `Round` (logical, default = FALSE): If `TRUE`, the function will round the values in certain columns based on specific rules.
+
+### Details
+
+1. **Column Harmonization**:
+   - Spaces, commas, and slashes in column names are replaced with dots.
+   - Missing values (NA) are replaced with zeros.
+
+2. **Synonym Harmonization**:
+   - Columns with similar meanings (synonyms) are identified and harmonized by replacing their values with the higher value between them.
+   - Specific columns such as 'STUDYID', 'UNREMARKABLE', 'THIKENING', and 'POSITIVE' are excluded from harmonization.
+
+3. **Optional Rounding**:
+   - If `Round` is set to `TRUE`, the function rounds certain columns:
+     - Liver-related columns (`avg_`, `liver`) are floored to the nearest integer and capped at 5.
+     - Histology-related columns are ceiled to the nearest integer.
+
+4. **Column Reordering**:
+   - Columns are reordered based on the sum of their values (excluding the first column).
+   - Columns with higher sums are moved to the left, ensuring that the most "important" columns appear first.
+
+5. **Column Removal**:
+   - Columns related to specific endpoints (e.g., 'INFILTRATE', 'UNREMARKABLE', 'THIKENING', 'POSITIVE') are removed from the final data frame.
+
+### Return Value
+
+- A data frame with harmonized columns, optional rounding applied, and columns ordered based on the sum of their values.
+
+### Example Usage
+
+```r
+# Sample liver score data frame
+liver_scores <- data.frame(
+  STUDYID = c(1, 2, 3),
+  INFILTRATE = c(0, 1, 0),
+  avg_Liver = c(3.5, 4.2, 2.1),
+  POSITIVE = c(0, 0, 1),
+  `Thickening` = c(0, 0, 1),
+  Liver_to_BW_zscore = c(3, 2, 4)
+)
+
+# Call the function with Round = TRUE
+result <- get_col_harmonized_scores_df(liver_score_data_frame = liver_scores, Round = TRUE)

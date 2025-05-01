@@ -1,0 +1,109 @@
+---
+title: "Documentation for 'get_livertobw_score' Function"
+author: "Md Aminul Islam Prodhan"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+## Purpose
+
+The `get_livertobw_score` function is designed to calculate liver-to-body-weight (LiverToBW) ratio  and their corresponding z-scores from study data. This function supports data retrieval from SQLite databases or `.xpt` files and provides options to return individual scores, USUBJID-specific z-scores, or averaged scores by study. The weight of each animal at the end of the dosing period was normalized by subtracting the baseline weight measured on the first day of dosing. Following this, the liver weight to body weight ratio was calculated for each animal. These liver-to-body weight ratios were then normalized using Z-scores, with comparisons made against the respective control group for each study
+
+### Function Parameters (Arguments)
+
+### Inputs
+
+| **Parameter**               | **Type**        | **Default**   | **Description**                                                                                      |
+|------------------------------|-----------------|---------------|------------------------------------------------------------------------------------------------------|
+| `studyid`                   | character       | `NULL`        | The STUDYID of the study for which the BW score is to be calculated. Required when `use_xpt_file = FALSE`. If `use_xpt_file = TRUE`, `studyid` is ignored, and the `.xpt` files of that study in the specified folder are analyzed.          |
+| `path_db`                   | character       | N/A           | Path to the SQLite database or `.xpt` files.                                                        |
+| `fake_study`                | logical         | `FALSE`       | Indicator for handling fake or test study data.                                                     |
+| `use_xpt_file`              | logical         | `FALSE`       | If `TRUE`, reads data from `.xpt` files. Otherwise, fetches data from the SQLite database.           |
+| `master_compiledata`        | data.frame      | `NULL`        | If `master_compiledata` is not supplied (i.e., `NULL`) , it is fetched using `get_compile_data()`. |
+| `bwzscore_BW`               | data.frame      | `NULL`        | If `bwzscore_BW` is not supplied (i.e., `NULL`),it is fetched using using `get_bw_score()`.          |
+| `return_individual_scores`  | logical         | `FALSE`       | If `TRUE`, returns averaged z-score for each domain calculated from the scores of all subjects/animals (`USUBJID`).                                           |
+| `return_zscore_by_USUBJID`  | logical         | `FALSE`       | If `TRUE`, returns Z-scores for each animal/subject (identified by `USUBJID`).                                                   |
+
+**Key Points**:
+- **Mandatory Parameter**: `path_db` is required for the function to work.
+- **Logical Exclusivity**: Both `return_individual_scores` and `return_zscore_by_USUBJID` cannot be `TRUE` simultaneously.
+
+### Outputs
+
+A `data.frame` containing the calculated LiverToBW Z-scores. The structure of the output depends on the provided parameters:
+
+- If `return_individual_scores = TRUE`: Returns averaged Z-scores for each of the domain per `studyid`.
+- If `return_zscore_by_USUBJID = TRUE`: Returns Z-score for each animal/subject by `USUBJID` for each domain per `studyid`.
+- Otherwise, a summarized BW Z-score for the specified `studyid`.
+
+
+## Implementation Details
+
+### Data Preparation
+
+- **Database Connection**:
+  - Connects to SQLite database using `DBI` if `use_xpt_file = FALSE`.
+  - If `use_xpt_file` = `TRUE`: Data is loaded from .xpt files located in the folder specified by path_db.
+- **Compile Data**:
+  - If `master_compiledata` is not supplied, it is retrieved using `get_compile_data()`.
+- **Body Weight Scores**:
+  - If `bwzscore_BW` is not supplied, it is calculated using `get_bw_score()`.
+
+### Data Retrieval
+
+The function retrieves the necessary data related to the specified studyid. The data retrieval process depends on whether master_compiledata is provided or NULL:
+
+When `master_compiledata = NULL`, 
+
+If `master_compiledata` is not provided, the function extracts data from the following SEND domains:
+
+- `BW` (Body Weight) : Provide the Body Weight measurements at the individual level. 
+- `DM` (Demographics): Supplies animal-level demographic details. 
+- `DS` (Disposition): Identifies recovery animals using the `DSDECOD` column.
+- `PC` (Pharmacokinetics): Provide `USUBJID` of the  TK animals for rats and mice study. 
+- `TX` (Treatment): Provide  dose levels information such as "vehicle" or "HD."
+
+When `master_compiledata is Provided`, 
+
+If `master_compiledata` value is provided, this function retrieve the following domains:
+
+- `OM` (Organ Measurements) : Provide the Organ measurements at the individual level.
+
+### Liver-to-Body-Weight Calculations
+
+- **Calculation**:
+  - Computes the liver weight-to-body-weight ratio (`liverToBW`).
+  - Calculates z-scores for `liverToBW` using vehicle arm statistics (mean and SD).
+  - Converts z-scores to absolute values.
+
+### Handling Optional Parameters
+   - If `return_individual_scores = TRUE`, Returns averaged Z-scores for each of the domain per `studyid`.
+   - If `return_zscore_by_USUBJID = TRUE`, Returns Z-score for each animal/subject by unique subject identifiers`USUBJID`.
+
+### Fake Study Handling  
+   If `fake_study = TRUE`, special handling is applied for data sets generated by the `SENDsanitizer` package to account for their structure.
+
+### Output Generation  
+   A data frame containing the requested scores is returned. This may include summarized scores, individual scores, or Z-scores by `USUBJID`, based on the parameters provided.
+   
+### Dependencies
+
+The function requires the following R packages:
+
+- `RSQLite`: To connect to the SQLite database.
+- `haven` : To read `.xpt` file,  if `use_xpt_file = TRUE`.
+
+
+***
+This implementation ensures flexibility in handling different input types and configurations while maintaining a consistent structure for the output.
+
+***
+
+## Examples
+
+### Example 1: Default Averaged Scores
+```r
+#path <- "path_to_database"
+#study_id <- "STUDY123"
+#result <- get_livertobw_score(studyid = study_id, path_db = path)
+#head(result)

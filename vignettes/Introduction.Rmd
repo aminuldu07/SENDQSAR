@@ -1,0 +1,93 @@
+---
+title: "Introduction to SENDQSAR"
+output: html_document
+date: Oct-06-2024
+---
+
+# Introduction  
+The Standard for Exchange of Nonclinical Data (__SEND__), developed by the Clinical
+Data Interchange Standards Consortium (CDISC), offers a __structured__ __electronic__
+__format__  to organize and exchange __nonclinical__ study data among sponsor companies,
+contract research organizations (CROs), and health authorities.
+
+Test results, examinations, and observations for subjects in a nonclinical study
+are represented in a series of SEND domains. 
+
+A __domain__ is defined as a collection of logically related observations with a
+common topic.  Typically, each domain is represented by a single dataset. 
+- [Domain vs
+
+
+- MI documentation still in progress
+## Need to be edited
+For each SEND study (identified by IND &STUDYID), normalized toxicity score values were calculated for hepatotoxicity study endpoints, with scores ranging from 0 to 5. These included animal body weight, liver weight, and liver function test results (e.g., serum enzyme levels such as ALB, ALT, AST, etc.). Z-scores were used to standardize the values relative to control groups, ensuring comparability across different studies. Additionally, histopathological findings were adjusted for both incidence and severity before being incorporated into the ML model. The details of the scoring system are described elsewhere [citation or the cross-study article], where these toxicity scores were based on a variety of critical parameters, enabling a robust assessment of liver toxicity. In short, initially, the weight of each animal at the end of the dosing period was normalized by subtracting the baseline weight measured on the first day of dosing. Following this, the liver weight to body weight ratio was calculated for each animal. These liver-to-body weight ratios were then normalized using Z-scores, with comparisons made against the respective control group for each study. This allowed for standardized comparisons across different studies, reducing variability due to differences in animal size and baseline conditions. For the laboratory test (LB) data, Z-scores were also calculated for six key enzymes commonly found in blood or serum that are indicative of liver function: Bilirubin, Albumin (ALB), Alanine Aminotransferase (ALT), Alkaline Phosphatase (ALP), Aspartate Aminotransferase (AST), and Gamma-Glutamyl Transferase (GGT). These enzymes serve as important biomarkers for detecting liver damage or dysfunction. In addition to the biochemical data, Z-scores for the Microscopic Findings (histopathological findings) were derived based on both the incidence (frequency) and severity of liver-related lesions. Initially, a score was calculated purely from the severity of the findings, which was then further adjusted based on the incidence rate providing a more accurate reflection of the overall histopathological impact on liver. 
+For the body weight (BW), organ mass (OM), and laboratory test (LB) domains, the absolute value of Z-scores was used to assign toxicity scores. The scoring system was as follows: Z-scores below 1 were scored as 0 (no toxicity signal), Z-scores between 1 and 2 were scored as 1 (weak signal), Z-scores between 2 and 3 were scored as 2 (moderate signal), Z-scores above 3 were scored as 3 (strong signal). This binning system effectively rounds down the absolute value of the Z-scores in most cases, simplifying the categorization of toxicity signals.  By incorporating these standardized scores across body weight, organ mass, laboratory data, and histopathology findings, a comprehensive and quantifiable framework for assessing hepatotoxicity was developed. This framework facilitates the application of machine learning models to predict liver toxicity in toxicology studies, enhancing the reproducibility and interpretability of toxicological risk assessments. ** Need to clarify the reasons for 0-5 MI and rests are 0-3. 
+
+The weight of each animal at the end of the dosing period was normalized by subtracting the baseline weight measured on the first day of dosing. 
+
+
+## Required Libraries
+
+This function requires the following R packages:
+
+- `DBI`
+- `RSQLite`
+- `data.table`
+- `dplyr`
+- `haven`
+- `tidyr`
+- `stringr`
+- `ROCR`
+- `caret`
+- `ggplot2`
+- `randomForest`
+- `reprtree`
+- `stats`
+
+
+##Notes
+
+- The function assumes standard SEND domains and column names.
+- For non-standard data, adjustments may be needed.
+- Check your database or `.xpt` files to ensure compatibility with the function.
+
+## See Also
+
+- [DBI](https://cran.r-project.org/package=DBI)
+- [RSQLite](https://cran.r-project.org/package=RSQLite)
+- [data.table](https://cran.r-project.org/package=data.table)
+- [SENDsanitizer](https://github.com/phuse-org/SEND-sanitizer)
+
+Imports: 
+    sendigR,
+    RSQLite,
+    caret,
+    data.table,
+    DBI,
+    fs,
+    dplyr,
+    randomForest,
+    reshape2,
+    ROCR,
+    stringr,
+    tidyr,
+    ggplot2,
+    glue,
+    matrixStats,
+    magrittr,
+    haven,
+    reprtree
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    usethis
+    
+#' # Example 1: Using real data from the database
+#' get_auc_curve_with_rf_model(Data = NULL, path_db = "path/to/database.db", rat_studies = TRUE, reps = 10,
+#'                             holdback = 0.75, error_correction_method = "Prune")
+#'
+#' # Example 2: Using synthetic data with fake study IDs
+#' get_auc_curve_with_rf_model(Data = NULL, fake_study = TRUE, reps = 5, holdback = 0.8,
+#'                             error_correction_method = "Flip")
+#'
