@@ -104,71 +104,51 @@ ml_data_with_tuned_hyperparameters <- get_ml_data_and_tuned_hyperparameters(Data
 Data <- ml_data_with_tuned_hyperparameters[["rfData"]]
 best.m <- ml_data_with_tuned_hyperparameters[["best.m"]]
 
-simple_rf_model <- get_rf_model_with_cv(scores_data_df = Data,
-                                        Undersample = FALSE,
-                                        best.m = NULL, # any numeric value or call function to get it
-                                        testReps=2, # testRps must be at least 2;
-                                        Type=1)
 
-
-#--------------------------f10------------------------------------------------------------
-zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv(scores_data_df= Data, #scores_df
-                                                                               Undersample = FALSE,
-                                                                               best.m = NULL, # any numeric value or call function to get it
-                                                                               testReps=2, # testRps must be at least 2;
-                                                                               indeterminateUpper=0.75,
-                                                                               indeterminateLower=0.25,
-                                                                               Type=1)
+#
+# simple_rf_model <- get_rf_model_with_cv(scores_data_df = Data,
+#                                         Undersample = FALSE,
+#                                         best.m = NULL, # any numeric value or call function to get it
+#                                         testReps=2, # testRps must be at least 2;
+#                                         Type=1)
+#
+#
+# #--------------------------f10------------------------------------------------------------
+# zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv(scores_data_df= Data, #scores_df
+#                                                                                Undersample = FALSE,
+#                                                                                best.m = NULL, # any numeric value or call function to get it
+#                                                                                testReps=2, # testRps must be at least 2;
+#                                                                                indeterminateUpper=0.75,
+#                                                                                indeterminateLower=0.25,
+#                                                                                Type=1)
 
 
 
 
 #--------------------------f16------------------------------------------------------------
-xxxxx <- get_Data_formatted_for_ml_and_best.m(path_db = path_db,
-                                                 rat_studies=FALSE,
-                                                 studyid_metadata=studyid_metadata,
-                                                 fake_study = FALSE,
-                                                 use_xpt_file = FALSE,
-                                                 Round = FALSE,
-                                                 Impute = FALSE,
-                                                 reps=1,
-                                                 holdback=0.1,
-                                                 Undersample = FALSE,
-                                                 hyperparameter_tuning = FALSE,
-                                                 error_correction_method = "None" # = must be 'Flip' or "Prune' or 'None'
-)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# xxxxx <- get_Data_formatted_for_ml_and_best.m(path_db = path_db,
+#                                                  rat_studies=FALSE,
+#                                                  studyid_metadata=studyid_metadata,
+#                                                  fake_study = FALSE,
+#                                                  use_xpt_file = FALSE,
+#                                                  Round = FALSE,
+#                                                  Impute = FALSE,
+#                                                  reps=1,
+#                                                  holdback=0.1,
+#                                                  Undersample = FALSE,
+#                                                  hyperparameter_tuning = FALSE,
+#                                                  error_correction_method = "None" # = must be 'Flip' or "Prune' or 'None'
+#                                                 )
 
 auc_curve <- get_auc_curve_with_rf_model(Data = Data, # Input data frame for training
-                                         path_db=NULL, # Path to the SQLite database
+                                         path_db=path_db, # Path to the SQLite database
                                          rat_studies=FALSE,
                                          studyid_metadata=studyid_metadata,
                                          fake_study = FALSE, # Whether to use fake study IDs
                                          use_xpt_file = FALSE,
                                          Round = FALSE, # Whether to round numerical values
                                          Impute = FALSE,
-                                         best.m = NULL, # The 'mtry' hyperparameter for Random Forest
+                                         best.m = best.m, # The 'mtry' hyperparameter for Random Forest
                                          reps=1, # from 0 to any numeric number
                                          holdback=0.1, # either 1 or fraction value like 0.75 etc.
                                          Undersample = FALSE,
@@ -176,18 +156,6 @@ auc_curve <- get_auc_curve_with_rf_model(Data = Data, # Input data frame for tra
                                          error_correction_method = "None",# # Choose: "Flip" or "Prune" or "None"
                                          output_individual_scores = TRUE,
                                          output_zscore_by_USUBJID = FALSE)
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

@@ -129,7 +129,7 @@ get_auc_curve_with_rf_model  <- function(Data = NULL, # Input data frame for tra
 
         studyid_or_studyids <- get_repeat_dose_parallel_studyids(path_db=path_db,
                                                                  rat_studies = rat_studies)
-
+        studyid_or_studyids <- as.vector(studyid_or_studyids$STUDYID)
       }
     }
 
@@ -157,11 +157,21 @@ get_auc_curve_with_rf_model  <- function(Data = NULL, # Input data frame for tra
                                                                 hyperparameter_tuning = hyperparameter_tuning,
                                                                 error_correction_method = error_correction_method)
 
+
+    rfData <- rfData_and_best_m[["rfData"]]
+    best.m <- rfData_and_best_m[["best.m"]]
+
+  } else {
+
+    rfData <- Data
+
   }
 
-
+browser()
   # reassignment of the data
-  rfData <- rfData_and_best_m[["rfData"]]
+  #rfData <- rfData_and_best_m[["rfData"]]
+
+
 
   # best.m input handling------------------------------------------------
   if(is.null(best.m)){
@@ -170,7 +180,22 @@ get_auc_curve_with_rf_model  <- function(Data = NULL, # Input data frame for tra
     best.m <- best.m
   }
 
+ # Build the Random forest model
 
+  rfAll <- randomForest::randomForest(Target_Organ ~ ., data=rfData, mytry = best.m,
+                                      importance = F, ntree = 500, proximity = T)
+  # # print(rfAll)
+  #
+  # if (Undersample == T) {
+  #   posIndex <- which(train[,1] == 1)
+  #   nPos <- length(posIndex)
+  #   trainIndex <- c(posIndex, sample(which(train[,1] == 0), nPos, replace = F))
+  #   train <- train[trainIndex,]
+  #   test <- rbind(train[-trainIndex,], test)
+  # }
+  #
+  # train_data_two <- train
+  # print(dim(train_data_two))
 
 
 

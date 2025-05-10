@@ -62,13 +62,18 @@ get_ml_data_and_tuned_hyperparameters <- function(Data, # Data == "scores_df"
   #----------------------------------------------------------------------------
   # if "studyid_metadata" is NULL, we can make it using the "STUDYID" column
   #----------------------------------------------------------------------------
+  if (is.null(studyid_metadata)) {
+    studyid_metadata <- input_scores_df[,1:2]
+    studyid_metadata$Target_Organ <- NA
+    studyid_metadata <- studyid_metadata[,c("STUDYID", "Target_Organ")]
+    n_rows <- nrow(studyid_metadata)
+    half_n <- ceiling(n_rows / 2)
+    studyid_metadata$Target_Organ <- c(rep("Liver", half_n),
+                                       rep("not_Liver", n_rows - half_n))
 
-
-
+  }
 
   metadata_df <- studyid_metadata
-
-
   metadata_df$STUDYID <- as.character(metadata_df$STUDYID)
 
   # Join metadata with the data
