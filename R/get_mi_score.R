@@ -70,10 +70,16 @@ if (use_xpt_file) {
   DBI::dbDisconnect(db_connection)
 }
 
+# Print the dimension of the data frames
+print("*********************************************************************************************************")
+print("*********************************************************************************************************")
+cat("The dimension of '.......mi...data...frame.......' is:--------", dim(mi)[1], "rows and", dim(mi)[2], "columns.\n")
+print("*********************************************************************************************************")
+print("*********************************************************************************************************")
 
 cat("The dimension of 'dm' domain is:", dim(dm), "\n")
 
-cat("The dimension of 'mi' domain is:", dim(mi), "\n")
+#cat("The dimension of 'mi' domain is:", dim(mi), "\n")
 
 
 # # Check if mi data frame is empty

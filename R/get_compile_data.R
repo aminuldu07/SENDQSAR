@@ -178,13 +178,20 @@ get_compile_data <- function(studyid = NULL,
   }
 
   # Print the dimension of the data frames
-  cat("The dimension of 'bw' is:", dim(bw)[1], "rows and", dim(bw)[2], "columns.\n")
-  cat("The dimension of 'dm' is:", dim(dm)[1], "rows and", dim(dm)[2], "columns.\n")
-  cat("The dimension of 'ds' is:", dim(ds)[1], "rows and", dim(ds)[2], "columns.\n")
-  cat("The dimension of 'ts' is:", dim(ts)[1], "rows and", dim(ts)[2], "columns.\n")
-  cat("The dimension of 'tx' is:", dim(tx)[1], "rows and", dim(tx)[2], "columns.\n")
-  cat("The dimension of 'pc' is:", dim(pc)[1], "rows and", dim(pc)[2], "columns.\n")
+  print("*********************************************************************************************************")
+  print("--------------------------------------------------------------------------------------------------------")
+  print("*********************************************************************************************************")
 
+  cat("The dimension of '.....bw...data...frame ......' is:----", dim(bw)[1], "rows and", dim(bw)[2], "columns.\n")
+  cat("The dimension of '.....dm...data...frame ......' is:----", dim(dm)[1], "rows and", dim(dm)[2], "columns.\n")
+  cat("The dimension of '.....ds...data...frame ......' is:----", dim(ds)[1], "rows and", dim(ds)[2], "columns.\n")
+  cat("The dimension of '.....ts...data...frame ......' is:----", dim(ts)[1], "rows and", dim(ts)[2], "columns.\n")
+  cat("The dimension of '.....tx...data...frame ......' is:----", dim(tx)[1], "rows and", dim(tx)[2], "columns.\n")
+  cat("The dimension of '.....pc...data...frame ......' is:----", dim(pc)[1], "rows and", dim(pc)[2], "columns.\n")
+
+  print("*********************************************************************************************************")
+  print("--------------------------------------------------------------------------------------------------------")
+  print("*********************************************************************************************************")
 
  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #..Creation of compilation data...(Compilation of DM Data).........
