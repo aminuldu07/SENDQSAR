@@ -167,7 +167,7 @@ get_auc_curve_with_rf_model  <- function(Data = NULL, # Input data frame for tra
 
   }
 
-browser()
+
   # reassignment of the data
   #rfData <- rfData_and_best_m[["rfData"]]
 
