@@ -140,10 +140,10 @@ best.m <- ml_data_with_tuned_hyperparameters[["best.m"]]
 #                                                  error_correction_method = "None" # = must be 'Flip' or "Prune' or 'None'
 #                                                 )
 
-auc_curve <- get_auc_curve_with_rf_model(Data = Data, # Input data frame for training
+auc_curve <- get_auc_curve_with_rf_model(Data = NULL, # Input data frame for training
                                          path_db=path_db, # Path to the SQLite database
                                          rat_studies=FALSE,
-                                         studyid_metadata=studyid_metadata,
+                                         studyid_metadata=NULL,
                                          fake_study = FALSE, # Whether to use fake study IDs
                                          use_xpt_file = FALSE,
                                          Round = FALSE, # Whether to round numerical values
@@ -156,6 +156,42 @@ auc_curve <- get_auc_curve_with_rf_model(Data = Data, # Input data frame for tra
                                          error_correction_method = "None",# # Choose: "Flip" or "Prune" or "None"
                                          output_individual_scores = TRUE,
                                          output_zscore_by_USUBJID = FALSE)
+
+
+
+
+
+get_reprtree <- get_reprtree_from_rf_model( Data=NULL,
+                                         path_db=path_db,
+                                         rat_studies=FALSE,
+                                         studyid_metadata=NULL,
+                                         fake_study = FALSE,
+                                         use_xpt_file = FALSE,
+                                         Round = FALSE,
+                                         Impute = FALSE,
+                                         reps=1,
+                                         holdback=0.1,
+                                         Undersample = FALSE,
+                                         hyperparameter_tuning = FALSE,
+                                         error_correction_method ="None")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

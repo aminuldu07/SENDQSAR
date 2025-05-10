@@ -63,8 +63,29 @@ get_reprtree_from_rf_model <- function ( Data=NULL,
                                          hyperparameter_tuning = FALSE,
                                          error_correction_method) { # = must be 'Flip' or "Prune' or 'None'
 
+  if (is.null(studyid_metadata)) {
+
+    repeat_dose_parallel_studyids <- get_repeat_dose_parallel_studyids(path_db,
+                                                   rat_studies = FALSE)
+    repeat_dose_parallel_studyids$Target_Organ <- NA
+    studyid_metadata <- repeat_dose_parallel_studyids
+    #studyid_metadata <- input_scores_df[,1:2]
+    #studyid_metadata$Target_Organ <- NA
+    #studyid_metadata <- studyid_metadata[,c("STUDYID", "Target_Organ")]
+    n_rows <- nrow(studyid_metadata)
+    half_n <- ceiling(n_rows / 2)
+    studyid_metadata$Target_Organ <- c(rep("Liver", half_n),
+                                       rep("not_Liver", n_rows - half_n))
+
+  }
+
+
+
+
+
 
   if(is.null(Data)){
+
     data_and_best.m <- get_Data_formatted_for_ml_and_best.m(path_db=path_db,
                                                    rat_studies=rat_studies,
                                                    studyid_metadata=studyid_metadata,
@@ -82,6 +103,8 @@ get_reprtree_from_rf_model <- function ( Data=NULL,
 
     Data <- data_and_best.m[["Data"]]
     best.m <- data_and_best.m[["best.m"]]
+
+
 
     # First way---------------------------------------------------------
     # Use a single random split (e.g., 70% train, 30% test)
