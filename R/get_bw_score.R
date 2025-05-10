@@ -78,6 +78,10 @@ get_bw_score <- function(studyid = NULL,
     DBI::dbDisconnect(db_connection)
   }
 
+  # Print the dimension of the data frames
+  cat("The dimension of 'bw' is:", dim(bw)[1], "rows and", dim(bw)[2], "columns.\n")
+
+
 
 # Check if both BWDY and VISITDY columns exist in the 'bw' data frame
 if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
