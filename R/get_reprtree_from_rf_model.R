@@ -61,7 +61,16 @@ get_reprtree_from_rf_model <- function ( Data=NULL,
                                          holdback,
                                          Undersample = FALSE,
                                          hyperparameter_tuning = FALSE,
-                                         error_correction_method) { # = must be 'Flip' or "Prune' or 'None'
+                                         error_correction_method,
+                                         best.m = NULL) { # = must be 'Flip' or "Prune' or 'None'
+
+    #Data <- Data
+    #best.m <- best.m
+
+    # enforce that Data and best.m must either both be NULL or both be non-NULL
+    if (xor(is.null(Data), is.null(best.m))) {
+      stop("Error: Either both 'Data' and 'best.m' must be NULL or both must be non-NULL.")
+    }
 
   if (is.null(studyid_metadata)) {
 
@@ -80,11 +89,7 @@ get_reprtree_from_rf_model <- function ( Data=NULL,
   }
 
 
-
-
-
-
-  if(is.null(Data)){
+  if (is.null(Data) && is.null(best.m)) {
 
     data_and_best.m <- get_Data_formatted_for_ml_and_best.m(path_db=path_db,
                                                    rat_studies=rat_studies,
@@ -98,13 +103,10 @@ get_reprtree_from_rf_model <- function ( Data=NULL,
                                                    Undersample = Undersample,
                                                    hyperparameter_tuning = hyperparameter_tuning,
                                                    error_correction_method=error_correction_method) # = must be 'Flip' or "Prune' or 'None'
-
-        }
-
     Data <- data_and_best.m[["Data"]]
     best.m <- data_and_best.m[["best.m"]]
 
-
+    }
 
     # First way---------------------------------------------------------
     # Use a single random split (e.g., 70% train, 30% test)

@@ -59,10 +59,16 @@ get_prediction_plot <- function(Data=NULL,
                                 Undersample = FALSE,
                                 hyperparameter_tuning = FALSE,
                                 error_correction_method,
+                                best.m = best.m,
                                 testReps){
 
 
-  if(is.null(Data)){
+  # enforce that Data and best.m must either both be NULL or both be non-NULL
+  if (xor(is.null(Data), is.null(best.m))) {
+    stop("Error: Either both 'Data' and 'best.m' must be NULL or both must be non-NULL.")
+  }
+
+  if (is.null(Data) && is.null(best.m)){
     data_and_best.m <- get_Data_formatted_for_ml_and_best.m(path_db=path_db,
                                                             rat_studies=rat_studies,
                                                             studyid_metadata=studyid_metadata,
@@ -76,15 +82,13 @@ get_prediction_plot <- function(Data=NULL,
                                                             hyperparameter_tuning = hyperparameter_tuning,
                                                             error_correction_method=error_correction_method) # = must be 'Flip' or "Prune' or 'None'
 
+
+    Data <- data_and_best.m[["Data"]]
+    best.m <- data_and_best.m[["best.m"]]
   }
 
-  Data <- data_and_best.m[["Data"]]
-  best.m <- data_and_best.m[["best.m"]]
-
-
-
-
   rfData <- Data
+  best.m <- best.m
   #---------------------------------------------------------------------
   # Initialize model performance metric trackers------------------------
   #---------------------------------------------------------------------

@@ -80,8 +80,13 @@ get_auc_curve_with_rf_model  <- function(Data = NULL, # Input data frame for tra
                                output_zscore_by_USUBJID = FALSE) {# Whether to perform undersampling
 
 
+  # enforce that Data and best.m must either both be NULL or both be non-NULL
+  if (xor(is.null(Data), is.null(best.m))) {
+    stop("Error: Either both 'Data' and 'best.m' must be NULL or both must be non-NULL.")
+  }
+
   # Generate data if not provided
-  if (is.null(Data)) {
+  if (is.null(Data) && is.null(best.m)) {
 
     if(use_xpt_file){
 
@@ -161,11 +166,18 @@ get_auc_curve_with_rf_model  <- function(Data = NULL, # Input data frame for tra
     rfData <- rfData_and_best_m[["rfData"]]
     best.m <- rfData_and_best_m[["best.m"]]
 
-  } else {
-
-    rfData <- Data
-
   }
+
+
+  # Pass the input Data as rfData and best.m
+  rfData <- Data
+  best.m <- best.m
+
+  # else {
+  #
+  #
+  #
+  # }
 
 
   # reassignment of the data
@@ -173,12 +185,12 @@ get_auc_curve_with_rf_model  <- function(Data = NULL, # Input data frame for tra
 
 
 
-  # best.m input handling------------------------------------------------
-  if(is.null(best.m)){
-    best.m <- rfData_and_best_m[["best.m"]]
-  } else {
-    best.m <- best.m
-  }
+  # # best.m input handling------------------------------------------------
+  # if(is.null(best.m)){
+  #   best.m <- rfData_and_best_m[["best.m"]]
+  # } else {
+  #   best.m <- best.m
+  # }
 
  # Build the Random forest model
 

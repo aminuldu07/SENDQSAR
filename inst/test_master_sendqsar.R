@@ -105,45 +105,37 @@ Data <- ml_data_with_tuned_hyperparameters[["rfData"]]
 best.m <- ml_data_with_tuned_hyperparameters[["best.m"]]
 
 
-#
-# simple_rf_model <- get_rf_model_with_cv(scores_data_df = Data,
-#                                         Undersample = FALSE,
-#                                         best.m = NULL, # any numeric value or call function to get it
-#                                         testReps=2, # testRps must be at least 2;
-#                                         Type=1)
-#
-#
-# #--------------------------f10------------------------------------------------------------
-# zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv(scores_data_df= Data, #scores_df
-#                                                                                Undersample = FALSE,
-#                                                                                best.m = NULL, # any numeric value or call function to get it
-#                                                                                testReps=2, # testRps must be at least 2;
-#                                                                                indeterminateUpper=0.75,
-#                                                                                indeterminateLower=0.25,
-#                                                                                Type=1)
+
+simple_rf_model <- get_rf_model_with_cv(scores_data_df = Data,
+                                        Undersample = FALSE,
+                                        best.m = NULL, # any numeric value or call function to get it
+                                        testReps=2, # testRps must be at least 2;
+                                        Type=1)
 
 
+#--------------------------f10------------------------------------------------------------
+zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv(scores_data_df= Data, #scores_df
+                                                                               Undersample = FALSE,
+                                                                               best.m = NULL, # any numeric value or call function to get it
+                                                                               testReps=2, # testRps must be at least 2;
+                                                                               indeterminateUpper=0.75,
+                                                                               indeterminateLower=0.25,
+                                                                               Type=1)
 
+#--------------------------f11------------------------------------------------------------
 
-#--------------------------f16------------------------------------------------------------
-# xxxxx <- get_Data_formatted_for_ml_and_best.m(path_db = path_db,
-#                                                  rat_studies=FALSE,
-#                                                  studyid_metadata=studyid_metadata,
-#                                                  fake_study = FALSE,
-#                                                  use_xpt_file = FALSE,
-#                                                  Round = FALSE,
-#                                                  Impute = FALSE,
-#                                                  reps=1,
-#                                                  holdback=0.1,
-#                                                  Undersample = FALSE,
-#                                                  hyperparameter_tuning = FALSE,
-#                                                  error_correction_method = "None" # = must be 'Flip' or "Prune' or 'None'
-#                                                 )
+imp_features <- get_imp_features_from_rf_model_with_cv(scores_data_df = Data, #scores_df
+                                                   Undersample = FALSE,
+                                                   best.m = NULL, # any numeric value or call function to get it
+                                                   testReps=2, # testRps must be at least 2;
+                                                   Type=1,
+                                                   nTopImportance=10)
 
-auc_curve <- get_auc_curve_with_rf_model(Data = NULL, # Input data frame for training
+#--------------------------f12------------------------------------------------------------
+auc_curve <- get_auc_curve_with_rf_model(Data = Data, # Input data frame for training
                                          path_db=path_db, # Path to the SQLite database
                                          rat_studies=FALSE,
-                                         studyid_metadata=NULL,
+                                         studyid_metadata=studyid_metadata,
                                          fake_study = FALSE, # Whether to use fake study IDs
                                          use_xpt_file = FALSE,
                                          Round = FALSE, # Whether to round numerical values
@@ -157,36 +149,72 @@ auc_curve <- get_auc_curve_with_rf_model(Data = NULL, # Input data frame for tra
                                          output_individual_scores = TRUE,
                                          output_zscore_by_USUBJID = FALSE)
 
+#--------------------------f13------------------------------------------------------------
+histogram <- get_histogram_barplot(Data =Data,
+                                   generateBarPlot= TRUE,
+                                   path_db= path_db,
+                                   rat_studies=FALSE,
+                                   studyid_metadata=studyid_metadata,
+                                   fake_study = FALSE,
+                                   use_xpt_file = FALSE,
+                                   Round = FALSE,
+                                   output_individual_scores = TRUE,
+                                   utput_zscore_by_USUBJID = FALSE)
+
+#--------------------------f14------------------------------------------------------------
+get_reprtree <- get_reprtree_from_rf_model( Data=Data,
+                                            path_db=path_db,
+                                            rat_studies=FALSE,
+                                            studyid_metadata=studyid_metadata,
+                                            fake_study = FALSE,
+                                            use_xpt_file = FALSE,
+                                            Round = FALSE,
+                                            Impute = FALSE,
+                                            reps=1,
+                                            holdback=0.1,
+                                            Undersample = FALSE,
+                                            hyperparameter_tuning = FALSE,
+                                            error_correction_method = "None",
+                                            best.m = best.m)
+
+#--------------------------f15------------------------------------------------------------
+prediciton_plot <- get_prediction_plot( Data=Data,
+                                        path_db=path_db,
+                                        rat_studies=FALSE,
+                                        studyid_metadata=studyid_metadata,
+                                        fake_study = FALSE,
+                                        use_xpt_file = FALSE,
+                                        Round = FALSE,
+                                        Impute = FALSE,
+                                        reps=1,
+                                        holdback=0.1,
+                                        Undersample = FALSE,
+                                        hyperparameter_tuning = FALSE,
+                                        error_correction_method = "None",
+                                        best.m = best.m,
+                                        testReps=2)
+
+#--------------------------f16------------------------------------------------------------
+ML_formatted_data <- get_Data_formatted_for_ml_and_best.m(path_db = path_db,
+                                                 rat_studies=FALSE,
+                                                 studyid_metadata=studyid_metadata,
+                                                 fake_study = FALSE,
+                                                 use_xpt_file = FALSE,
+                                                 Round = FALSE,
+                                                 Impute = FALSE,
+                                                 reps=1,
+                                                 holdback=0.1,
+                                                 Undersample = FALSE,
+                                                 hyperparameter_tuning = FALSE,
+                                                 error_correction_method = "None" # = must be 'Flip' or "Prune' or 'None'
+                                                )
+
+#--------------------------f16------------------------------------------------------------
 
 
 
 
-get_reprtree <- get_reprtree_from_rf_model( Data=NULL,
-                                         path_db=path_db,
-                                         rat_studies=FALSE,
-                                         studyid_metadata=NULL,
-                                         fake_study = FALSE,
-                                         use_xpt_file = FALSE,
-                                         Round = FALSE,
-                                         Impute = FALSE,
-                                         reps=1,
-                                         holdback=0.1,
-                                         Undersample = FALSE,
-                                         hyperparameter_tuning = FALSE,
-                                         error_correction_method ="None")
 
-
-
-histogram <- get_histogram_barplot(Data =NULL,
-                                  generateBarPlot= TRUE,
-                                  path_db= path_db,
-                                  rat_studies=FALSE,
-                                  studyid_metadata=NULL,
-                                  fake_study = FALSE,
-                                  use_xpt_file = FALSE,
-                                  Round = FALSE,
-                                  output_individual_scores = TRUE,
-                                  utput_zscore_by_USUBJID = FALSE)
 
 
 
