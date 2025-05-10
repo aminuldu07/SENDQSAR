@@ -63,7 +63,24 @@ get_histogram_barplot <- function(Data =NULL,
                                   output_individual_scores = TRUE,
                                   utput_zscore_by_USUBJID = FALSE){
 
+  browser()
   Data <- Data
+
+  if (is.null(studyid_metadata)) {
+
+    repeat_dose_parallel_studyids <- get_repeat_dose_parallel_studyids(path_db,
+                                                                       rat_studies = FALSE)
+    repeat_dose_parallel_studyids$Target_Organ <- NA
+    studyid_metadata <- repeat_dose_parallel_studyids
+    #studyid_metadata <- input_scores_df[,1:2]
+    #studyid_metadata$Target_Organ <- NA
+    #studyid_metadata <- studyid_metadata[,c("STUDYID", "Target_Organ")]
+    n_rows <- nrow(studyid_metadata)
+    half_n <- ceiling(n_rows / 2)
+    studyid_metadata$Target_Organ <- c(rep("Liver", half_n),
+                                       rep("not_Liver", n_rows - half_n))
+
+  }
 
   studyid_metadata <- studyid_metadata
 

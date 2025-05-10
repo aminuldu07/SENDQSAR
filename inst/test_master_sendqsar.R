@@ -177,7 +177,16 @@ get_reprtree <- get_reprtree_from_rf_model( Data=NULL,
 
 
 
-
+histogram <- get_histogram_barplot(Data =NULL,
+                                  generateBarPlot= TRUE,
+                                  path_db= path_db,
+                                  rat_studies=FALSE,
+                                  studyid_metadata=NULL,
+                                  fake_study = FALSE,
+                                  use_xpt_file = FALSE,
+                                  Round = FALSE,
+                                  output_individual_scores = TRUE,
+                                  utput_zscore_by_USUBJID = FALSE)
 
 
 
