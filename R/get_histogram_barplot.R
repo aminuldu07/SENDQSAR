@@ -63,7 +63,7 @@ get_histogram_barplot <- function(Data =NULL,
                                   output_individual_scores = TRUE,
                                   utput_zscore_by_USUBJID = FALSE){
 
-  browser()
+
   Data <- Data
 
   if (is.null(studyid_metadata)) {

@@ -175,7 +175,16 @@ get_compile_data <- function(studyid = NULL,
     # pp <- haven::read_xpt(fs::path(path,'pp.xpt'))
     # pooldef <- haven::read_xpt(fs::path(path,'pooldef.xpt'))
 
- }
+  }
+
+  # Print the dimension of the data frames
+  cat("The dimension of 'bw' is:", dim(bw)[1], "rows and", dim(bw)[2], "columns.\n")
+  cat("The dimension of 'dm' is:", dim(dm)[1], "rows and", dim(dm)[2], "columns.\n")
+  cat("The dimension of 'ds' is:", dim(ds)[1], "rows and", dim(ds)[2], "columns.\n")
+  cat("The dimension of 'ts' is:", dim(ts)[1], "rows and", dim(ts)[2], "columns.\n")
+  cat("The dimension of 'tx' is:", dim(tx)[1], "rows and", dim(tx)[2], "columns.\n")
+  cat("The dimension of 'pc' is:", dim(pc)[1], "rows and", dim(pc)[2], "columns.\n")
+
 
  #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     #..Creation of compilation data...(Compilation of DM Data).........
