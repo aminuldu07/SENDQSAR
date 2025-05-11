@@ -67,9 +67,8 @@ get_zone_exclusioned_rf_model_with_cv <- function(scores_data_df, #scores_df
                                       Undersample = FALSE,
                                       best.m = NULL, # any numeric value or call function to get it
                                       testReps, # testRps must be at least 2;
-                                      indeterminateUpper,
-                                      indeterminateLower,
                                       Type) {
+
 
     rfData <- scores_data_df #rfData <- scores_df
     #---------------------------------------------------------------------
@@ -182,15 +181,15 @@ get_zone_exclusioned_rf_model_with_cv <- function(scores_data_df, #scores_df
       #------------------------------------------------------------------------
       #------------------------------------------------------------------------
 
-      indeterminateIndex <- which((p2r < indeterminateUpper)&(p2r > indeterminateLower))
+      #indeterminateIndex <- which((p2r < indeterminateUpper)&(p2r > indeterminateLower))
 
       #Calculating the Proportion of Indeterminate Predictions
       #Sets the indeterminate predictions to NA, effectively marking them
       #as missing or invalid.
-      nRemoved <- c(nRemoved, length(indeterminateIndex)/length(p2r))
+      #nRemoved <- c(nRemoved, length(indeterminateIndex)/length(p2r))
 
       #Handling Indeterminate Predictions
-      p2r[indeterminateIndex] <- NA
+      #p2r[indeterminateIndex] <- NA
 
       #Rounding the Predictions:
       p2r <- round(p2r)

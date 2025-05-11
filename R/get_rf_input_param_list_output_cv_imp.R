@@ -88,7 +88,7 @@ get_rf_input_param_list_output_cv_imp <- function(path_db,
                                                   nTopImportance
                                                   ){
 
-
+browser()
     if(use_xpt_file){
 
       studyid_or_studyids <- list.dirs(path_db , full.names = TRUE, recursive = FALSE)
@@ -135,9 +135,27 @@ get_rf_input_param_list_output_cv_imp <- function(path_db,
 
         studyid_or_studyids <- get_repeat_dose_parallel_studyids(path_db=path_db,
                                                                  rat_studies = rat_studies)
+        studyid_or_studyids <- as.vector(studyid_or_studyids$STUDYID)
 
       }
     }
+
+  # process the database to get the "studyid_metadata"------------
+  if (is.null(studyid_metadata)) {
+
+    repeat_dose_parallel_studyids <- get_repeat_dose_parallel_studyids(path_db,
+                                                                       rat_studies = FALSE)
+    repeat_dose_parallel_studyids$Target_Organ <- NA
+    studyid_metadata <- repeat_dose_parallel_studyids
+    #studyid_metadata <- input_scores_df[,1:2]
+    #studyid_metadata$Target_Organ <- NA
+    #studyid_metadata <- studyid_metadata[,c("STUDYID", "Target_Organ")]
+    n_rows <- nrow(studyid_metadata)
+    half_n <- ceiling(n_rows / 2)
+    studyid_metadata$Target_Organ <- c(rep("Liver", half_n),
+                                       rep("not_Liver", n_rows - half_n))
+
+  }
 
   #-----------------------------------------------------------------------
   # if studyid_metadata is not provided then use the data frame to
@@ -172,6 +190,7 @@ get_rf_input_param_list_output_cv_imp <- function(path_db,
 
 
   rfData <- rfData_and_best_m[["rfData"]]
+  #best.m <- rfData_and_best_m[["best.m"]]
 
   # best.m input handling------------------------------------------------
   if(is.null(best.m)){

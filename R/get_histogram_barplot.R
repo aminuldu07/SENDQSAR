@@ -66,6 +66,7 @@ get_histogram_barplot <- function(Data =NULL,
 
   Data <- Data
 
+  # process the database to get the "studyid_metadata"------------
   if (is.null(studyid_metadata)) {
 
     repeat_dose_parallel_studyids <- get_repeat_dose_parallel_studyids(path_db,

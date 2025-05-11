@@ -210,20 +210,50 @@ ML_formatted_data <- get_Data_formatted_for_ml_and_best.m(path_db = path_db,
                                                 )
 
 #--------------------------f17------------------------------------------------------------
-
+output_cv_imp <- get_rf_input_param_list_output_cv_imp( path_db=path_db,
+                                                        rat_studies=FALSE,
+                                                        studyid_metadata=NULL,
+                                                        fake_study = FALSE,
+                                                        use_xpt_file = FALSE,
+                                                        Round = FALSE,
+                                                        Impute = FALSE,
+                                                        reps=1,
+                                                        holdback=0.1,
+                                                        Undersample = FALSE,
+                                                        hyperparameter_tuning = FALSE,
+                                                        error_correction_method='None', # = must be 'Flip' or "Prune' or 'None'
+                                                        best.m = NULL, #rf mytr parameter
+                                                        testReps=2, # at least 2
+                                                        indeterminateUpper=0.75,
+                                                        indeterminateLower=0.25,
+                                                        Type=1,
+                                                        nTopImportance=10
+                                                        )
 
 
 
 
 #--------------------------f18------------------------------------------------------------
+zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv( scores_data_df=Data, #scores_df
+                                                                    Undersample = FALSE,
+                                                                    best.m = best.m, # any numeric value or call function to get it
+                                                                    testReps=2, # testRps must be at least 2;
+                                                                    Type=1)
 
 
 
 
 
+#--------------------------f19------------------------------------------------------------
 
-
-
+zone_exclusioned_rf_model_cv_imp <- get_zone_exclusioned_rf_model_cv_imp(  scores_data_df,
+                                                                           Undersample = FALSE,
+                                                                           best.m = NULL, # any numeric value or call function to get it
+                                                                           testReps, # testRps must be at least 2;
+                                                                           indeterminateUpper,
+                                                                           indeterminateLower,
+                                                                           Type,
+                                                                           nTopImportance)
 
 
 
