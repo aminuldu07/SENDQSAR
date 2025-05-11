@@ -106,7 +106,7 @@ best.m <- ml_data_with_tuned_hyperparameters[["best.m"]]
 
 
 
-simple_rf_model <- get_rf_model_with_cv(scores_data_df = Data,
+simple_rf_model <- get_rf_model_with_cv(ml_formatted_scores_df = Data,
                                         Undersample = FALSE,
                                         best.m = NULL, # any numeric value or call function to get it
                                         testReps=2, # testRps must be at least 2;
@@ -231,8 +231,6 @@ output_cv_imp <- get_rf_input_param_list_output_cv_imp( path_db=path_db,
                                                         )
 
 
-
-
 #--------------------------f18------------------------------------------------------------
 zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv( scores_data_df=Data, #scores_df
                                                                     Undersample = FALSE,
@@ -256,71 +254,6 @@ zone_exclusioned_rf_model_cv_imp <- get_zone_exclusioned_rf_model_cv_imp(  score
                                                                            nTopImportance)
 
 
-
-
-
-
-
-
-
-
-
-
-output_cv_imp <- get_rf_input_param_list_output_cv_imp( path_db=path_db,
-                                                        rat_studies=FALSE,
-                                                        studyid_metadata= studyid_metadata,
-                                                        fake_study = FALSE,
-                                                        use_xpt_file = FALSE,
-                                                        Round = TRUE,
-                                                        Impute = TRUE,
-                                                        reps=1,
-                                                        holdback=0.25,
-                                                        Undersample = TRUE,
-                                                        hyperparameter_tuning = FALSE, # best.m == 4, if hyperparameter_tuning = FALSE
-                                                        error_correction_method = 'None',
-                                                        testReps = 5,
-                                                        indeterminateUpper = .75,
-                                                        indeterminateLower = .25,
-                                                        Type = 1,
-                                                        nTopImportance = 20)
-
-
-
-studyid_or_studyids   <- 8514252
-
-xxxx <- get_lb_score(studyid = studyid_or_studyids,
-                         path_db = path_db,
-                         fake_study= FALSE,
-                         use_xpt_file = FALSE,
-                         master_compiledata = NULL,
-                         return_individual_scores = FALSE,
-                         return_zscore_by_USUBJID = TRUE)
-
-# get score in a list format
-R_SQL_om_lb_mi_CD <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = studyid_or_studyids,
-                                                       path_db = path_db,
-                                                       fake_study = FALSE,
-                                                       use_xpt_file = FALSE,
-                                                       output_individual_scores = TRUE,
-                                                       output_zscore_by_USUBJID = FALSE)
-
-
-# Building the Machine learning model
-
-# Get the Data formatted for ML models
-Data_ML_fomatted <- get_Data_formatted_for_ml_and_best.m(path_db=path_db,
-                                             rat_studies=TRUE,
-                                             studyid_metadata=studyid_metadata ,
-                                             fake_study = FALSE,
-                                             use_xpt_file = FALSE,
-                                             Round = TRUE,
-                                             Impute = TRUE,
-                                             reps=1,
-                                             holdback=0.25,
-                                             Undersample =TRUE,
-                                             hyperparameter_tuning = FALSE,
-                                             error_correction_method = 'None' # = must be 'Flip' or "Prune' or 'None'
-                                             )
 
 
 

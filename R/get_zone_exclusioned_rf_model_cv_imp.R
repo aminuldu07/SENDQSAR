@@ -57,7 +57,7 @@
 
 
 
-get_zone_exclusioned_rf_model_cv_imp <- function(scores_data_df,
+get_zone_exclusioned_rf_model_cv_imp <- function(ml_formatted_scores_df,
                                       Undersample = FALSE,
                                       best.m = NULL, # any numeric value or call function to get it
                                       testReps, # testRps must be at least 2;

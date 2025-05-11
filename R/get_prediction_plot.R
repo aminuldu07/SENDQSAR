@@ -46,7 +46,7 @@
 #' @export
 
 
-get_prediction_plot <- function(Data=NULL,
+get_prediction_plot <- function(ml_formatted_scores_df=NULL,
                                 path_db,
                                 rat_studies=FALSE,
                                 studyid_metadata=NULL,
@@ -68,7 +68,23 @@ get_prediction_plot <- function(Data=NULL,
     stop("Error: Either both 'Data' and 'best.m' must be NULL or both must be non-NULL.")
   }
 
-  if (is.null(Data) && is.null(best.m)){
+  if (is.null(studyid_metadata)) {
+
+    repeat_dose_parallel_studyids <- get_repeat_dose_parallel_studyids(path_db,
+                                                                       rat_studies = FALSE)
+    repeat_dose_parallel_studyids$Target_Organ <- NA
+    studyid_metadata <- repeat_dose_parallel_studyids
+    #studyid_metadata <- input_scores_df[,1:2]
+    #studyid_metadata$Target_Organ <- NA
+    #studyid_metadata <- studyid_metadata[,c("STUDYID", "Target_Organ")]
+    n_rows <- nrow(studyid_metadata)
+    half_n <- ceiling(n_rows / 2)
+    studyid_metadata$Target_Organ <- c(rep("Liver", half_n),
+                                       rep("not_Liver", n_rows - half_n))
+
+  }
+
+  if (is.null(ml_formatted_scores_df) && is.null(best.m)){
     data_and_best.m <- get_Data_formatted_for_ml_and_best.m(path_db=path_db,
                                                             rat_studies=rat_studies,
                                                             studyid_metadata=studyid_metadata,
@@ -83,11 +99,11 @@ get_prediction_plot <- function(Data=NULL,
                                                             error_correction_method=error_correction_method) # = must be 'Flip' or "Prune' or 'None'
 
 
-    Data <- data_and_best.m[["Data"]]
+    ml_formatted_scores_df <- data_and_best.m[["Data"]]
     best.m <- data_and_best.m[["best.m"]]
   }
 
-  rfData <- Data
+  rfData <- ml_formatted_scores_df
   best.m <- best.m
   #---------------------------------------------------------------------
   # Initialize model performance metric trackers------------------------
