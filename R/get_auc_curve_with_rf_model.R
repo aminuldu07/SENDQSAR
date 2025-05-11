@@ -62,7 +62,7 @@
 
 
 
-get_auc_curve_with_rf_model  <- function(Data = NULL, # Input data frame for training
+get_auc_curve_with_rf_model  <- function(ml_formatted_scores_df = NULL, # Input data frame for training
                                path_db=NULL, # Path to the SQLite database
                                rat_studies=FALSE,
                                studyid_metadata,
@@ -86,7 +86,7 @@ get_auc_curve_with_rf_model  <- function(Data = NULL, # Input data frame for tra
   }
 
   # Generate data if not provided
-  if (is.null(Data) && is.null(best.m)) {
+  if (is.null(ml_formatted_scores_df) && is.null(best.m)) {
 
     if(use_xpt_file){
 
@@ -137,11 +137,6 @@ get_auc_curve_with_rf_model  <- function(Data = NULL, # Input data frame for tra
         studyid_or_studyids <- as.vector(studyid_or_studyids$STUDYID)
       }
     }
-
-
-
-
-
 
     # get scores for the lb,mi and om data frame combined
     calculated_liver_scores <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = studyid_or_studyids,

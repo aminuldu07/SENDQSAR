@@ -4,6 +4,8 @@ devtools::load_all(".")
 # For real data
 path_db = 'C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/TestDB.db'
 
+xpt_path <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/real_xpt_dir"
+
 studyid_metadata <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/sqlite_20Liver_20not_liver.csv")
 
 studyid_or_studyids <-as.vector(studyid_metadata [,"STUDYID"])
@@ -14,6 +16,7 @@ studyid_or_studyids <-as.vector(studyid_metadata [,"STUDYID"])
 #
 # studyid_metadata <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_80_MD.csv",
 #                              header = TRUE, sep = ",", stringsAsFactors = FALSE)
+
 
 #-------------------------- f1------------------------------------------------------------
 # Call the function for "REAL SEND SQLite database"
@@ -114,7 +117,7 @@ simple_rf_model <- get_rf_model_with_cv(ml_formatted_scores_df = Data,
 
 
 #--------------------------f10------------------------------------------------------------
-zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv(scores_data_df= Data, #scores_df
+zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv(ml_formatted_scores_df= Data,
                                                                                Undersample = FALSE,
                                                                                best.m = NULL, # any numeric value or call function to get it
                                                                                testReps=2, # testRps must be at least 2;
@@ -124,7 +127,7 @@ zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv(scores_data_d
 
 #--------------------------f11------------------------------------------------------------
 
-imp_features <- get_imp_features_from_rf_model_with_cv(scores_data_df = Data, #scores_df
+imp_features <- get_imp_features_from_rf_model_with_cv(ml_formatted_scores_df = Data, #scores_df
                                                    Undersample = FALSE,
                                                    best.m = NULL, # any numeric value or call function to get it
                                                    testReps=2, # testRps must be at least 2;
@@ -208,6 +211,21 @@ ML_formatted_data <- get_Data_formatted_for_ml_and_best.m(path_db = path_db,
                                                  hyperparameter_tuning = FALSE,
                                                  error_correction_method = "None" # = must be 'Flip' or "Prune' or 'None'
                                                 )
+
+
+ml_formatted_data <- get_Data_formatted_for_ml_and_best.m( path_db=xpt_path,
+                                                           rat_studies=FALSE,
+                                                           studyid_metadata=NULL,
+                                                           fake_study = FALSE,
+                                                           use_xpt_file = TRUE,
+                                                           Round = FALSE,
+                                                           Impute = FALSE,
+                                                           reps=1,
+                                                           holdback=0.1,
+                                                           Undersample = FALSE,
+                                                           hyperparameter_tuning = FALSE,
+                                                           error_correction_method = "None" # = must be 'Flip' or "Prune' or 'None'
+)
 
 #--------------------------f17------------------------------------------------------------
 output_cv_imp <- get_rf_input_param_list_output_cv_imp( path_db=path_db,

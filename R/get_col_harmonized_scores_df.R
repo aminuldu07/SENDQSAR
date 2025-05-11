@@ -40,7 +40,6 @@ get_col_harmonized_scores_df <- function(liver_score_data_frame, Round = FALSE) 
 get_col_harmonized_scores_df <- function(liver_score_data_frame,
                                          Round = FALSE){
 
-  #write.csv(Data, 'mergedData.csv', row.names = F)
 
   ###-----------column harmonization of "liver_scores"-------------
   liver_scores <- liver_score_data_frame
@@ -152,7 +151,14 @@ get_col_harmonized_scores_df <- function(liver_score_data_frame,
 
   removeIndex <- which(colnames(Data) %in% removeEndpoints)
 
-  Data <- Data[, -removeIndex]
+  # remove the removeIndex
+  if (length(removeIndex) > 0) {
+    removedCols <- colnames(Data)[removeIndex]
+    cat("Removing columns:", paste(removedCols, collapse = ", "), "\n")
+    Data <- Data[, -removeIndex]
+  } else {
+    cat("...No matching columns found to remove.....\n")
+  }
 
   print(dim(Data))
 

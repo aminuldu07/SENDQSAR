@@ -46,7 +46,7 @@
 
 
 
-get_imp_features_from_rf_model_with_cv <- function(scores_data_df, #scores_df
+get_imp_features_from_rf_model_with_cv <- function(ml_formatted_scores_df,
                                                   Undersample = FALSE,
                                                   best.m = NULL, # any numeric value or call function to get it
                                                   testReps, # testRps must be at least 2;
@@ -56,7 +56,7 @@ get_imp_features_from_rf_model_with_cv <- function(scores_data_df, #scores_df
 
 
 
-    rfData <- scores_data_df #rfData <- scores_df
+    rfData <- ml_formatted_scores_df
     #---------------------------------------------------------------------
     # Initialize model performance metric trackers------------------------
     #---------------------------------------------------------------------

@@ -52,7 +52,7 @@
 #' @export
 
 
-get_histogram_barplot <- function(Data =NULL,
+get_histogram_barplot <- function(ml_formatted_scores_df =NULL,
                                   generateBarPlot= FALSE,
                                   path_db=FALSE,
                                   rat_studies=FALSE,
@@ -64,9 +64,12 @@ get_histogram_barplot <- function(Data =NULL,
                                   utput_zscore_by_USUBJID = FALSE){
 
 
-  Data <- Data
+  Data <- ml_formatted_scores_df
 
   # process the database to get the "studyid_metadata"------------
+
+  # think if xpt folder, then?????????????????????????????????
+
   if (is.null(studyid_metadata)) {
 
     repeat_dose_parallel_studyids <- get_repeat_dose_parallel_studyids(path_db,
@@ -85,8 +88,8 @@ get_histogram_barplot <- function(Data =NULL,
 
   studyid_metadata <- studyid_metadata
 
-  # Generate data if not provided
-  if (is.null(Data)) {
+  # Generate "ml_formatted_scores_df" if not provided
+  if (is.null(ml_formatted_scores_df)) {
 
     if(use_xpt_file){
 
