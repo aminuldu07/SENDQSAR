@@ -62,7 +62,7 @@
 
 
 
-get_auc_curve_with_rf_model  <- function(ml_formatted_scores_df = NULL, # Input data frame for training
+get_auc_curve_with_rf_model  <- function(ml_formatted_scores_df = NULL,
                                path_db=NULL, # Path to the SQLite database
                                rat_studies=FALSE,
                                studyid_metadata,
@@ -79,9 +79,9 @@ get_auc_curve_with_rf_model  <- function(ml_formatted_scores_df = NULL, # Input 
                                output_individual_scores = TRUE,
                                output_zscore_by_USUBJID = FALSE) {# Whether to perform undersampling
 
-
+browser()
   # enforce that Data and best.m must either both be NULL or both be non-NULL
-  if (xor(is.null(Data), is.null(best.m))) {
+  if (xor(is.null(ml_formatted_scores_df), is.null(best.m))) {
     stop("Error: Either both 'Data' and 'best.m' must be NULL or both must be non-NULL.")
   }
 
@@ -150,9 +150,17 @@ get_auc_curve_with_rf_model  <- function(ml_formatted_scores_df = NULL, # Input 
     column_harmonized_liverscr_df <- get_col_harmonized_scores_df(liver_score_data_frame = calculated_liver_scores,
                                                                   Round = Round)
 
+
+    # If "studyid_metadata = NULL"-----------------
+
+    if(is.null(studyid_metadata)){
+
+      studyid_metadata <- get_studyid_metadata(input_df = column_harmonized_liverscr_df)
+    }
+
     #Data <- column_harmonized_liverscr_df
 
-    rfData_and_best_m <- get_ml_data_and_tuned_hyperparameters( Data = column_harmonized_liverscr_df,
+    rfData_and_best_m <- get_ml_data_and_tuned_hyperparameters( column_harmonized_df = column_harmonized_liverscr_df,
                                                                 studyid_metadata = studyid_metadata,
                                                                 Impute = Impute,
                                                                 Round = Round,
@@ -170,7 +178,7 @@ get_auc_curve_with_rf_model  <- function(ml_formatted_scores_df = NULL, # Input 
 
 
   # Pass the input Data as rfData and best.m
-  rfData <- Data
+  rfData <- rfData
   best.m <- best.m
 
   # else {

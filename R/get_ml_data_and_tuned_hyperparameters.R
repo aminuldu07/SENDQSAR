@@ -46,7 +46,7 @@
 #' }
 
 
-get_ml_data_and_tuned_hyperparameters <- function(Data, # Data == "scores_df"
+get_ml_data_and_tuned_hyperparameters <- function(column_harmonized_df,
                                                   studyid_metadata,
                                                   Impute = FALSE,
                                                   Round =FALSE,
@@ -57,7 +57,7 @@ get_ml_data_and_tuned_hyperparameters <- function(Data, # Data == "scores_df"
                                                   error_correction_method = "None") { #Default to "None";
                                                                                        #options: "Flip", "Prune", "None"
 
-  input_scores_df <- Data #input_scores_df <- scores_df
+  input_scores_df <- column_harmonized_df
 
   #----------------------------------------------------------------------------
   # if "studyid_metadata" is NULL, we can make it using the "STUDYID" column

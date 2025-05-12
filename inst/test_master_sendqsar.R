@@ -2,9 +2,12 @@ rm(list = ls())
 devtools::load_all(".")
 
 # For real data
-path_db = 'C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/TestDB.db'
+#path_db = 'C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/TestDB.db'
 
-xpt_path <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/real_xpt_dir"
+xpt_path <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/all_fakedata_liver_"
+#path_db = 'C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/Reese.db'
+#xpt_path <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/Reese_xpts"
+#xpt_path <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/real_xpt_dir"
 
 studyid_metadata <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/sqlite_20Liver_20not_liver.csv")
 
@@ -82,6 +85,8 @@ R_SQL_om_lb_mi_scores <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids =
                                                        output_individual_scores = TRUE,
                                                        output_zscore_by_USUBJID = FALSE)
 
+
+
 #-------------------------- f7------------------------------------------------------------
 column_harmonized_df <- get_col_harmonized_scores_df(liver_score_data_frame = R_SQL_om_lb_mi_scores,
                                          Round = FALSE)
@@ -90,7 +95,7 @@ column_harmonized_df <- get_col_harmonized_scores_df(liver_score_data_frame = R_
 #-------------------------- f8------------------------------------------------------------
 #studyid_metadata5 <- studyid_metadata [studyid_metadata$STUDYID %in% studyid_or_studyids , ]
 
-ml_data_with_tuned_hyperparameters <- get_ml_data_and_tuned_hyperparameters(Data = column_harmonized_df, # Data == "scores_df"
+ml_data_with_tuned_hyperparameters <- get_ml_data_and_tuned_hyperparameters(column_harmonized_df = column_harmonized_df, # Data == "scores_df"
                                                   studyid_metadata = studyid_metadata,
                                                   Impute = FALSE,
                                                   Round =FALSE,
@@ -127,7 +132,7 @@ zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv(ml_formatted_
 
 #--------------------------f11------------------------------------------------------------
 
-imp_features <- get_imp_features_from_rf_model_with_cv(ml_formatted_scores_df = Data, #scores_df
+imp_features <- get_imp_features_from_rf_model_with_cv(ml_formatted_scores_df = Data,
                                                    Undersample = FALSE,
                                                    best.m = NULL, # any numeric value or call function to get it
                                                    testReps=2, # testRps must be at least 2;
@@ -135,15 +140,15 @@ imp_features <- get_imp_features_from_rf_model_with_cv(ml_formatted_scores_df = 
                                                    nTopImportance=10)
 
 #--------------------------f12------------------------------------------------------------
-auc_curve <- get_auc_curve_with_rf_model(Data = Data, # Input data frame for training
-                                         path_db=path_db, # Path to the SQLite database
+auc_curve <- get_auc_curve_with_rf_model(ml_formatted_scores_df = NULL,
+                                         path_db=xpt_path , # Path to the SQLite database
                                          rat_studies=FALSE,
-                                         studyid_metadata=studyid_metadata,
-                                         fake_study = FALSE, # Whether to use fake study IDs
-                                         use_xpt_file = FALSE,
+                                         studyid_metadata=NULL,
+                                         fake_study = TRUE, # Whether to use fake study IDs
+                                         use_xpt_file = TRUE,
                                          Round = FALSE, # Whether to round numerical values
                                          Impute = FALSE,
-                                         best.m = best.m, # The 'mtry' hyperparameter for Random Forest
+                                         best.m = NULL, # The 'mtry' hyperparameter for Random Forest
                                          reps=1, # from 0 to any numeric number
                                          holdback=0.1, # either 1 or fraction value like 0.75 etc.
                                          Undersample = FALSE,
@@ -153,7 +158,7 @@ auc_curve <- get_auc_curve_with_rf_model(Data = Data, # Input data frame for tra
                                          output_zscore_by_USUBJID = FALSE)
 
 #--------------------------f13------------------------------------------------------------
-histogram <- get_histogram_barplot(Data =Data,
+histogram <- get_histogram_barplot(ml_formatted_scores_df =Data,
                                    generateBarPlot= TRUE,
                                    path_db= path_db,
                                    rat_studies=FALSE,
@@ -165,7 +170,7 @@ histogram <- get_histogram_barplot(Data =Data,
                                    utput_zscore_by_USUBJID = FALSE)
 
 #--------------------------f14------------------------------------------------------------
-get_reprtree <- get_reprtree_from_rf_model( Data=Data,
+get_reprtree <- get_reprtree_from_rf_model( ml_formatted_scores_df=Data,
                                             path_db=path_db,
                                             rat_studies=FALSE,
                                             studyid_metadata=studyid_metadata,
@@ -181,7 +186,7 @@ get_reprtree <- get_reprtree_from_rf_model( Data=Data,
                                             best.m = best.m)
 
 #--------------------------f15------------------------------------------------------------
-prediciton_plot <- get_prediction_plot( Data=Data,
+prediciton_plot <- get_prediction_plot( ml_formatted_scores_df=Data,
                                         path_db=path_db,
                                         rat_studies=FALSE,
                                         studyid_metadata=studyid_metadata,
@@ -250,7 +255,7 @@ output_cv_imp <- get_rf_input_param_list_output_cv_imp( path_db=path_db,
 
 
 #--------------------------f18------------------------------------------------------------
-zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv( scores_data_df=Data, #scores_df
+zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv( ml_formatted_scores_df=Data, #scores_df
                                                                     Undersample = FALSE,
                                                                     best.m = best.m, # any numeric value or call function to get it
                                                                     testReps=2, # testRps must be at least 2;
@@ -262,7 +267,7 @@ zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv( scores_data_
 
 #--------------------------f19------------------------------------------------------------
 
-zone_exclusioned_rf_model_cv_imp <- get_zone_exclusioned_rf_model_cv_imp(  scores_data_df,
+zone_exclusioned_rf_model_cv_imp <- get_zone_exclusioned_rf_model_cv_imp(  ml_formatted_scores_df,
                                                                            Undersample = FALSE,
                                                                            best.m = NULL, # any numeric value or call function to get it
                                                                            testReps, # testRps must be at least 2;

@@ -49,7 +49,7 @@
 #' @export
 
 
-get_reprtree_from_rf_model <- function ( Data=NULL,
+get_reprtree_from_rf_model <- function ( ml_formatted_scores_df=NULL,
                                          path_db,
                                          rat_studies=FALSE,
                                          studyid_metadata=NULL,
