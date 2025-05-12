@@ -66,7 +66,7 @@ get_zone_exclusioned_rf_model_cv_imp <- function(ml_formatted_scores_df,
                                       Type,
                                       nTopImportance) {
 
-  rfData <- scores_data_df
+  rfData <- ml_formatted_scores_df
     #---------------------------------------------------------------------
     # Initialize model performance metric trackers------------------------
     #---------------------------------------------------------------------

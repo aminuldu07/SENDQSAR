@@ -1,37 +1,28 @@
 rm(list = ls())
 devtools::load_all(".")
 
-# For real data
+#-------------------------------------------------------------------------------
+#---------------------------For-real-data---------------------------------------
+#-------------------------------------------------------------------------------
 #path_db = 'C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/TestDB.db'
+#studyid_metadata <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/sqlite_20Liver_20not_liver.csv")
 
-xpt_path <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/all_fakedata_liver_"
-#path_db = 'C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/Reese.db'
-#xpt_path <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/Reese_xpts"
-#xpt_path <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/real_xpt_dir"
-
-studyid_metadata <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/sqlite_20Liver_20not_liver.csv")
-
-studyid_or_studyids <-as.vector(studyid_metadata [,"STUDYID"])
-#studyid_or_studyids <- studyid_metadata[, "STUDYID"]
-
-# For-synthetic--data---------------------------
-# path_db='C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_merged_liver_not_liver.db'
-#
-# studyid_metadata <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/fake_80_MD.csv",
-#                              header = TRUE, sep = ",", stringsAsFactors = FALSE)
-
+##-----SQLite-----------------------
+real_sqlite_path_db = 'C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/twenty8.db'
+real_sqlite_studyid_metadata <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/twenty8_Liver_not_Liver.csv")
+studyid_or_studyids <-as.vector(real_sqlite_studyid_metadata[,"STUDYID"])
 
 #-------------------------- f1------------------------------------------------------------
 # Call the function for "REAL SEND SQLite database"
-R_SQL_compile_data <- get_compile_data(studyid='5003635',
-                                       path_db='C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/TestDB.db',
+R_SQL_compile_data <- get_compile_data(studyid='8382298',
+                                       path_db = real_sqlite_path_db,
                                        fake_study = FALSE,
                                        use_xpt_file = FALSE)
 
 
 
 #-------------------------- f2------------------------------------------------------------
-real_sqlite_bw_score = get_bw_score(studyid="5003635",
+real_sqlite_bw_score = get_bw_score(studyid="8382298",
                                     path_db=path_db,
                                     fake_study=FALSE,
                                     use_xpt_file=FALSE,
@@ -41,7 +32,7 @@ real_sqlite_bw_score = get_bw_score(studyid="5003635",
 
 
 #-------------------------- f3------------------------------------------------------------
-real_sqlite_livertobw_score = get_livertobw_score(studyid="5003635",
+real_sqlite_livertobw_score = get_livertobw_score(studyid="8382298",
                                                   path_db=path_db,
                                                   fake_study=FALSE,
                                                   use_xpt_file=FALSE,
@@ -52,7 +43,7 @@ real_sqlite_livertobw_score = get_livertobw_score(studyid="5003635",
 
 
 #-------------------------- f4------------------------------------------------------------
-R_SQL_lb_score <- get_lb_score(studyid = '5003635',
+R_SQL_lb_score <- get_lb_score(studyid = '8382298',
                                   path_db = path_db ,
                                   fake_study = FALSE,
                                   use_xpt_file = FALSE,
@@ -63,7 +54,7 @@ R_SQL_lb_score <- get_lb_score(studyid = '5003635',
 
 
 #-------------------------- f5------------------------------------------------------------
-real_sqlite_mi_score <- get_mi_score(studyid="5003635",
+real_sqlite_mi_score <- get_mi_score(studyid="8382298",
                                      path_db= path_db,
                                      fake_study=FALSE,
                                      use_xpt_file=FALSE,
@@ -78,10 +69,10 @@ real_sqlite_mi_score <- get_mi_score(studyid="5003635",
 #                          "02081-22026","ZYT-774", "T2109511", "1877RD3", "8004042")  # issues with 1877RD3, T2109511
 
 # get score in a list format
-R_SQL_om_lb_mi_scores <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = studyid_or_studyids,
-                                                       path_db = path_db,
+R_SQL_om_lb_mi_scores <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = real_studyid_or_studyids_xpt,
+                                                       path_db = real_xpt_path,
                                                        fake_study = FALSE,
-                                                       use_xpt_file = FALSE,
+                                                       use_xpt_file = TRUE,
                                                        output_individual_scores = TRUE,
                                                        output_zscore_by_USUBJID = FALSE)
 
@@ -122,13 +113,13 @@ simple_rf_model <- get_rf_model_with_cv(ml_formatted_scores_df = Data,
 
 
 #--------------------------f10------------------------------------------------------------
-zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv(ml_formatted_scores_df= Data,
-                                                                               Undersample = FALSE,
-                                                                               best.m = NULL, # any numeric value or call function to get it
-                                                                               testReps=2, # testRps must be at least 2;
-                                                                               indeterminateUpper=0.75,
-                                                                               indeterminateLower=0.25,
-                                                                               Type=1)
+zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv(   ml_formatted_scores_df= Data,
+                                                                      Undersample = FALSE,
+                                                                      best.m = NULL, # any numeric value or call function to get it
+                                                                      testReps=2, # testRps must be at least 2;
+                                                                      indeterminateUpper=0.75,
+                                                                      indeterminateLower=0.25,
+                                                                      Type=1)
 
 #--------------------------f11------------------------------------------------------------
 

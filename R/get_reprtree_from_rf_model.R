@@ -89,7 +89,7 @@ get_reprtree_from_rf_model <- function ( ml_formatted_scores_df=NULL,
   }
 
 
-  if (is.null(Data) && is.null(best.m)) {
+  if (is.null(ml_formatted_scores_df) && is.null(best.m)) {
 
     data_and_best.m <- get_Data_formatted_for_ml_and_best.m(path_db=path_db,
                                                    rat_studies=rat_studies,

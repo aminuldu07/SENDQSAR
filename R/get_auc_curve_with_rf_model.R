@@ -79,7 +79,7 @@ get_auc_curve_with_rf_model  <- function(ml_formatted_scores_df = NULL,
                                output_individual_scores = TRUE,
                                output_zscore_by_USUBJID = FALSE) {# Whether to perform undersampling
 
-browser()
+
   # enforce that Data and best.m must either both be NULL or both be non-NULL
   if (xor(is.null(ml_formatted_scores_df), is.null(best.m))) {
     stop("Error: Either both 'Data' and 'best.m' must be NULL or both must be non-NULL.")

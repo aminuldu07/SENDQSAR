@@ -88,7 +88,7 @@ get_rf_input_param_list_output_cv_imp <- function(path_db,
                                                   nTopImportance
                                                   ){
 
-browser()
+
     if(use_xpt_file){
 
       studyid_or_studyids <- list.dirs(path_db , full.names = TRUE, recursive = FALSE)
