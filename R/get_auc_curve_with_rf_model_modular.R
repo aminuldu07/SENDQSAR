@@ -5,23 +5,10 @@
 #' calculates the AUC (Area Under the Curve). It allows various preprocessing
 #' options, such as imputation, rounding, undersampling, and hyperparameter tuning.
 #'
-#' @param Data A data frame containing the training data. If `NULL`, data will be fetched from the database.
-#' @param path_db A string representing the path to the SQLite database used to fetch data when `Data` is `NULL`.
-#' @param rat_studies Logical; whether to filter for rat studies. Defaults to `FALSE`.
-#' @param studyid_metadata A data frame containing metadata associated with study IDs.
-#' @param fake_study Logical; whether to use fake study IDs for data simulation. Defaults to `FALSE`.
-#' @param use_xpt_file Logical; whether to use an XPT file for input data. Defaults to `FALSE`.
-#' @param Round Logical; whether to round numerical values. Defaults to `FALSE`.
-#' @param Impute Logical; whether to perform imputation on missing values. Defaults to `FALSE`.
+#' @param ml_formatted_scores_df A data frame containing the training data. If `NULL`, data will be fetched from the database.
 #' @param best.m The 'mtry' hyperparameter for Random Forest. If `NULL`, it is determined by the function.
-#' @param reps A numeric value indicating the number of repetitions for cross-validation. Defaults to a numeric value.
-#' @param holdback Numeric; either 1 or a fraction value (e.g., 0.75) for holdback during cross-validation.
-#' @param Undersample Logical; whether to perform undersampling. Defaults to `FALSE`.
-#' @param hyperparameter_tuning Logical; whether to perform hyperparameter tuning. Defaults to `FALSE`.
-#' @param error_correction_method Character; one of "Flip", "Prune", or "None", specifying the method of error correction.
-#' @param output_individual_scores Logical; whether to output individual scores. Defaults to `TRUE`.
-#' @param output_zscore_by_USUBJID Logical; whether to output z-scores by subject ID. Defaults to `FALSE`.
-#'
+
+
 #' @return This function does not return any explicit value. It generates:
 #'   \itemize{
 #'     \item The AUC (Area Under the Curve) printed to the console.
@@ -30,12 +17,8 @@
 #'   }
 #'
 #' @details
-#' The function prepares data for training a Random Forest model by first fetching data from an SQLite database
-#' or generating synthetic data (if `fake_study` is `TRUE`). It processes the data using various options such
-#' as imputation, rounding, and undersampling. The model is trained using the Random Forest algorithm, and
-#' performance is evaluated via the ROC curve and AUC metric.
-#'
-#' The function also allows for hyperparameter tuning and error correction. After training the model,
+#' The function requires a data frame that is generated from function f8. The model is trained using the Random Forest algorithm, and
+#' performance is evaluated via the ROC curve and AUC metric. After training the model,
 #' predictions are made, and the AUC is calculated and visualized with a ROC curve plot.
 #'
 #' @examples
@@ -64,8 +47,7 @@
 
 get_auc_curve_with_rf_model_modular  <- function(ml_formatted_scores_df,
                                best.m # The 'mtry' hyperparameter for Random Forest
-                               ) {# Whether to perform undersampling
-
+                               ) {
 
 
   # Pass the input Data as rfData and best.m
@@ -77,12 +59,8 @@ get_auc_curve_with_rf_model_modular  <- function(ml_formatted_scores_df,
   #
   #
   # }
-
-
   # reassignment of the data
   #rfData <- rfData_and_best_m[["rfData"]]
-
-
 
   # # best.m input handling------------------------------------------------
   # if(is.null(best.m)){
@@ -107,9 +85,6 @@ get_auc_curve_with_rf_model_modular  <- function(ml_formatted_scores_df,
   #
   # train_data_two <- train
   # print(dim(train_data_two))
-
-
-
   # Predict probabilities and calculate AUC
   pred1 <- stats::predict(rfAll, type = "prob")
   perf <- ROCR::prediction(pred1[,1], levels(rfData[,1])[rfData[,1]])

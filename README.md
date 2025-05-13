@@ -103,7 +103,7 @@ SENDQSAR
       - Computes feature importance for model interpretation (depends on
         f8).
   - **Model Performance Visualization**
-    - `f12`: `get_auc_curve_with_rf_model`
+    - `f12`: `get_auc_curve_with_rf_model_modular`
       - Generates AUC curves to evaluate model performance(depends on
         f8).
 
@@ -128,6 +128,8 @@ SENDQSAR
 
 - **Visualization and Reporting** :
 
+  - `fxx`: `get_auc_curve_with_rf_model` - Generates AUC curves to
+    evaluate model performance (depends on functions `f1` to `f8`).
   - `f13`: `get_histogram_barplot` - Creates bar plots for target
     variable classes (depends on functions `f1` to `f8`).
   - `f14`: `get_reprtree_from_rf_model` - Builds representative decision
