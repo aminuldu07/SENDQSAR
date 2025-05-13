@@ -5,7 +5,7 @@
 \title{Get Random Forest Data and Tuned Hyperparameters}
 \usage{
 get_ml_data_and_tuned_hyperparameters(
-  Data,
+  column_harmonized_df,
   studyid_metadata,
   Impute = FALSE,
   Round = FALSE,
@@ -17,9 +17,6 @@ get_ml_data_and_tuned_hyperparameters(
 )
 }
 \arguments{
-\item{Data}{data.frame. Input data frame containing scores, typically named \code{scores_df}.
-First column is "STUDYID", followed by columns with score values.}
-
 \item{studyid_metadata}{data.frame. Metadata containing \code{STUDYID} and \code{Target_Organ}.}
 
 \item{Impute}{logical. Indicates whether to impute missing values in the dataset using random forest imputation. Default is \code{FALSE}.}
@@ -35,6 +32,9 @@ First column is "STUDYID", followed by columns with score values.}
 \item{hyperparameter_tuning}{logical. Specifies whether to perform hyperparameter tuning for the random forest model. Default is \code{FALSE}.}
 
 \item{error_correction_method}{character. Specifies the method for error correction. Can be \code{"Flip"}, \code{"Prune"}, or \code{None}. Default is \code{None}.}
+
+\item{Data}{data.frame. Input data frame containing scores, typically named \code{scores_df}.
+First column is "STUDYID", followed by columns with score values.}
 }
 \value{
 A list containing:

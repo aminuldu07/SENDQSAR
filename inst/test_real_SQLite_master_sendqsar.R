@@ -131,6 +131,12 @@ imp_features <- get_imp_features_from_rf_model_with_cv(  ml_formatted_scores_df 
                                                          nTopImportance=10)
 
 #--------------------------f12------------------------------------------------------------
+
+modular_auc <- get_auc_curve_with_rf_model_modular(ml_formatted_scores_df=Data,
+                                                 best.m = best.m # The 'mtry' hyperparameter for Random Forest
+                                                )
+
+
 auc_curve <- get_auc_curve_with_rf_model(ml_formatted_scores_df = NULL,
                                          path_db = R_sqlite_path_db, # Path to the SQLite database
                                          rat_studies=FALSE,

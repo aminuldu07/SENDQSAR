@@ -5,7 +5,7 @@
 \title{Random Forest Model with Cross-validation and Exclusion}
 \usage{
 get_zone_exclusioned_rf_model_with_cv(
-  scores_data_df,
+  ml_formatted_scores_df,
   Undersample = FALSE,
   best.m = NULL,
   testReps,

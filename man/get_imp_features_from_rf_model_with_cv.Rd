@@ -5,7 +5,7 @@
 \title{Get Important Features from Random Forest Model with Cross-Validation}
 \usage{
 get_imp_features_from_rf_model_with_cv(
-  scores_data_df,
+  ml_formatted_scores_df,
   Undersample = FALSE,
   best.m = NULL,
   testReps,

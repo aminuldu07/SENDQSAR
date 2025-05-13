@@ -5,7 +5,7 @@
 \title{Generate Histogram or Bar Plot for Liver-Related Scores}
 \usage{
 get_histogram_barplot(
-  Data = NULL,
+  ml_formatted_scores_df = NULL,
   generateBarPlot = FALSE,
   path_db = FALSE,
   rat_studies = FALSE,
@@ -18,9 +18,6 @@ get_histogram_barplot(
 )
 }
 \arguments{
-\item{Data}{A data frame containing liver-related scores. If NULL, the function will attempt to
-generate or fetch the data from a database or file.}
-
 \item{generateBarPlot}{A logical flag (default = FALSE). If TRUE, generates a bar plot. If FALSE,
 returns the processed data.}
 
@@ -43,6 +40,9 @@ to fetch data, instead of relying on the database.}
 
 \item{output_individual_scores}{A logical flag (default = TRUE). Whether to output individual
 scores or aggregated scores.}
+
+\item{Data}{A data frame containing liver-related scores. If NULL, the function will attempt to
+generate or fetch the data from a database or file.}
 
 \item{output_zscore_by_USUBJID}{A logical flag (default = FALSE). Whether to output z-scores
 by USUBJID (unique subject identifier).}

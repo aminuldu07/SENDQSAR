@@ -5,7 +5,7 @@
 \title{Get Representation Tree from Random Forest Model}
 \usage{
 get_reprtree_from_rf_model(
-  Data = NULL,
+  ml_formatted_scores_df = NULL,
   path_db,
   rat_studies = FALSE,
   studyid_metadata = NULL,
@@ -17,12 +17,11 @@ get_reprtree_from_rf_model(
   holdback,
   Undersample = FALSE,
   hyperparameter_tuning = FALSE,
-  error_correction_method
+  error_correction_method,
+  best.m = NULL
 )
 }
 \arguments{
-\item{Data}{A data frame containing the dataset to train the Random Forest model. If \code{NULL}, data is fetched using the \code{get_Data_formatted_for_ml_and_best.m} function.}
-
 \item{path_db}{A character string representing the path to the database used for fetching or processing the data.}
 
 \item{rat_studies}{A logical flag indicating whether rat studies are used (default: \code{FALSE}).}
@@ -46,6 +45,8 @@ get_reprtree_from_rf_model(
 \item{hyperparameter_tuning}{A logical flag indicating whether hyperparameter tuning should be performed (default: \code{FALSE}).}
 
 \item{error_correction_method}{A character string specifying the method for error correction. Must be one of \code{'Flip'}, \code{'Prune'}, or \code{'None'}.}
+
+\item{Data}{A data frame containing the dataset to train the Random Forest model. If \code{NULL}, data is fetched using the \code{get_Data_formatted_for_ml_and_best.m} function.}
 }
 \value{
 A plot of the first tree from the Random Forest model is displayed. The function does not return the ReprTree object explicitly, but it is generated and used for plotting.

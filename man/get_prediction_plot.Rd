@@ -5,7 +5,7 @@
 \title{Generate Prediction Plot for Random Forest Model}
 \usage{
 get_prediction_plot(
-  Data = NULL,
+  ml_formatted_scores_df = NULL,
   path_db,
   rat_studies = FALSE,
   studyid_metadata = NULL,
@@ -18,12 +18,11 @@ get_prediction_plot(
   Undersample = FALSE,
   hyperparameter_tuning = FALSE,
   error_correction_method,
+  best.m = best.m,
   testReps
 )
 }
 \arguments{
-\item{Data}{A data frame containing the dataset to use for training and testing. If \code{NULL}, the function will attempt to fetch and format the data from the database using \code{get_Data_formatted_for_ml_and_best.m} function.}
-
 \item{path_db}{A string indicating the path to the database that contains the dataset.}
 
 \item{rat_studies}{A logical flag indicating whether to use rat studies data. Defaults to \code{FALSE}.}
@@ -49,6 +48,8 @@ get_prediction_plot(
 \item{error_correction_method}{A string specifying the error correction method to be used. Possible values are "Flip", "Prune", or "None".}
 
 \item{testReps}{An integer specifying the number of test repetitions for model evaluation.}
+
+\item{Data}{A data frame containing the dataset to use for training and testing. If \code{NULL}, the function will attempt to fetch and format the data from the database using \code{get_Data_formatted_for_ml_and_best.m} function.}
 }
 \value{
 A \code{ggplot} object representing the histogram of predicted probabilities for the \code{LIVER} variable across test repetitions.

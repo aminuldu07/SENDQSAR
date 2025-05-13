@@ -5,7 +5,7 @@
 \title{Random Forest with Cross-Validation}
 \usage{
 get_rf_model_with_cv(
-  scores_data_df,
+  ml_formatted_scores_df,
   Undersample = FALSE,
   best.m = NULL,
   testReps,
