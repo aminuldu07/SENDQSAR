@@ -100,10 +100,12 @@ SENDQSAR
         predictions (depends on `f8`).
   - **Feature Importance**
     - `f11`: `get_imp_features_from_rf_model_with_cv`
-      - Computes feature importance for model interpretation.
+      - Computes feature importance for model interpretation (depends on
+        f8).
   - **Model Performance Visualization**
     - `f12`: `get_auc_curve_with_rf_model`
-      - Generates AUC curves to evaluate model performance.
+      - Generates AUC curves to evaluate model performance(depends on
+        f8).
 
 #### Notes for MOdular Functions
 
