@@ -119,7 +119,8 @@ output:
 
 ## Helper Functions
 
-- `h1`: **get_treatment_group_&_dose** - Retrieve treatment groups from the `tx` domain.
+- `h1`: **`get_treatment_group_&_dose`**
+  - Retrieve treatment groups from the `tx` domain.
 - `h2`: **`get_repeat_dose_parallel_studyids`**
   - Retrieves `STUDYID`s for repeat dose and parallel study designs.
   - Optional filtering for "rat" species studies.
