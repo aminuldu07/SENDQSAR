@@ -8,22 +8,22 @@ devtools::load_all(".")
 #studyid_metadata <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/sqlite_20Liver_20not_liver.csv")
 
 ##-----SQLite-----------------------
-real_sqlite_path_db = 'C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/twenty8.db'
-real_sqlite_studyid_metadata <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/twenty8_Liver_not_Liver.csv")
-studyid_or_studyids <-as.vector(real_sqlite_studyid_metadata[,"STUDYID"])
+R_sqlite_path_db = 'C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/twenty8.db'
+R_sqlite_studyid_metadata <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/twenty8_Liver_not_Liver.csv")
+R_sqlite_studyid_or_studyids <-as.vector(R_sqlite_studyid_metadata[,"STUDYID"])
 
 #-------------------------- f1------------------------------------------------------------
 # Call the function for "REAL SEND SQLite database"
 R_SQL_compile_data <- get_compile_data(studyid='8382298',
-                                       path_db = real_sqlite_path_db,
+                                       path_db = R_sqlite_path_db,
                                        fake_study = FALSE,
                                        use_xpt_file = FALSE)
 
 
 
 #-------------------------- f2------------------------------------------------------------
-real_sqlite_bw_score = get_bw_score(studyid="8382298",
-                                    path_db=path_db,
+R_sqlite_bw_score = get_bw_score(studyid="8382298",
+                                    path_db=R_sqlite_path_db,
                                     fake_study=FALSE,
                                     use_xpt_file=FALSE,
                                     master_compiledata=NULL,
@@ -33,7 +33,7 @@ real_sqlite_bw_score = get_bw_score(studyid="8382298",
 
 #-------------------------- f3------------------------------------------------------------
 real_sqlite_livertobw_score = get_livertobw_score(studyid="8382298",
-                                                  path_db=path_db,
+                                                  path_db= R_sqlite_path_db,
                                                   fake_study=FALSE,
                                                   use_xpt_file=FALSE,
                                                   master_compiledata=NULL,
@@ -44,7 +44,7 @@ real_sqlite_livertobw_score = get_livertobw_score(studyid="8382298",
 
 #-------------------------- f4------------------------------------------------------------
 R_SQL_lb_score <- get_lb_score(studyid = '8382298',
-                                  path_db = path_db ,
+                                  path_db = R_sqlite_path_db,
                                   fake_study = FALSE,
                                   use_xpt_file = FALSE,
                                   master_compiledata = NULL,
@@ -55,7 +55,7 @@ R_SQL_lb_score <- get_lb_score(studyid = '8382298',
 
 #-------------------------- f5------------------------------------------------------------
 real_sqlite_mi_score <- get_mi_score(studyid="8382298",
-                                     path_db= path_db,
+                                     path_db= R_sqlite_path_db,
                                      fake_study=FALSE,
                                      use_xpt_file=FALSE,
                                      master_compiledata=NULL,
@@ -69,25 +69,25 @@ real_sqlite_mi_score <- get_mi_score(studyid="8382298",
 #                          "02081-22026","ZYT-774", "T2109511", "1877RD3", "8004042")  # issues with 1877RD3, T2109511
 
 # get score in a list format
-R_SQL_om_lb_mi_scores <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = real_studyid_or_studyids_xpt,
-                                                       path_db = real_xpt_path,
+R_SQL_list_scores_om_lb_mi <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = R_sqlite_studyid_or_studyids,
+                                                       path_db = R_sqlite_path_db,
                                                        fake_study = FALSE,
-                                                       use_xpt_file = TRUE,
+                                                       use_xpt_file = FALSE,
                                                        output_individual_scores = TRUE,
                                                        output_zscore_by_USUBJID = FALSE)
 
 
 
 #-------------------------- f7------------------------------------------------------------
-column_harmonized_df <- get_col_harmonized_scores_df(liver_score_data_frame = R_SQL_om_lb_mi_scores,
+column_harmonized_df <- get_col_harmonized_scores_df(liver_score_data_frame = R_SQL_list_scores_om_lb_mi,
                                          Round = FALSE)
 
 
 #-------------------------- f8------------------------------------------------------------
 #studyid_metadata5 <- studyid_metadata [studyid_metadata$STUDYID %in% studyid_or_studyids , ]
 
-ml_data_with_tuned_hyperparameters <- get_ml_data_and_tuned_hyperparameters(column_harmonized_df = column_harmonized_df, # Data == "scores_df"
-                                                  studyid_metadata = studyid_metadata,
+ml_data_with_tuned_hyperparameters <- get_ml_data_and_tuned_hyperparameters(column_harmonized_df = column_harmonized_df,
+                                                  studyid_metadata = R_sqlite_studyid_metadata,
                                                   Impute = FALSE,
                                                   Round =FALSE,
                                                   reps = 2, # from 0 to any numeric number
@@ -123,20 +123,21 @@ zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv(   ml_formatt
 
 #--------------------------f11------------------------------------------------------------
 
-imp_features <- get_imp_features_from_rf_model_with_cv(ml_formatted_scores_df = Data,
-                                                   Undersample = FALSE,
-                                                   best.m = NULL, # any numeric value or call function to get it
-                                                   testReps=2, # testRps must be at least 2;
-                                                   Type=1,
-                                                   nTopImportance=10)
+imp_features <- get_imp_features_from_rf_model_with_cv(  ml_formatted_scores_df = Data,
+                                                         Undersample = FALSE,
+                                                         best.m = NULL, # any numeric value or call function to get it
+                                                         testReps=2, # testRps must be at least 2;
+                                                         Type=1,
+                                                         nTopImportance=10)
 
 #--------------------------f12------------------------------------------------------------
 auc_curve <- get_auc_curve_with_rf_model(ml_formatted_scores_df = NULL,
-                                         path_db=xpt_path , # Path to the SQLite database
+                                         path_db = R_sqlite_path_db, # Path to the SQLite database
                                          rat_studies=FALSE,
                                          studyid_metadata=NULL,
-                                         fake_study = TRUE, # Whether to use fake study IDs
-                                         use_xpt_file = TRUE,
+                                         #studyid_metadata = R_sqlite_studyid_metadata,
+                                         fake_study = FALSE, # Whether to use fake study IDs
+                                         use_xpt_file = FALSE,
                                          Round = FALSE, # Whether to round numerical values
                                          Impute = FALSE,
                                          best.m = NULL, # The 'mtry' hyperparameter for Random Forest
@@ -151,9 +152,9 @@ auc_curve <- get_auc_curve_with_rf_model(ml_formatted_scores_df = NULL,
 #--------------------------f13------------------------------------------------------------
 histogram <- get_histogram_barplot(ml_formatted_scores_df =Data,
                                    generateBarPlot= TRUE,
-                                   path_db= path_db,
+                                   path_db= R_sqlite_path_db,
                                    rat_studies=FALSE,
-                                   studyid_metadata=studyid_metadata,
+                                   studyid_metadata = R_sqlite_studyid_metadata,
                                    fake_study = FALSE,
                                    use_xpt_file = FALSE,
                                    Round = FALSE,
@@ -162,9 +163,9 @@ histogram <- get_histogram_barplot(ml_formatted_scores_df =Data,
 
 #--------------------------f14------------------------------------------------------------
 get_reprtree <- get_reprtree_from_rf_model( ml_formatted_scores_df=Data,
-                                            path_db=path_db,
+                                            path_db = R_sqlite_path_db,
                                             rat_studies=FALSE,
-                                            studyid_metadata=studyid_metadata,
+                                            studyid_metadata = R_sqlite_studyid_metadata,
                                             fake_study = FALSE,
                                             use_xpt_file = FALSE,
                                             Round = FALSE,
@@ -178,9 +179,9 @@ get_reprtree <- get_reprtree_from_rf_model( ml_formatted_scores_df=Data,
 
 #--------------------------f15------------------------------------------------------------
 prediciton_plot <- get_prediction_plot( ml_formatted_scores_df=Data,
-                                        path_db=path_db,
+                                        path_db = R_sqlite_path_db,
                                         rat_studies=FALSE,
-                                        studyid_metadata=studyid_metadata,
+                                        studyid_metadata = R_sqlite_studyid_metadata,
                                         fake_study = FALSE,
                                         use_xpt_file = FALSE,
                                         Round = FALSE,
@@ -194,9 +195,9 @@ prediciton_plot <- get_prediction_plot( ml_formatted_scores_df=Data,
                                         testReps=2)
 
 #--------------------------f16------------------------------------------------------------
-ML_formatted_data <- get_Data_formatted_for_ml_and_best.m(path_db = path_db,
+ML_formatted_data <- get_Data_formatted_for_ml_and_best.m(path_db = R_sqlite_path_db,
                                                  rat_studies=FALSE,
-                                                 studyid_metadata=studyid_metadata,
+                                                 studyid_metadata = R_sqlite_studyid_metadata,
                                                  fake_study = FALSE,
                                                  use_xpt_file = FALSE,
                                                  Round = FALSE,
@@ -209,9 +210,9 @@ ML_formatted_data <- get_Data_formatted_for_ml_and_best.m(path_db = path_db,
                                                 )
 
 
-ml_formatted_data <- get_Data_formatted_for_ml_and_best.m( path_db=xpt_path,
+ml_formatted_data <- get_Data_formatted_for_ml_and_best.m( path_db = R_sqlite_path_db,
                                                            rat_studies=FALSE,
-                                                           studyid_metadata=NULL,
+                                                           studyid_metadata = R_sqlite_studyid_metadata,
                                                            fake_study = FALSE,
                                                            use_xpt_file = TRUE,
                                                            Round = FALSE,
@@ -224,9 +225,9 @@ ml_formatted_data <- get_Data_formatted_for_ml_and_best.m( path_db=xpt_path,
 )
 
 #--------------------------f17------------------------------------------------------------
-output_cv_imp <- get_rf_input_param_list_output_cv_imp( path_db=path_db,
+output_cv_imp <- get_rf_input_param_list_output_cv_imp( path_db = R_sqlite_path_db,
                                                         rat_studies=FALSE,
-                                                        studyid_metadata=NULL,
+                                                        studyid_metadata=R_sqlite_studyid_metadata,
                                                         fake_study = FALSE,
                                                         use_xpt_file = FALSE,
                                                         Round = FALSE,
