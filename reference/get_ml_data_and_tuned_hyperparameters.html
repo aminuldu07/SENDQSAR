@@ -66,7 +66,7 @@ error correction, and hyperparameter tuning.</p>
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">get_ml_data_and_tuned_hyperparameters</span><span class="op">(</span></span>
-<span>  <span class="va">Data</span>,</span>
+<span>  <span class="va">column_harmonized_df</span>,</span>
 <span>  <span class="va">studyid_metadata</span>,</span>
 <span>  Impute <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  Round <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -82,12 +82,7 @@ error correction, and hyperparameter tuning.</p>
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-data">Data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
-<dd><p>data.frame. Input data frame containing scores, typically named <code>scores_df</code>.
-First column is "STUDYID", followed by columns with score values.</p></dd>
-
-
-<dt id="arg-studyid-metadata">studyid_metadata<a class="anchor" aria-label="anchor" href="#arg-studyid-metadata"></a></dt>
+<dl><dt id="arg-studyid-metadata">studyid_metadata<a class="anchor" aria-label="anchor" href="#arg-studyid-metadata"></a></dt>
 <dd><p>data.frame. Metadata containing <code>STUDYID</code> and <code>Target_Organ</code>.</p></dd>
 
 
@@ -117,6 +112,11 @@ First column is "STUDYID", followed by columns with score values.</p></dd>
 
 <dt id="arg-error-correction-method">error_correction_method<a class="anchor" aria-label="anchor" href="#arg-error-correction-method"></a></dt>
 <dd><p>character. Specifies the method for error correction. Can be <code>"Flip"</code>, <code>"Prune"</code>, or <code>None</code>. Default is <code>None</code>.</p></dd>
+
+
+<dt id="arg-data">Data<a class="anchor" aria-label="anchor" href="#arg-data"></a></dt>
+<dd><p>data.frame. Input data frame containing scores, typically named <code>scores_df</code>.
+First column is "STUDYID", followed by columns with score values.</p></dd>
 
 </dl></div>
     <div class="section level2">
