@@ -68,13 +68,13 @@ output:
   - **Model Performance Visualization** 
   
     - `f12`: `get_histogram_barplot_modular`
-      - Generates AUC curves to evaluate model performance(depends on f8).
+      - Generates histogram of the two levels of data (depends on f8).
       
     - `f13`: `get_auc_curve_with_rf_model_modular`
       - Generates AUC curves to evaluate model performance(depends on f8).
   
     - `f14`: `get_reprtree_from_rf_model_modular `
-      - Generates AUC curves to evaluate model performance(depends on f8).
+      - Generates representative tree of a decision tree form rf model(depends on f8).
 
 #### Notes for MOdular Functions 
 - **Data Preparation**  
