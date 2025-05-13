@@ -676,21 +676,36 @@ label (TOXIC/NON-TOXIC) of the <code>STUDYID</code>.</li>
 <li><p><strong>Liver Toxicity Score Calculation for Individual
 <code>STUDYID</code></strong> :</p>
 <ul>
-<li><code>f1</code>: <code>get_compile_data</code> - Fetches structured
-data from the specified database path.</li>
-<li><code>f2</code>: <code>get_bw_score</code> - Calculates body weight
-z-scores for each animal (depends on <code>f1</code>).</li>
-<li><code>f3</code>: <code>get_livertobw_zscore</code> - Computes
-liver-to-body weight z-scores(depends on <code>f1</code>).</li>
-<li><code>f4</code>: <code>get_lb_score</code> - Calculates z-scores for
-laboratory test results(depends on <code>f1</code>).</li>
-<li><code>f5</code>: <code>get_mi_score</code> - Computes z-scores for
-microscopic findings(depends on <code>f1</code>).</li>
+<li><code>f1</code>: <strong><code>get_compile_data</code></strong>
+<ul>
+<li>Fetches structured data from the specified database path.</li>
+</ul></li>
+<li><code>f2</code>: <strong><code>get_bw_score</code></strong>
+<ul>
+<li>Calculates body weight z-scores for each animal (depends on
+<code>f1</code>).</li>
+</ul></li>
+<li><code>f3</code>: <strong><code>get_livertobw_zscore</code></strong>
+<ul>
+<li>Computes liver-to-body weight z-scores(depends on
+<code>f1</code>).</li>
+</ul></li>
+<li><code>f4</code>: <strong><code>get_lb_score</code></strong>
+<ul>
+<li>Calculates z-scores for laboratory test results(depends on
+<code>f1</code>).</li>
+</ul></li>
+<li><code>f5</code>: <strong><code>get_mi_score</code></strong>
+<ul>
+<li>Computes z-scores for microscopic findings(depends on
+<code>f1</code>).</li>
+</ul></li>
 </ul></li>
 <li><p><strong>Liver Toxicity Score Calculation and Aggregation for
 Multiple <code>STUDYID</code></strong>:</p>
 <ul>
-<li><code>f6</code>: <code>get_liver_om_lb_mi_tox_score_list</code>
+<li><code>f6</code>:
+<strong><code>get_liver_om_lb_mi_tox_score_list</code></strong>
 <ul>
 <li>Combines z-scores for LB, MI, and liver-to-BW ratio into a single
 data frame.</li>
@@ -699,13 +714,14 @@ data frame.</li>
 </ul></li>
 <li><p><strong>Machine Learning Data Preparation</strong>:</p>
 <ul>
-<li><p><code>f7</code>: <code>get_col_harmonized_scores_df</code> -
-Harmonizes column names across columns for consistency from the data
-frame (depends on <code>f6</code>).</p></li>
+<li><p><code>f7</code>:
+<strong><code>get_col_harmonized_scores_df</code></strong> - Harmonizes
+column names across columns for consistency from the data frame (depends
+on <code>f6</code>).</p></li>
 <li><p><code>f8</code>:
-<code>get_ml_data_and_tuned_hyperparameters</code> - Prepares data and
-tunes hyper parameters for machine learning (depends on
-<code>f7</code>).</p></li>
+<strong><code>get_ml_data_and_tuned_hyperparameters</code></strong> -
+Prepares data and tunes hyper parameters for machine learning (depends
+on <code>f7</code>).</p></li>
 </ul></li>
 <li><p><strong>Machine Learning Model Building and Performance
 Evaluation</strong>:</p>
@@ -730,7 +746,7 @@ Evaluation</strong>:</p>
 <li><p><strong>Feature Importance &amp; Visualization</strong></p>
 <ul>
 <li><code>f11</code>:
-<code>get_imp_features_from_rf_model_with_cv</code>
+<strong><code>get_imp_features_from_rf_model_with_cv</code></strong>
 <ul>
 <li>Computes feature importance for model interpretation (depends on
 f8).</li>

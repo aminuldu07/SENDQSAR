@@ -60,33 +60,33 @@ SENDQSAR
 
 - **Liver Toxicity Score Calculation for Individual `STUDYID`** :
 
-  - `f1`: `get_compile_data` - Fetches structured data from the
-    specified database path.
-  - `f2`: `get_bw_score` - Calculates body weight z-scores for each
-    animal (depends on `f1`).
-  - `f3`: `get_livertobw_zscore` - Computes liver-to-body weight
-    z-scores(depends on `f1`).
-  - `f4`: `get_lb_score` - Calculates z-scores for laboratory test
-    results(depends on `f1`).
-  - `f5`: `get_mi_score` - Computes z-scores for microscopic
-    findings(depends on `f1`).
+  - `f1`: **`get_compile_data`**
+    - Fetches structured data from the specified database path.
+  - `f2`: **`get_bw_score`**
+    - Calculates body weight z-scores for each animal (depends on `f1`).
+  - `f3`: **`get_livertobw_zscore`**
+    - Computes liver-to-body weight z-scores(depends on `f1`).
+  - `f4`: **`get_lb_score`**
+    - Calculates z-scores for laboratory test results(depends on `f1`).
+  - `f5`: **`get_mi_score`**
+    - Computes z-scores for microscopic findings(depends on `f1`).
 
 - **Liver Toxicity Score Calculation and Aggregation for Multiple
   `STUDYID`**:
 
-  - `f6`: `get_liver_om_lb_mi_tox_score_list`
+  - `f6`: **`get_liver_om_lb_mi_tox_score_list`**
     - Combines z-scores for LB, MI, and liver-to-BW ratio into a single
       data frame.
     - Internally calls `f1` to `f5`.
 
 - **Machine Learning Data Preparation**:
 
-  - `f7`: `get_col_harmonized_scores_df` - Harmonizes column names
+  - `f7`: **`get_col_harmonized_scores_df`** - Harmonizes column names
     across columns for consistency from the data frame (depends on
     `f6`).
 
-  - `f8`: `get_ml_data_and_tuned_hyperparameters` - Prepares data and
-    tunes hyper parameters for machine learning (depends on `f7`).
+  - `f8`: **`get_ml_data_and_tuned_hyperparameters`** - Prepares data
+    and tunes hyper parameters for machine learning (depends on `f7`).
 
 - **Machine Learning Model Building and Performance Evaluation**:
 
@@ -104,7 +104,7 @@ SENDQSAR
 
   - **Feature Importance & Visualization**
 
-    - `f11`: `get_imp_features_from_rf_model_with_cv`
+    - `f11`: **`get_imp_features_from_rf_model_with_cv`**
       - Computes feature importance for model interpretation (depends on
         f8).
 
