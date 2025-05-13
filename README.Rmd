@@ -79,7 +79,7 @@ output:
       - Generates AUC curves to evaluate model performance(depends on f8).
   
     - `f14`: **`get_reprtree_from_rf_model_modular`**
-      - Generates representative tree of a decision tree form rf model(depends on f8).
+        - Generates representative tree of a decision tree form rf model(depends on f8).
 
 #### Notes for Modular Functions 
 - **Data Preparation**  
