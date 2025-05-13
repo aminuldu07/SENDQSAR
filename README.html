@@ -712,7 +712,7 @@ Evaluation</strong>:</p>
 <ul>
 <li><p><strong>Model Training</strong></p>
 <ul>
-<li><code>f9</code>: <code>get_rf_model_with_cv</code>
+<li><code>f9</code>: <strong><code>get_rf_model_with_cv</code></strong>
 <ul>
 <li>Builds a random forest model with cross-validation (depends on
 <code>f8</code>).</li>
@@ -720,7 +720,8 @@ Evaluation</strong>:</p>
 </ul></li>
 <li><p><strong>Improved Classification Accuracy</strong></p>
 <ul>
-<li><code>f10</code>: <code>get_zone_exclusioned_rf_model_with_cv</code>
+<li><code>f10</code>:
+<strong><code>get_zone_exclusioned_rf_model_with_cv*</code></strong>
 <ul>
 <li>Enhances classification accuracy by excluding uncertain predictions
 (depends on <code>f8</code>).</li>
@@ -737,16 +738,19 @@ f8).</li>
 </ul></li>
 <li><p><strong>Model Performance Visualization</strong></p>
 <ul>
-<li><code>f12</code>: <code>get_histogram_barplot_modular</code>
+<li><code>f12</code>:
+<strong><code>get_histogram_barplot_modular</code></strong>
 <ul>
 <li>Generates histogram of the two levels of data (depends on f8).</li>
 </ul></li>
-<li><code>f13</code>: <code>get_auc_curve_with_rf_model_modular</code>
+<li><code>f13</code>:
+<strong><code>get_auc_curve_with_rf_model_modular</code></strong>
 <ul>
 <li>Generates AUC curves to evaluate model performance(depends on
 f8).</li>
 </ul></li>
-<li><code>f14</code>: <code>get_reprtree_from_rf_model_modular</code>
+<li><code>f14</code>:
+<strong><code>get_reprtree_from_rf_model_modular</code></strong>
 <ul>
 <li>Generates representative tree of a decision tree form rf
 model(depends on f8).</li>
@@ -781,36 +785,43 @@ directly generate the <code>Data</code> argument.</li>
 operations.</p></li>
 <li><p><strong>Visualization and Reporting</strong> :</p>
 <ul>
-<li><p><code>f15</code>: <code>get_histogram_barplot</code> - Creates
-bar plots for target variable classes (depends on functions
+<li><p><code>f15</code>:
+<strong><code>get_histogram_barplot</code></strong> - Creates bar plots
+for target variable classes (depends on functions <code>f1</code> to
+<code>f8</code>).</p></li>
+<li><p><code>f16</code>:
+<strong><code>get_auc_curve_with_rf_model</code></strong> - Generates
+AUC curves to evaluate model performance (depends on functions
 <code>f1</code> to <code>f8</code>).</p></li>
-<li><p><code>f16</code>: <code>get_auc_curve_with_rf_model</code> -
-Generates AUC curves to evaluate model performance (depends on functions
-<code>f1</code> to <code>f8</code>).</p></li>
-<li><p><code>f17</code>: <code>get_reprtree_from_rf_model</code> -
-Builds representative decision trees (depends on functions
-<code>f1</code> to <code>f8</code>).</p></li>
-<li><p><code>f18</code>: <code>get_prediction_plot</code> - Visualizes
+<li><p><code>f17</code>:
+<strong><code>get_reprtree_from_rf_model</code></strong> - Builds
+representative decision trees (depends on functions <code>f1</code> to
+<code>f8</code>).</p></li>
+<li><p><code>f18</code>:
+<strong><code>get_prediction_plot</code></strong> - Visualizes
 prediction probabilities with histograms(depends on functions
 <code>f1</code> to <code>f8</code>)..</p></li>
 </ul></li>
 </ul>
 <h3 id="automated-pipelines">Automated Pipelines</h3>
 <ul>
-<li><code>f19</code>: <code>get_Data_formatted_for_ml_and_best.m</code>
+<li><code>f19</code>:
+<strong><code>get_Data_formatted_for_ml_and_best.m</code></strong>
 <ul>
 <li>Creates machine learning-ready data by executing <code>f1</code> to
 <code>f8</code> -Formats data for ML pipelines.</li>
 <li>Provide the same result as <code>f8</code> by merging functionality
 of functions from <code>f1</code> to <code>f7</code></li>
 </ul></li>
-<li><code>f20</code>: <code>get_rf_input_param_list_output_cv_imp</code>
+<li><code>f20</code>:
+<strong><code>get_rf_input_param_list_output_cv_imp</code></strong>
 <ul>
 <li>Automates pre-processing, modeling, and evaluation.</li>
 <li>Provide the same result as <code>f9</code> by merging functionality
 of functions from <code>f1</code> to <code>f8</code></li>
 </ul></li>
-<li><code>f21</code>: <code>get_zone_exclusioned_rf_model_cv_imp</code>
+<li><code>f21</code>:
+<strong><code>get_zone_exclusioned_rf_model_cv_imp</code></strong>
 <ul>
 <li>Similar to <code>f17</code> but excludes uncertain predictions.</li>
 <li>Provide the same result as <code>f10</code> by merging functionality

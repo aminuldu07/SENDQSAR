@@ -92,13 +92,13 @@ SENDQSAR
 
   - **Model Training**
 
-    - `f9`: `get_rf_model_with_cv`
+    - `f9`: **`get_rf_model_with_cv`**
       - Builds a random forest model with cross-validation (depends on
         `f8`).
 
   - **Improved Classification Accuracy**
 
-    - `f10`: `get_zone_exclusioned_rf_model_with_cv`
+    - `f10`: **`get_zone_exclusioned_rf_model_with_cv*`**
       - Enhances classification accuracy by excluding uncertain
         predictions (depends on `f8`).
 
@@ -110,12 +110,12 @@ SENDQSAR
 
   - **Model Performance Visualization**
 
-    - `f12`: `get_histogram_barplot_modular`
+    - `f12`: **`get_histogram_barplot_modular`**
       - Generates histogram of the two levels of data (depends on f8).
-    - `f13`: `get_auc_curve_with_rf_model_modular`
+    - `f13`: **`get_auc_curve_with_rf_model_modular`**
       - Generates AUC curves to evaluate model performance(depends on
         f8).
-    - `f14`: `get_reprtree_from_rf_model_modular`
+    - `f14`: **`get_reprtree_from_rf_model_modular`**
       - Generates representative tree of a decision tree form rf
         model(depends on f8).
 
@@ -140,30 +140,30 @@ SENDQSAR
 
 - **Visualization and Reporting** :
 
-  - `f15`: `get_histogram_barplot` - Creates bar plots for target
+  - `f15`: **`get_histogram_barplot`** - Creates bar plots for target
     variable classes (depends on functions `f1` to `f8`).
 
-  - `f16`: `get_auc_curve_with_rf_model` - Generates AUC curves to
+  - `f16`: **`get_auc_curve_with_rf_model`** - Generates AUC curves to
     evaluate model performance (depends on functions `f1` to `f8`).
 
-  - `f17`: `get_reprtree_from_rf_model` - Builds representative decision
-    trees (depends on functions `f1` to `f8`).
+  - `f17`: **`get_reprtree_from_rf_model`** - Builds representative
+    decision trees (depends on functions `f1` to `f8`).
 
-  - `f18`: `get_prediction_plot` - Visualizes prediction probabilities
-    with histograms(depends on functions `f1` to `f8`)..
+  - `f18`: **`get_prediction_plot`** - Visualizes prediction
+    probabilities with histograms(depends on functions `f1` to `f8`)..
 
 ### Automated Pipelines
 
-- `f19`: `get_Data_formatted_for_ml_and_best.m`
+- `f19`: **`get_Data_formatted_for_ml_and_best.m`**
   - Creates machine learning-ready data by executing `f1` to `f8`
     -Formats data for ML pipelines.
   - Provide the same result as `f8` by merging functionality of
     functions from `f1` to `f7`
-- `f20`: `get_rf_input_param_list_output_cv_imp`
+- `f20`: **`get_rf_input_param_list_output_cv_imp`**
   - Automates pre-processing, modeling, and evaluation.
   - Provide the same result as `f9` by merging functionality of
     functions from `f1` to `f8`
-- `f21`: `get_zone_exclusioned_rf_model_cv_imp`
+- `f21`: **`get_zone_exclusioned_rf_model_cv_imp`**
   - Similar to `f17` but excludes uncertain predictions.
   - Provide the same result as `f10` by merging functionality of
     functions from `f1` to `f8`
