@@ -91,19 +91,32 @@ SENDQSAR
 - **Machine Learning Model Building and Performance Evaluation**:
 
   - **Model Training**
+
     - `f9`: `get_rf_model_with_cv`
       - Builds a random forest model with cross-validation (depends on
         `f8`).
+
   - **Improved Classification Accuracy**
+
     - `f10`: `get_zone_exclusioned_rf_model_with_cv`
       - Enhances classification accuracy by excluding uncertain
         predictions (depends on `f8`).
-  - **Feature Importance**
+
+  - **Feature Importance & Visualization**
+
     - `f11`: `get_imp_features_from_rf_model_with_cv`
       - Computes feature importance for model interpretation (depends on
         f8).
+
   - **Model Performance Visualization**
-    - `f12`: `get_auc_curve_with_rf_model_modular`
+
+    - `f12`: `get_histogram_barplot_modular`
+      - Generates AUC curves to evaluate model performance(depends on
+        f8).
+    - `f13`: `get_auc_curve_with_rf_model_modular`
+      - Generates AUC curves to evaluate model performance(depends on
+        f8).
+    - `f14`: `get_reprtree_from_rf_model_modular`
       - Generates AUC curves to evaluate model performance(depends on
         f8).
 

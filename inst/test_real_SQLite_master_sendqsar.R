@@ -97,15 +97,13 @@ ml_data_with_tuned_hyperparameters <- get_ml_data_and_tuned_hyperparameters(colu
                                                   error_correction_method = "None") #{ #Default to "None"; #options: "Flip", "Prune", "None"
 
 
-#--------------------------f9------------------------------------------------------------
 # Build the ML model
 # Get the ML formatted data as a variable from the list stored in "Data_ML_fomatted"
-Data <- ml_data_with_tuned_hyperparameters[["rfData"]]
+ml_formatted_scores_df<- ml_data_with_tuned_hyperparameters[["ml_formatted_scores_df"]]
 best.m <- ml_data_with_tuned_hyperparameters[["best.m"]]
 
-
-
-simple_rf_model <- get_rf_model_with_cv(ml_formatted_scores_df = Data,
+#--------------------------f9------------------------------------------------------------
+simple_rf_model <- get_rf_model_with_cv(ml_formatted_scores_df = ml_formatted_scores_df,
                                         Undersample = FALSE,
                                         best.m = NULL, # any numeric value or call function to get it
                                         testReps=2, # testRps must be at least 2;
@@ -113,7 +111,7 @@ simple_rf_model <- get_rf_model_with_cv(ml_formatted_scores_df = Data,
 
 
 #--------------------------f10------------------------------------------------------------
-zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv(   ml_formatted_scores_df= Data,
+zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv(   ml_formatted_scores_df= ml_formatted_scores_df,
                                                                       Undersample = FALSE,
                                                                       best.m = NULL, # any numeric value or call function to get it
                                                                       testReps=2, # testRps must be at least 2;
@@ -123,20 +121,48 @@ zone_exclusioned_rf_model <- get_zone_exclusioned_rf_model_with_cv(   ml_formatt
 
 #--------------------------f11------------------------------------------------------------
 
-imp_features <- get_imp_features_from_rf_model_with_cv(  ml_formatted_scores_df = Data,
+imp_features <- get_imp_features_from_rf_model_with_cv(  ml_formatted_scores_df = ml_formatted_scores_df,
                                                          Undersample = FALSE,
                                                          best.m = NULL, # any numeric value or call function to get it
                                                          testReps=2, # testRps must be at least 2;
                                                          Type=1,
                                                          nTopImportance=10)
 
+
+#--------------------------fxxx------------------------------------------------------------
+histogram <- get_histogram_barplot_modular(ml_formatted_scores_df = ml_formatted_scores_df,
+                                           generateBarPlot= TRUE)
+
+
 #--------------------------f12------------------------------------------------------------
 
-modular_auc <- get_auc_curve_with_rf_model_modular(ml_formatted_scores_df=Data,
+modular_auc <- get_auc_curve_with_rf_model_modular(ml_formatted_scores_df = ml_formatted_scores_df,
                                                  best.m = best.m # The 'mtry' hyperparameter for Random Forest
                                                 )
+#--------------------------fxxx------------------------------------------------------------
+
+reprtree <- get_reprtree_from_rf_model_modular (ml_formatted_scores_df = ml_formatted_scores_df,
+                                                best.m = best.m,
+                                                Undersample = TRUE)
 
 
+
+#--------------------------fxxx------------------------------------------------------------                                                                                                             )
+
+#################-------------------Composite Functions------------------------------------
+#--------------------------f13------------------------------------------------------------
+histogram <- get_histogram_barplot(ml_formatted_scores_df = ml_formatted_scores_df,
+                                   generateBarPlot= TRUE,
+                                   path_db= R_sqlite_path_db,
+                                   rat_studies=FALSE,
+                                   studyid_metadata = R_sqlite_studyid_metadata,
+                                   fake_study = FALSE,
+                                   use_xpt_file = FALSE,
+                                   Round = FALSE,
+                                   output_individual_scores = TRUE,
+                                   utput_zscore_by_USUBJID = FALSE)
+
+#--------------------------fxx------------------------------------------------------------
 auc_curve <- get_auc_curve_with_rf_model(ml_formatted_scores_df = NULL,
                                          path_db = R_sqlite_path_db, # Path to the SQLite database
                                          rat_studies=FALSE,
@@ -154,18 +180,6 @@ auc_curve <- get_auc_curve_with_rf_model(ml_formatted_scores_df = NULL,
                                          error_correction_method = "None",# # Choose: "Flip" or "Prune" or "None"
                                          output_individual_scores = TRUE,
                                          output_zscore_by_USUBJID = FALSE)
-
-#--------------------------f13------------------------------------------------------------
-histogram <- get_histogram_barplot(ml_formatted_scores_df =Data,
-                                   generateBarPlot= TRUE,
-                                   path_db= R_sqlite_path_db,
-                                   rat_studies=FALSE,
-                                   studyid_metadata = R_sqlite_studyid_metadata,
-                                   fake_study = FALSE,
-                                   use_xpt_file = FALSE,
-                                   Round = FALSE,
-                                   output_individual_scores = TRUE,
-                                   utput_zscore_by_USUBJID = FALSE)
 
 #--------------------------f14------------------------------------------------------------
 get_reprtree <- get_reprtree_from_rf_model( ml_formatted_scores_df=Data,

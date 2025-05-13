@@ -306,14 +306,13 @@ get_ml_data_and_tuned_hyperparameters <- function(column_harmonized_df,
 
       #rfData <-  rfData
       rfData <-  train
-
       }
 
     }
 
   }
 
-    return(list(rfData=rfData,
+    return(list(ml_formatted_scores_df=rfData,
            best.m=best.m))
 
 }
