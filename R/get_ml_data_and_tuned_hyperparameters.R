@@ -84,10 +84,20 @@ get_ml_data_and_tuned_hyperparameters <- function(column_harmonized_df,
   ###-----------------------rfData preparation--------------------------------
   #---------------------------------------------------------------------------
   rfData <- merged_Data[, -1]
-  rfData[which(rfData$Target_Organ == 'Liver'), 1] <- 1
-  rfData[which(rfData$Target_Organ == 'not_Liver'), 1] <- 0
-  # rfData[,1] <- as.numeric(rfData[,1])
-  rfData[,1] <- factor(rfData[,1], levels = c(1, 0))
+  # Create a proper binary encoding
+  rfData <- rfData %>%
+    mutate(Target_Organ = case_when(
+      Target_Organ == 'Liver' ~ 1,
+      Target_Organ == 'not_Liver' ~ 0,
+      TRUE ~ NA_real_
+    )) %>%
+    mutate(Target_Organ = factor(Target_Organ, levels = c(1, 0)))
+
+
+  # rfData[which(rfData$Target_Organ == 'Liver'), 1] <- 1
+  # rfData[which(rfData$Target_Organ == 'not_Liver'), 1] <- 0
+  # # rfData[,1] <- as.numeric(rfData[,1])
+  # rfData[,1] <- factor(rfData[,1], levels = c(1, 0))
 
   # removeIndex <- which(colnames(rfData) %in% c('INFILTRATE'))
   # rfData <- rfData[, -removeIndex]
