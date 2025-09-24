@@ -423,10 +423,18 @@ cat("The dimension of 'dm' domain is:", dim(dm), "\n")
         #                           ifelse(mi_CompileData2[,i] > 0, 1, 0))))
 
         # Score Severity based on mi_CompileData2
-        x <- ifelse(mi_CompileData2[[colName]] == 5, 5,
-                    ifelse(mi_CompileData2[[colName]] > 3, 3,
-                           ifelse(mi_CompileData2[[colName]] == 3, 2,
-                                  ifelse(mi_CompileData2[[colName]] > 0, 1, 0))))
+        # x <- ifelse(mi_CompileData2[[colName]] == 5, 5,
+        #             ifelse(mi_CompileData2[[colName]] > 3, 3,
+        #                    ifelse(mi_CompileData2[[colName]] == 3, 2,
+        #                           ifelse(mi_CompileData2[[colName]] > 0, 1, 0))))
+
+        x <- ifelse(mi_CompileData2[[colName]] >= 3, 3,
+                           ifelse(mi_CompileData2[[colName]] >= 2, 2,
+                                  ifelse(mi_CompileData2[[colName]] >= 1, 1, 0)))
+
+        # dplyr::mutate(LB_zscore = ifelse(LB_zscore >= 3, 3,
+        #                                  ifelse(LB_zscore >= 2, 2,
+        #                                         ifelse(LB_zscore >= 1, 1, 0))))
 
         #ScoredData[,colName] <-x
 
@@ -460,14 +468,16 @@ cat("The dimension of 'dm' domain is:", dim(dm), "\n")
                 findingIndex <- which(DoseIncid$Finding == colName)
 
                 Incid <- DoseIncid$Count[findingIndex]
-                Incid <- ifelse(Incid >= 0.75, 5,
-                                ifelse(Incid >= 0.5, 3,
-                                       ifelse(Incid >= 0.25, 2,
-                                              ifelse(Incid >= 0.1, 1, 0))))
 
-                # Incid <- ifelse(Incid>=0.5,3,
-                #                 ifelse(Incid>=0.25,2,
-                #                        ifelse(Incid>=0.1,1,0)))
+                # Incid <- ifelse(Incid >= 0.75, 5,
+                #                 ifelse(Incid >= 0.5, 3,
+                #                        ifelse(Incid >= 0.25, 2,
+                #                               ifelse(Incid >= 0.1, 1, 0))))
+
+                Incid <- ifelse(Incid>=0.5,3,
+                                ifelse(Incid>=0.25,2,
+                                       ifelse(Incid>=0.1,1,0)))
+
                 swapIndex <- which(DoseSev[[colName]] < Incid & DoseSev[[colName]] > 0)
                 if (length(swapIndex) > 0) {
                   DoseSev[swapIndex, colName] <- Incid
