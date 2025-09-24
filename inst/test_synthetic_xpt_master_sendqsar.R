@@ -8,25 +8,25 @@ devtools::load_all(".")
 #studyid_metadata <- read.csv("C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/sqlite_20Liver_20not_liver.csv")
 
 ##-----SQLite-----------------------
-real_sqlite_path_db = 'C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/Reese.db'
+#real_sqlite_path_db = 'C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/Reese.db'
 
 
 ##---XPT file-----------------------
-real_xpt_path <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/Reese_xpts"
-real_studyid_or_studyids_xpt <- list.dirs(real_xpt_path, full.names = TRUE, recursive = FALSE)
+bayer_xpt_path <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/FAKE_DATA/fake_xpt_80_Folders"
+bayer_studyid_or_studyids_xpt <- list.dirs(bayer_xpt_path, full.names = TRUE, recursive = FALSE)
 
 
 #-------------------------------------------------------------------------------
 #---------------------------For--Synthetic-data---------------------------------
 #-------------------------------------------------------------------------------
 ##-----fake_SQLite-----------------------
-fake_xpt_path <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/all_fakedata_liver_"
+#fake_xpt_path <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/all_fakedata_liver_"
 
 ##---fake_XPT file-----------------------
 
 #xpt_path <- "C:/Users/MdAminulIsla.Prodhan/OneDrive - FDA/Documents/DATABASES/real_xpt_dir"
 
-studyid_or_studyids <-as.vector(studyid_metadata [,"STUDYID"])
+#studyid_or_studyids <-as.vector(studyid_metadata [,"STUDYID"])
 #studyid_or_studyids <- studyid_metadata[, "STUDYID"]
 
 # For-synthetic--data---------------------------
@@ -93,9 +93,9 @@ real_sqlite_mi_score <- get_mi_score(studyid="5003635",
 #                          "02081-22026","ZYT-774", "T2109511", "1877RD3", "8004042")  # issues with 1877RD3, T2109511
 
 # get score in a list format
-R_SQL_om_lb_mi_scores <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = studyid_or_studyids_xpt,
-                                                       path_db = xpt_path,
-                                                       fake_study = FALSE,
+R_SQL_om_lb_mi_scores <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = bayer_studyid_or_studyids_xpt,
+                                                       path_db = bayer_xpt_path,
+                                                       fake_study = TRUE,
                                                        use_xpt_file = TRUE,
                                                        output_individual_scores = TRUE,
                                                        output_zscore_by_USUBJID = FALSE)

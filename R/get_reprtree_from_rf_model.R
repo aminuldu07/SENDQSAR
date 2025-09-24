@@ -64,47 +64,138 @@ get_reprtree_from_rf_model <- function ( ml_formatted_scores_df=NULL,
                                          error_correction_method,
                                          best.m = NULL) { # = must be 'Flip' or "Prune' or 'None'
 
-    #Data <- Data
+    Data <- ml_formatted_scores_df
     #best.m <- best.m
 
     # enforce that Data and best.m must either both be NULL or both be non-NULL
     if (xor(is.null(Data), is.null(best.m))) {
       stop("Error: Either both 'Data' and 'best.m' must be NULL or both must be non-NULL.")
     }
+#
+#   if (is.null(studyid_metadata)) {
+#
+#     repeat_dose_parallel_studyids <- get_repeat_dose_parallel_studyids(path_db,
+#                                                    rat_studies = FALSE)
+#     repeat_dose_parallel_studyids$Target_Organ <- NA
+#     studyid_metadata <- repeat_dose_parallel_studyids
+#     #studyid_metadata <- input_scores_df[,1:2]
+#     #studyid_metadata$Target_Organ <- NA
+#     #studyid_metadata <- studyid_metadata[,c("STUDYID", "Target_Organ")]
+#     n_rows <- nrow(studyid_metadata)
+#     half_n <- ceiling(n_rows / 2)
+#     studyid_metadata$Target_Organ <- c(rep("Liver", half_n),
+#                                        rep("not_Liver", n_rows - half_n))
+#
+#   }
+#
+#
+#   if (is.null(ml_formatted_scores_df) && is.null(best.m)) {
+#
+#     data_and_best.m <- get_Data_formatted_for_ml_and_best.m(path_db=path_db,
+#                                                    rat_studies=rat_studies,
+#                                                    studyid_metadata=studyid_metadata,
+#                                                    fake_study = fake_study,
+#                                                    use_xpt_file = use_xpt_file,
+#                                                    Round =  Round,
+#                                                    Impute = Impute,
+#                                                    reps=reps,
+#                                                    holdback=holdback,
+#                                                    Undersample = Undersample,
+#                                                    hyperparameter_tuning = hyperparameter_tuning,
+#                                                    error_correction_method=error_correction_method) # = must be 'Flip' or "Prune' or 'None'
+#     Data <- data_and_best.m[["ml_formatted_scores_df"]]
+#     best.m <- data_and_best.m[["best.m"]]
+#
+#     }
 
-  if (is.null(studyid_metadata)) {
 
-    repeat_dose_parallel_studyids <- get_repeat_dose_parallel_studyids(path_db,
-                                                   rat_studies = FALSE)
-    repeat_dose_parallel_studyids$Target_Organ <- NA
-    studyid_metadata <- repeat_dose_parallel_studyids
-    #studyid_metadata <- input_scores_df[,1:2]
-    #studyid_metadata$Target_Organ <- NA
-    #studyid_metadata <- studyid_metadata[,c("STUDYID", "Target_Organ")]
-    n_rows <- nrow(studyid_metadata)
-    half_n <- ceiling(n_rows / 2)
-    studyid_metadata$Target_Organ <- c(rep("Liver", half_n),
-                                       rep("not_Liver", n_rows - half_n))
+    # Generate data if not provided
+    if (is.null(ml_formatted_scores_df) && is.null(best.m)) {
 
-  }
+      if(use_xpt_file){
+
+        studyid_or_studyids <- list.dirs(path_db , full.names = TRUE, recursive = FALSE)
+
+      } else {
+
+        if (fake_study) {
+          # Helper function to fetch data from SQLite database
+          fetch_domain_data <- function(db_connection, domain_name) {
+            # Convert domain name to uppercase
+            domain_name <- toupper(domain_name)
+            # Create SQL query statement
+            query_statement <- paste0('SELECT * FROM ', domain_name)
+            # Execute query and fetch the data
+            query_result <- DBI::dbGetQuery(db_connection, statement = query_statement)
+            # Return the result
+            query_result
+          }
+          # Establish a connection to the SQLite database
+          db_connection <- DBI::dbConnect(RSQLite::SQLite(), dbname = path_db)
+
+          # Fetch data for required domains
+          dm <- fetch_domain_data(db_connection, 'dm')
+
+          # Close the database connection
+          DBI::dbDisconnect(db_connection)
+
+          # get the studyids from the dm table
+          studyid_or_studyids <- as.vector(unique(dm$STUDYID)) # unique STUDYIDS from DM table
+
+          # Filter the fake data for the "rat_studies"
+          if(rat_studies){
+
+            studyid_or_studyids <- studyid_or_studyids
+          }
+
+          #--------------------------------------------------------------------
+          #-----------we can set logic here for rat studies in "fake data"----
+          #--------------------------------------------------------------------
+
+        } else {
+          # For the real data in sqlite database
+          # filter for the repeat-dose and parallel studyids
+
+          studyid_or_studyids <- get_repeat_dose_parallel_studyids(path_db=path_db,
+                                                                   rat_studies = rat_studies)
+          studyid_or_studyids <- as.vector(studyid_or_studyids$STUDYID)
+        }
+      }
+
+      # get scores for the lb,mi and om data frame combined
+      calculated_liver_scores <- get_liver_om_lb_mi_tox_score_list(studyid_or_studyids = studyid_or_studyids,
+                                                                   path_db = path_db,
+                                                                   fake_study = fake_study,
+                                                                   use_xpt_file = use_xpt_file,
+                                                                   output_individual_scores = TRUE,
+                                                                   output_zscore_by_USUBJID = FALSE)
+
+      # Harmonize the column
+      column_harmonized_liverscr_df <- get_col_harmonized_scores_df(liver_score_data_frame = calculated_liver_scores,
+                                                                    Round = Round)
 
 
-  if (is.null(ml_formatted_scores_df) && is.null(best.m)) {
+      # If "studyid_metadata = NULL"-----------------
 
-    data_and_best.m <- get_Data_formatted_for_ml_and_best.m(path_db=path_db,
-                                                   rat_studies=rat_studies,
-                                                   studyid_metadata=studyid_metadata,
-                                                   fake_study = fake_study,
-                                                   use_xpt_file = use_xpt_file,
-                                                   Round =  Round,
-                                                   Impute = Impute,
-                                                   reps=reps,
-                                                   holdback=holdback,
-                                                   Undersample = Undersample,
-                                                   hyperparameter_tuning = hyperparameter_tuning,
-                                                   error_correction_method=error_correction_method) # = must be 'Flip' or "Prune' or 'None'
-    Data <- data_and_best.m[["Data"]]
-    best.m <- data_and_best.m[["best.m"]]
+      if(is.null(studyid_metadata)){
+
+        studyid_metadata <- get_studyid_metadata(input_df = column_harmonized_liverscr_df)
+      }
+
+      #Data <- column_harmonized_liverscr_df
+
+      rfData_and_best_m <- get_ml_data_and_tuned_hyperparameters( column_harmonized_df = column_harmonized_liverscr_df,
+                                                                  studyid_metadata = studyid_metadata,
+                                                                  Impute = Impute,
+                                                                  Round = Round,
+                                                                  reps=reps,
+                                                                  holdback=holdback,
+                                                                  Undersample = Undersample,
+                                                                  hyperparameter_tuning = hyperparameter_tuning,
+                                                                  error_correction_method = error_correction_method)
+
+      Data <- rfData_and_best_m[["ml_formatted_scores_df"]]
+      best.m <- rfData_and_best_m[["best.m"]]
 
     }
 
