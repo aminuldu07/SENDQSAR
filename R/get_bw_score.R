@@ -386,9 +386,17 @@ if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
                                         is.infinite(BWZSCORE), NA)) %>%
       dplyr::mutate(BWZSCORE = abs(BWZSCORE))  %>%
       dplyr::select(STUDYID, USUBJID, SEX , BWZSCORE) %>%
-      dplyr::mutate(BWZSCORE = ifelse(BWZSCORE >= 3, 3,
-                                       ifelse(BWZSCORE >= 2, 2,
-                                              ifelse(BWZSCORE >= 1, 1, 0))))
+      # dplyr::mutate(BWZSCORE = ifelse(BWZSCORE >= 3, 3,
+      #                                  ifelse(BWZSCORE >= 2, 2,
+      #                                         ifelse(BWZSCORE >= 1, 1, 0))))
+      dplyr::mutate(BWZSCORE = ifelse(BWZSCORE == 5, 5,
+                                      ifelse(BWZSCORE > 3, 3,
+                                             ifelse(BWZSCORE == 3, 2,
+                                                    ifelse(BWZSCORE > 0, 1, 0)))))
+    # x <- ifelse(mi_CompileData2[[colName]] == 5, 5,
+    #             ifelse(mi_CompileData2[[colName]] > 3, 3,
+    #                    ifelse(mi_CompileData2[[colName]] == 3, 2,
+    #                           ifelse(mi_CompileData2[[colName]] > 0, 1, 0))))
 
   } else {
 
@@ -397,10 +405,13 @@ if (!("BWDY" %in% colnames(bw)) && !("VISITDY" %in% colnames(bw))) {
       dplyr::select(STUDYID, BWZSCORE) %>%    # Select relevant columns
       dplyr::group_by(STUDYID) %>%             # Group by STUDYID
       dplyr::summarize(BWZSCORE_avg = mean(abs(BWZSCORE), na.rm = TRUE)) %>%  # Calculate average, ignoring NAs
-      dplyr::mutate(BWZSCORE_avg  = ifelse(BWZSCORE_avg  >= 3, 3,
-                                           ifelse(BWZSCORE_avg  >= 2, 2,
-                                                  ifelse(BWZSCORE_avg  >= 1, 1, 0))))
-
+      # dplyr::mutate(BWZSCORE_avg  = ifelse(BWZSCORE_avg  >= 3, 3,
+      #                                      ifelse(BWZSCORE_avg  >= 2, 2,
+      #                                             ifelse(BWZSCORE_avg  >= 1, 1, 0))))
+        dplyr::mutate(BWZSCORE_avg = ifelse(BWZSCORE_avg == 5, 5,
+                                        ifelse(BWZSCORE_avg > 3, 3,
+                                               ifelse(BWZSCORE_avg == 3, 2,
+                                                      ifelse(BWZSCORE_avg > 0, 1, 0)))))
 
 
   }

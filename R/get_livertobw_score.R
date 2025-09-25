@@ -216,10 +216,18 @@ get_livertobw_score <- function (studyid = NULL,
       dplyr::summarize(avg_liverToBW_zscore = mean(liverToBW_zscore, na.rm = TRUE))%>%
       dplyr::mutate(avg_liverToBW_zscore = abs(avg_liverToBW_zscore))  %>%
       dplyr::select(STUDYID, avg_liverToBW_zscore) %>%
-      dplyr::mutate(avg_liverToBW_zscore = ifelse(avg_liverToBW_zscore >= 3, 3,
-                                                  ifelse(avg_liverToBW_zscore >= 2, 2,
-                                                         ifelse(avg_liverToBW_zscore >= 1, 1, 0))))
 
+      # dplyr::mutate(avg_liverToBW_zscore = ifelse(avg_liverToBW_zscore >= 3, 3,
+      #                                             ifelse(avg_liverToBW_zscore >= 2, 2,
+      #                                                    ifelse(avg_liverToBW_zscore >= 1, 1, 0))))
+      dplyr::mutate(avg_liverToBW_zscore = ifelse(avg_liverToBW_zscore == 5, 5,
+                                                  ifelse(avg_liverToBW_zscore > 3, 3,
+                                                         ifelse(avg_liverToBW_zscore == 3, 2,
+                                                                ifelse(avg_liverToBW_zscore > 0, 1, 0)))))
+      # x <- ifelse(mi_CompileData2[[colName]] == 5, 5,
+      #             ifelse(mi_CompileData2[[colName]] > 3, 3,
+      #                    ifelse(mi_CompileData2[[colName]] == 3, 2,
+      #                           ifelse(mi_CompileData2[[colName]] > 0, 1, 0))))
 
   } else if (return_zscore_by_USUBJID ) {
 
@@ -230,9 +238,14 @@ get_livertobw_score <- function (studyid = NULL,
                                                is.infinite(liverToBW_zscore), NA)) %>%
       dplyr::mutate(liverToBW_zscore = abs(liverToBW_zscore))  %>%
       dplyr::select(STUDYID, USUBJID,liverToBW_zscore) %>%
-      dplyr::mutate(liverToBW_zscore = ifelse(liverToBW_zscore >= 3, 3,
-                                                  ifelse(liverToBW_zscore >= 2, 2,
-                                                         ifelse(liverToBW_zscore >= 1, 1, 0))))
+
+      # dplyr::mutate(liverToBW_zscore = ifelse(liverToBW_zscore >= 3, 3,
+      #                                             ifelse(liverToBW_zscore >= 2, 2,
+      #                                                    ifelse(liverToBW_zscore >= 1, 1, 0))))
+      dplyr::mutate(liverToBW_zscore = ifelse(liverToBW_zscore == 5, 5,
+                                              ifelse(liverToBW_zscore > 3, 3,
+                                                     ifelse(liverToBW_zscore == 3, 2,
+                                                            ifelse(liverToBW_zscore > 0, 1, 0)))))
 
   } else {
     # Create final_liverToBW_df for the current STUDYID by averaging.......................
@@ -243,9 +256,14 @@ get_livertobw_score <- function (studyid = NULL,
       dplyr::summarize(avg_liverToBW_zscore = mean(liverToBW_zscore, na.rm = TRUE))%>%
       dplyr::mutate(avg_liverToBW_zscore = abs(avg_liverToBW_zscore))  %>%
       dplyr::select(STUDYID, avg_liverToBW_zscore) %>%
-      dplyr::mutate(avg_liverToBW_zscore = ifelse(avg_liverToBW_zscore >= 3, 3,
-                                                  ifelse(avg_liverToBW_zscore >= 2, 2,
-                                                         ifelse(avg_liverToBW_zscore >= 1, 1, 0))))
+      # dplyr::mutate(avg_liverToBW_zscore = ifelse(avg_liverToBW_zscore >= 3, 3,
+      #                                             ifelse(avg_liverToBW_zscore >= 2, 2,
+      #                                                    ifelse(avg_liverToBW_zscore >= 1, 1, 0))))
+      dplyr::mutate(avg_liverToBW_zscore = ifelse(avg_liverToBW_zscore == 5, 5,
+                                                  ifelse(avg_liverToBW_zscore > 3, 3,
+                                                         ifelse(avg_liverToBW_zscore == 3, 2,
+                                                                ifelse(avg_liverToBW_zscore > 0, 1, 0))))
+      )
 
   }
 

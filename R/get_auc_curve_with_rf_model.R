@@ -82,7 +82,7 @@ get_auc_curve_with_rf_model  <- function(ml_formatted_scores_df = NULL,
 
   rfData <- ml_formatted_scores_df
 
-  # enforce that Data and best.m must either both be NULL or both be non-NULL
+  # enforce that ml_formatted_scores_df and best.m must either both be NULL or both be non-NULL
   if (xor(is.null(ml_formatted_scores_df), is.null(best.m))) {
     stop("Error: Either both 'Data' and 'best.m' must be NULL or both must be non-NULL.")
   }
@@ -132,12 +132,20 @@ get_auc_curve_with_rf_model  <- function(ml_formatted_scores_df = NULL,
 
       } else {
         # For the real data in sqlite database
+        if (!is.null(studyid_metadata)) {
+
+          studyid_or_studyids <- studyid_metadata$STUDYID
+
+
+        } else {
+          studyid_or_studyids <- get_repeat_dose_parallel_studyids(path_db=path_db,
+                                                                   rat_studies = rat_studies)
+          studyid_or_studyids <- as.vector(studyid_or_studyids$STUDYID)
+        }
+
+        }
         # filter for the repeat-dose and parallel studyids
 
-        studyid_or_studyids <- get_repeat_dose_parallel_studyids(path_db=path_db,
-                                                                 rat_studies = rat_studies)
-        studyid_or_studyids <- as.vector(studyid_or_studyids$STUDYID)
-      }
     }
 
     # get scores for the lb,mi and om data frame combined
