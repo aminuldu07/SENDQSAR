@@ -7,37 +7,9 @@
 get_auc_curve_with_rf_model_modular(ml_formatted_scores_df, best.m)
 }
 \arguments{
+\item{ml_formatted_scores_df}{A data frame containing the training data. If \code{NULL}, data will be fetched from the database.}
+
 \item{best.m}{The 'mtry' hyperparameter for Random Forest. If \code{NULL}, it is determined by the function.}
-
-\item{Data}{A data frame containing the training data. If \code{NULL}, data will be fetched from the database.}
-
-\item{path_db}{A string representing the path to the SQLite database used to fetch data when \code{Data} is \code{NULL}.}
-
-\item{rat_studies}{Logical; whether to filter for rat studies. Defaults to \code{FALSE}.}
-
-\item{studyid_metadata}{A data frame containing metadata associated with study IDs.}
-
-\item{fake_study}{Logical; whether to use fake study IDs for data simulation. Defaults to \code{FALSE}.}
-
-\item{use_xpt_file}{Logical; whether to use an XPT file for input data. Defaults to \code{FALSE}.}
-
-\item{Round}{Logical; whether to round numerical values. Defaults to \code{FALSE}.}
-
-\item{Impute}{Logical; whether to perform imputation on missing values. Defaults to \code{FALSE}.}
-
-\item{reps}{A numeric value indicating the number of repetitions for cross-validation. Defaults to a numeric value.}
-
-\item{holdback}{Numeric; either 1 or a fraction value (e.g., 0.75) for holdback during cross-validation.}
-
-\item{Undersample}{Logical; whether to perform undersampling. Defaults to \code{FALSE}.}
-
-\item{hyperparameter_tuning}{Logical; whether to perform hyperparameter tuning. Defaults to \code{FALSE}.}
-
-\item{error_correction_method}{Character; one of "Flip", "Prune", or "None", specifying the method of error correction.}
-
-\item{output_individual_scores}{Logical; whether to output individual scores. Defaults to \code{TRUE}.}
-
-\item{output_zscore_by_USUBJID}{Logical; whether to output z-scores by subject ID. Defaults to \code{FALSE}.}
 }
 \value{
 This function does not return any explicit value. It generates:
@@ -53,12 +25,8 @@ calculates the AUC (Area Under the Curve). It allows various preprocessing
 options, such as imputation, rounding, undersampling, and hyperparameter tuning.
 }
 \details{
-The function prepares data for training a Random Forest model by first fetching data from an SQLite database
-or generating synthetic data (if \code{fake_study} is \code{TRUE}). It processes the data using various options such
-as imputation, rounding, and undersampling. The model is trained using the Random Forest algorithm, and
-performance is evaluated via the ROC curve and AUC metric.
-
-The function also allows for hyperparameter tuning and error correction. After training the model,
+The function requires a data frame that is generated from function f8. The model is trained using the Random Forest algorithm, and
+performance is evaluated via the ROC curve and AUC metric. After training the model,
 predictions are made, and the AUC is calculated and visualized with a ROC curve plot.
 }
 \examples{

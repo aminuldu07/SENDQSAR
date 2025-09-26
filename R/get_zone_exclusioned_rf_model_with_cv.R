@@ -61,6 +61,7 @@
 #'
 #' @import randomForest
 #' @import caret
+#' @export
 
 
 get_zone_exclusioned_rf_model_with_cv <- function(ml_formatted_scores_df,
