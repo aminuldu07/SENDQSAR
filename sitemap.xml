@@ -36,6 +36,7 @@
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_col_harmonized_scores_df.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_compile_data.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_histogram_barplot.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_histogram_barplot_modular.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_imp_features_from_rf_model_with_cv.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_indiv_score_om_lb_mi_domain_df.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_lb_score.html</loc></url>
@@ -46,6 +47,7 @@
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_prediction_plot.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_repeat_dose_parallel_studyids.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_reprtree_from_rf_model.html</loc></url>
+<url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_reprtree_from_rf_model_modular.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_rf_input_param_list_output_cv_imp.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_rf_model_with_cv.html</loc></url>
 <url><loc>https://aminuldu07.github.io/SENDQSAR/reference/get_treatment_group_amin.html</loc></url>
